@@ -233,7 +233,7 @@
               <ul>${s.debrief.takeaways.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
               <label class="form-label fw-semibold mt-2" for="reflection">Personal reflection</label>
               <p class="small text-muted-2 mb-1">${esc(s.debrief.reflection)}</p>
-              <textarea class="form-control mb-2" id="reflection" rows="4" placeholder="Your reflection is saved only in this browser.">${esc(saved)}</textarea>
+              <textarea class="form-control mb-2" id="reflection" rows="4" placeholder="Your reflection is kept for this demo session.">${esc(saved)}</textarea>
               <div class="d-flex flex-wrap gap-2 align-items-center">
                 <button class="btn btn-outline-primary btn-sm" id="save-ref"><i class="bi bi-save" aria-hidden="true"></i> Save reflection</button>
                 <span class="small text-muted-2" id="save-msg" role="status"></span>
