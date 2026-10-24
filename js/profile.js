@@ -58,7 +58,7 @@
     root.innerHTML = `
       ${pr.name ? '' : `
         <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2">
-          <span><i class="bi bi-person-plus" aria-hidden="true"></i> <strong>Create your profile</strong> to personalise the Navigator and keep your learning in one place.</span>
+          <span><i class="bi bi-person-plus" aria-hidden="true"></i> <strong>Create your profile</strong> to personalize the Navigator and keep your learning in one place.</span>
           <button class="btn btn-primary btn-sm" data-edit>Set up profile</button>
         </div>`}
 
@@ -69,7 +69,7 @@
           <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
             <div>
               <h1 class="h3 mb-1">${esc(pr.name || 'Your name')}</h1>
-              <p class="mb-1">${esc(pr.headline || 'Add a headline, e.g. your role or programme')}</p>
+              <p class="mb-1">${esc(pr.headline || 'Add a headline, e.g. your role or program')}</p>
               <p class="small text-muted-2 mb-2">
                 ${pr.location ? `<i class="bi bi-geo-alt" aria-hidden="true"></i> ${esc(pr.location)} · ` : ''}
                 ${mission ? `<a href="map.html?mission=${mission.id}"><i class="bi bi-globe-americas" aria-hidden="true"></i> ${esc(mission.acronym)}</a>` : 'No duty station selected'}
@@ -160,8 +160,7 @@
   // Header avatar lives in the shared nav, so re-render it too.
   function refreshAll() {
     render();
-    const nav = document.querySelector('.nav-profile');
-    if (nav) nav.querySelector('.avatar').outerHTML = App.avatar(Profile.get(), 28);
+    App.renderChrome();
   }
 
   // ---------- editor ----------
@@ -189,7 +188,7 @@
   document.getElementById('pf-name').addEventListener('input', showPreview);
   document.getElementById('photo-remove').addEventListener('click', () => { draftPhoto = null; showPreview(); });
 
-  // Centre-crop to a square and shrink, so the photo fits comfortably in browser storage.
+  // Center-crop to a square and shrink, so the photo fits comfortably in browser storage.
   function processPhoto(file) {
     return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(file);

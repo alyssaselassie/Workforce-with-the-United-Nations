@@ -904,7 +904,7 @@ window.APP_DATA = {
    {
     "id": "affinity",
     "name": "Affinity bias",
-    "definition": "Favouring people who seem similar to us in language, education, nationality or manner.",
+    "definition": "Favoring people who seem similar to us in language, education, nationality or manner.",
     "fieldExample": "Treating the English-speaking community member as the 'reliable' voice.",
     "counter": "Ask whose perspective is missing, and seek it out on purpose."
    },
@@ -925,14 +925,14 @@ window.APP_DATA = {
    {
     "id": "attribution",
     "name": "Fundamental attribution error",
-    "definition": "Explaining others' behaviour by character rather than circumstance.",
+    "definition": "Explaining others' behavior by character rather than circumstance.",
     "fieldExample": "Reading low turnout at a meeting as 'apathy' when the timing clashed with harvest or prayer.",
-    "counter": "Ask what circumstances could explain the behaviour."
+    "counter": "Ask what circumstances could explain the behavior."
    },
    {
     "id": "stereotyping",
     "name": "Stereotyping",
-    "definition": "Applying a generalisation about a group to an individual.",
+    "definition": "Applying a generalization about a group to an individual.",
     "fieldExample": "Assuming all young men in an area are linked to an armed group.",
     "counter": "Treat cultural knowledge as a hypothesis to test, never as a conclusion about a person."
    },
@@ -940,21 +940,21 @@ window.APP_DATA = {
     "id": "availability",
     "name": "Availability heuristic",
     "definition": "Judging how likely or common something is by how easily examples come to mind.",
-    "fieldExample": "Prioritising the needs of the district that was in the news.",
+    "fieldExample": "Prioritizing the needs of the district that was in the news.",
     "counter": "Use systematic data and note where coverage is thin."
    },
    {
     "id": "authority",
     "name": "Authority and credential bias",
     "definition": "Over-weighting views from people with formal titles or international credentials.",
-    "fieldExample": "Overriding a national colleague's contextual advice in favour of a visiting consultant.",
+    "fieldExample": "Overriding a national colleague's contextual advice in favor of a visiting consultant.",
     "counter": "Weigh advice on reasoning and local knowledge, not rank."
    },
    {
     "id": "saviour",
-    "name": "Saviour / paternalism bias",
+    "name": "Savior / paternalism bias",
     "definition": "Assuming outsiders know best and communities need rescuing rather than partnership.",
-    "fieldExample": "Designing a programme for a community without consulting it.",
+    "fieldExample": "Designing a program for a community without consulting it.",
     "counter": "Start from local capacities and priorities, and share decision-making."
    },
    {
@@ -968,13 +968,13 @@ window.APP_DATA = {
     "id": "ethnocentrism",
     "name": "Ethnocentrism",
     "definition": "Judging other cultures by the norms of your own.",
-    "fieldExample": "Labelling indirect communication as 'evasive'.",
-    "counter": "Learn local communication norms from colleagues and suspend judgement."
+    "fieldExample": "Labeling indirect communication as 'evasive'.",
+    "counter": "Learn local communication norms from colleagues and suspend judgment."
    },
    {
     "id": "groupthink",
     "name": "Groupthink",
-    "definition": "Going along with group consensus to avoid conflict, at the cost of good judgement.",
+    "definition": "Going along with group consensus to avoid conflict, at the cost of good judgment.",
     "fieldExample": "No one questions a team plan because the chief proposed it.",
     "counter": "Assign a 'devil's advocate' and invite junior staff to speak first."
    },
@@ -995,7 +995,7 @@ window.APP_DATA = {
    {
     "id": "threat",
     "name": "Threat bias",
-    "definition": "Seeing ambiguous behaviour as hostile, especially in insecure settings.",
+    "definition": "Seeing ambiguous behavior as hostile, especially in insecure settings.",
     "fieldExample": "Treating a farmer approaching a patrol as a threat by default.",
     "counter": "Combine force-protection procedures with de-escalation and local liaison."
    }
@@ -1016,7 +1016,7 @@ window.APP_DATA = {
     },
     {
      "name": "CQ Action",
-     "question": "Am I adapting my words, tone and behaviour appropriately?"
+     "question": "Am I adapting my words, tone and behavior appropriately?"
     }
    ],
    "humanitarianPrinciples": [
@@ -1127,7 +1127,7 @@ window.APP_DATA = {
         "biasTags": [
          "stereotyping"
         ],
-        "feedback": "You are right to centre women, but bypassing recognised leaders can cause tension and backlash against the women who spoke up. Approaching people at the water point also isn't a safe or private space for them."
+        "feedback": "You are right to center women, but bypassing recognized leaders can cause tension and backlash against the women who spoke up. Approaching people at the water point also isn't a safe or private space for them."
        },
        {
         "text": "Send an online survey to the leaders' phones so they can forward it.",
@@ -1221,8 +1221,8 @@ window.APP_DATA = {
     ],
     "steps": [
      {
-      "prompt": "For three weeks, every interview about the dispute has gone through one highly regarded interpreter, Samir, who is from one of the two villages. His accounts consistently favour one side. What do you do?",
-      "context": "Samir is professional and well liked. Your draft report already leans towards the side his accounts support.",
+      "prompt": "For three weeks, every interview about the dispute has gone through one highly regarded interpreter, Samir, who is from one of the two villages. His accounts consistently favor one side. What do you do?",
+      "context": "Samir is professional and well liked. Your draft report already leans toward the side his accounts support.",
       "choices": [
        {
         "text": "Keep working with Samir. He has been reliable, and the accounts are consistent.",
@@ -1296,7 +1296,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
-        "feedback": "This is CQ Knowledge and Strategy: you recognise that communication norms differ and draw on contextual expertise to understand the testimony."
+        "feedback": "This is CQ Knowledge and Strategy: you recognize that communication norms differ and draw on contextual expertise to understand the testimony."
        },
        {
         "text": "Include the testimony, but ask the elder to answer yes or no next time.",
@@ -1335,7 +1335,7 @@ window.APP_DATA = {
      "unoau",
      "osesg-hoa"
     ],
-    "role": "Programme Manager",
+    "role": "Program Manager",
     "setting": "A fictional mission planning cell preparing a community dialogue initiative.",
     "minutes": 5,
     "biasFocus": [
@@ -1450,7 +1450,7 @@ window.APP_DATA = {
    {
     "id": "sc-needs-assessment-data",
     "title": "The data we can reach",
-    "summary": "Prioritise assistance using a needs assessment with significant gaps.",
+    "summary": "Prioritize assistance using a needs assessment with significant gaps.",
     "missionIds": [
      "unmiss",
      "untmis",
@@ -1459,7 +1459,7 @@ window.APP_DATA = {
      "osesgy"
     ],
     "role": "Humanitarian Liaison Officer",
-    "setting": "A fictional region with an accessible urban centre and rural areas that are hard to reach.",
+    "setting": "A fictional region with an accessible urban center and rural areas that are hard to reach.",
     "minutes": 5,
     "biasFocus": [
      "availability",
@@ -1518,7 +1518,7 @@ window.APP_DATA = {
       "context": "Displaced people have set up their own water committees and a school.",
       "choices": [
        {
-        "text": "Keep the wording. It emphasises urgency for donors.",
+        "text": "Keep the wording. It emphasizes urgency for donors.",
         "scores": {
          "cq": 0,
          "bias": 0,
@@ -1530,7 +1530,7 @@ window.APP_DATA = {
          "deficit",
          "saviour"
         ],
-        "feedback": "Deficit framing strips people of agency and can shape programmes that sideline community structures that already work."
+        "feedback": "Deficit framing strips people of agency and can shape programs that sideline community structures that already work."
        },
        {
         "text": "Describe both needs and community capacities, such as the committees and the school, and use the terms the community uses for itself.",
@@ -1551,22 +1551,22 @@ window.APP_DATA = {
      "takeaways": [
       "Areas without data are unknown, not low-need.",
       "State the limits of your coverage explicitly.",
-      "Words shape programmes, so describe capacities as well as needs."
+      "Words shape programs, so describe capacities as well as needs."
      ],
-     "reflection": "What does your organisation's language say about the people it serves?"
+     "reflection": "What does your organization's language say about the people it serves?"
     }
    },
    {
     "id": "sc-rumour-response",
-    "title": "When rumours spread",
-    "summary": "Respond to a damaging rumour about the mission circulating on social media.",
+    "title": "When rumors spread",
+    "summary": "Respond to a damaging rumor about the mission circulating on social media.",
     "missionIds": [
      "monusco",
      "minusca",
      "osesg-gl"
     ],
     "role": "Public Information Officer",
-    "setting": "Benza, a fictional city where a rumour claims peacekeepers are protecting an armed group.",
+    "setting": "Benza, a fictional city where a rumor claims peacekeepers are protecting an armed group.",
     "minutes": 5,
     "biasFocus": [
      "attribution",
@@ -1575,7 +1575,7 @@ window.APP_DATA = {
     ],
     "steps": [
      {
-      "prompt": "A colleague says the rumour is 'obviously enemy propaganda that only uneducated people believe' and proposes a strongly worded denial. What is your first step?",
+      "prompt": "A colleague says the rumor is 'obviously enemy propaganda that only uneducated people believe' and proposes a strongly worded denial. What is your first step?",
       "context": "Community radio hosts say people are frustrated that attacks happened near a mission base.",
       "choices": [
        {
@@ -1594,7 +1594,7 @@ window.APP_DATA = {
         "feedback": "Writing believers off as 'uneducated' misreads a real grievance. A denial in the wrong languages and with the wrong tone can deepen distrust."
        },
        {
-        "text": "Listen first: meet community radio hosts, civil society and youth groups to understand the grievances behind the rumour, then respond in local languages with verifiable facts and a clear account of what the mission can and cannot do.",
+        "text": "Listen first: meet community radio hosts, civil society and youth groups to understand the grievances behind the rumor, then respond in local languages with verifiable facts and a clear account of what the mission can and cannot do.",
         "scores": {
          "cq": 3,
          "bias": 3,
@@ -1603,10 +1603,10 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
-        "feedback": "Rumours often express real fears and unmet expectations. Engaging with the underlying grievance and being candid about the mandate's limits builds more trust than a denial alone."
+        "feedback": "Rumors often express real fears and unmet expectations. Engaging with the underlying grievance and being candid about the mandate's limits builds more trust than a denial alone."
        },
        {
-        "text": "Say nothing. Responding gives the rumour oxygen.",
+        "text": "Say nothing. Responding gives the rumor oxygen.",
         "scores": {
          "cq": 1,
          "bias": 1,
@@ -1615,7 +1615,7 @@ window.APP_DATA = {
         },
         "rating": "partial",
         "biasTags": [],
-        "feedback": "Sometimes not amplifying a rumour is wise, but silence while people feel unprotected can come across as indifference and put staff and civilians at risk."
+        "feedback": "Sometimes not amplifying a rumor is wise, but silence while people feel unprotected can come across as indifference and put staff and civilians at risk."
        }
       ]
      },
@@ -1635,7 +1635,7 @@ window.APP_DATA = {
         "biasTags": [
          "authority"
         ],
-        "feedback": "Leadership presence matters, but a panel made up only of outsiders reinforces the distance that feeds rumours."
+        "feedback": "Leadership presence matters, but a panel made up only of outsiders reinforces the distance that feeds rumors."
        },
        {
         "text": "Mission leaders alongside trusted local voices, such as women's and youth representatives and faith leaders, with a Q&A in local languages and a commitment to follow up.",
@@ -1654,7 +1654,7 @@ window.APP_DATA = {
     ],
     "debrief": {
      "takeaways": [
-      "Behind a rumour there is often a real grievance.",
+      "Behind a rumor there is often a real grievance.",
       "Language and messenger matter as much as the message.",
       "Be candid about what the mandate can and cannot do."
      ],
@@ -1672,7 +1672,7 @@ window.APP_DATA = {
      "unsos"
     ],
     "role": "Regional Liaison Officer",
-    "setting": "A fictional capital where you are meeting a regional organisation's delegation for the first time.",
+    "setting": "A fictional capital where you are meeting a regional organization's delegation for the first time.",
     "minutes": 4,
     "biasFocus": [
      "ethnocentrism",
@@ -1707,7 +1707,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
-        "feedback": "This honours the hospitality while following UN standards on gifts and conflicts of interest. Check with your ethics focal point when in doubt."
+        "feedback": "This honors the hospitality while following UN standards on gifts and conflicts of interest. Check with your ethics focal point when in doubt."
        },
        {
         "text": "Accept both privately. Refusing would be culturally insensitive.",
@@ -1812,7 +1812,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
-        "feedback": "Accessible, confidential and survivor-centred reporting mechanisms are central to accountability to affected populations."
+        "feedback": "Accessible, confidential and survivor-centered reporting mechanisms are central to accountability to affected populations."
        },
        {
         "text": "Tell them to email the mission's headquarters.",
@@ -1876,7 +1876,7 @@ window.APP_DATA = {
         "feedback": "A sweeping claim about a whole group is a hypothesis, not a fact. Permanent separation can entrench stigma."
        },
        {
-        "text": "Consult each group separately and safely first, including ethnic authorities and women's organisations, then design gradual joint activities around shared interests if communities agree.",
+        "text": "Consult each group separately and safely first, including ethnic authorities and women's organizations, then design gradual joint activities around shared interests if communities agree.",
         "scores": {
          "cq": 3,
          "bias": 3,
@@ -1885,7 +1885,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
-        "feedback": "Phased, consent-based approaches respect safety concerns and test assumptions instead of accepting them. Recognising ethnic authorities also respects collective rights."
+        "feedback": "Phased, consent-based approaches respect safety concerns and test assumptions instead of accepting them. Recognizing ethnic authorities also respects collective rights."
        },
        {
         "text": "Insist on a joint meeting next week to show reconciliation is possible.",
@@ -1970,7 +1970,7 @@ window.APP_DATA = {
     ],
     "steps": [
      {
-      "prompt": "Your draft situation report uses the place names favoured by the community you work with most often. A colleague from the other community notices. What do you do?",
+      "prompt": "Your draft situation report uses the place names favored by the community you work with most often. A colleague from the other community notices. What do you do?",
       "context": "The UN has established terminology guidance for this context.",
       "choices": [
        {
@@ -2027,7 +2027,7 @@ window.APP_DATA = {
    {
     "id": "sc-patrol-encounter",
     "title": "The approaching farmer",
-    "summary": "Make a split-second judgement during a patrol near agricultural land.",
+    "summary": "Make a split-second judgment during a patrol near agricultural land.",
     "missionIds": [
      "unifil",
      "unscol"
@@ -2042,7 +2042,7 @@ window.APP_DATA = {
     ],
     "steps": [
      {
-      "prompt": "A man in his twenties walks quickly towards your patrol, waving his arms and shouting in a language your team doesn't speak. Your morning briefing mentioned 'tensions with young men in the area'. What do you do?",
+      "prompt": "A man in his twenties walks quickly toward your patrol, waving his arms and shouting in a language your team doesn't speak. Your morning briefing mentioned 'tensions with young men in the area'. What do you do?",
       "context": "Your language assistant is with the vehicle about 30 metres behind.",
       "choices": [
        {
@@ -2120,7 +2120,7 @@ window.APP_DATA = {
     ],
     "debrief": {
      "takeaways": [
-      "Briefings can prime threat bias, so separate group trends from individual behaviour.",
+      "Briefings can prime threat bias, so separate group trends from individual behavior.",
       "De-escalation and force protection go together.",
       "Debrief your reactions as well as your actions."
      ],

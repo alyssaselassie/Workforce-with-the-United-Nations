@@ -204,12 +204,14 @@
     { href: 'map.html', page: 'map', label: 'Mission Map', icon: 'bi-globe-americas' },
     { href: 'scenarios.html', page: 'scenarios', label: 'Scenarios', icon: 'bi-signpost-split' },
     { href: 'toolkit.html', page: 'toolkit', label: 'Bias Toolkit', icon: 'bi-lightbulb' },
-    { href: 'collaboration.html', page: 'collaboration', label: 'Team Debrief', icon: 'bi-people' },
-    { href: 'progress.html', page: 'progress', label: 'My Progress', icon: 'bi-bar-chart' }
+    { href: 'collaboration.html', page: 'collaboration', label: 'Team Debrief', icon: 'bi-people' }
   ];
 
   function renderChrome() {
     const current = document.body.dataset.page;
+    const profile = Profile.get();
+    const firstName = String(profile.name || '').trim().split(/\s+/)[0];
+    const onProfile = current === 'profile' || current === 'progress';
     const header = document.getElementById('site-header');
     if (header) {
       header.innerHTML = `
@@ -231,9 +233,9 @@
                       <i class="bi ${n.icon}" aria-hidden="true"></i> ${n.label}
                     </a>
                   </li>`).join('')}
-                <li class="nav-item ms-xl-1">
-                  <a class="nav-link nav-profile${current === 'profile' ? ' active' : ''}" ${current === 'profile' ? 'aria-current="page"' : ''} href="profile.html" title="My profile" aria-label="My profile">
-                    ${avatar(Profile.get(), 28)}<span class="ms-2 d-xl-none" aria-hidden="true">My Profile</span>
+                <li class="nav-item ms-xl-2">
+                  <a class="nav-link nav-profile${firstName ? '' : ' is-cta'}${onProfile ? ' active' : ''}" ${onProfile ? 'aria-current="page"' : ''} href="profile.html${firstName ? '' : '?edit=1'}" title="${firstName ? 'My profile and progress' : 'Create your profile'}">
+                    ${avatar(profile, 28)}<span class="ms-2">${firstName ? esc(firstName) : 'Create profile'}</span>
                   </a>
                 </li>
               </ul>
@@ -272,6 +274,7 @@
     Progress,
     Profile,
     avatar,
+    renderChrome,
     loadMissions: () => loadJSON('missions'),
     loadScenarios: () => loadJSON('scenarios'),
     esc,

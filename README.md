@@ -1,6 +1,6 @@
 # UN Cultural Intelligence & Bias Navigator
 
-An interactive educational web application that helps United Nations personnel build cultural intelligence, recognise implicit bias and make more inclusive, evidence-based decisions before and during humanitarian fieldwork.
+An interactive educational web application that helps United Nations personnel build cultural intelligence, recognize implicit bias and make more inclusive, evidence-based decisions before and during humanitarian fieldwork.
 
 > **Learning prototype.** This is not an official United Nations product, and the UN has not endorsed it. All scenarios are fictional composites. Mission information should be checked against the official sources listed below.
 
@@ -120,8 +120,8 @@ Everything runs in the browser. Profiles (including the photo, stored as a small
 
 ## Accessibility
 
-Semantic landmarks, a skip link, keyboard-operable map rows and markers, ARIA live regions for feedback, labelled form controls, visible focus styles and print styles. Layouts were tested at 375 px with no horizontal scrolling.
+Semantic landmarks, a skip link, keyboard-operable map rows and markers, ARIA live regions for feedback, labeled form controls, visible focus styles and print styles. Layouts were tested at 375 px with no horizontal scrolling.
 
-## Licence and attribution
+## License and attribution
 
 Map data © OpenStreetMap contributors. Leaflet © Volodymyr Agafonkin (BSD-2-Clause). Bootstrap (MIT). Boundaries and names on the map do not imply official endorsement or acceptance by the United Nations.
