@@ -880,9 +880,9 @@ window.APP_DATA = {
   },
   "competencies": {
    "cq": {
-    "label": "Cultural Intelligence",
+    "label": "Cultural Intelligence (CQ)",
     "short": "CQ",
-    "description": "Drive, knowledge, strategy and action: being curious about other perspectives, checking your own assumptions and adapting how you behave."
+    "description": "CQ stands for Cultural Quotient. Drive, knowledge, strategy and action: being curious about other perspectives, checking your own assumptions and adapting how you behave."
    },
    "bias": {
     "label": "Bias Awareness",

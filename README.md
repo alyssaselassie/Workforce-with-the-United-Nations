@@ -19,7 +19,7 @@ An interactive educational web application that helps United Nations personnel b
 
 Each choice earns 0–3 points on four competencies:
 
-- **Cultural Intelligence (CQ)**: drive, knowledge, strategy and action.
+- **Cultural Intelligence (CQ, Cultural Quotient)**: drive, knowledge, strategy and action.
 - **Bias Awareness**: noticing shortcuts such as anchoring, affinity bias and stereotyping.
 - **Evidence-Based Decisions**: triangulating sources, using disaggregated data and stating uncertainty.
 - **Do No Harm & Inclusion**: humanitarian principles, safety and participation of affected people.
