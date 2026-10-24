@@ -7,6 +7,7 @@
   'use strict';
 
   const PROGRESS_KEY = 'uncq.progress.v1';
+  const PROFILE_KEY = 'uncq.profile.v1';
   const COMPETENCIES = ['cq', 'bias', 'evidence', 'harm'];
 
   // ---------- storage (never throws; works in private mode) ----------
@@ -105,6 +106,31 @@
     }
   };
 
+  // ---------- profile ----------
+  const Profile = {
+    get() {
+      return Store.read(PROFILE_KEY, {});
+    },
+    save(profile) {
+      return Store.write(PROFILE_KEY, profile);
+    },
+    clear() {
+      Store.remove(PROFILE_KEY);
+    },
+    initials(profile) {
+      const parts = String(profile.name || '').trim().split(/\s+/).filter(Boolean);
+      return parts.length ? (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase() : '';
+    }
+  };
+
+  // Round avatar: the uploaded photo, else initials, else a person icon.
+  function avatar(profile, size) {
+    const style = `width:${size}px;height:${size}px;font-size:${Math.round(size * 0.4)}px`;
+    if (profile.photo) return `<img class="avatar" src="${esc(profile.photo)}" alt="" style="${style}">`;
+    const ini = Profile.initials(profile);
+    return `<span class="avatar avatar-empty" style="${style}" aria-hidden="true">${ini ? esc(ini) : '<i class="bi bi-person"></i>'}</span>`;
+  }
+
   // ---------- helpers ----------
   function esc(value) {
     return String(value == null ? '' : value)
@@ -188,7 +214,7 @@
     if (header) {
       header.innerHTML = `
         <a class="visually-hidden-focusable skip-link" href="#main">Skip to main content</a>
-        <nav class="navbar navbar-expand-lg navbar-dark site-nav" aria-label="Main">
+        <nav class="navbar navbar-expand-xl navbar-dark site-nav" aria-label="Main">
           <div class="container-xl">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
               <span class="brand-mark" aria-hidden="true"><i class="bi bi-compass"></i></span>
@@ -205,6 +231,11 @@
                       <i class="bi ${n.icon}" aria-hidden="true"></i> ${n.label}
                     </a>
                   </li>`).join('')}
+                <li class="nav-item ms-xl-1">
+                  <a class="nav-link nav-profile${current === 'profile' ? ' active' : ''}" ${current === 'profile' ? 'aria-current="page"' : ''} href="profile.html" title="My profile" aria-label="My profile">
+                    ${avatar(Profile.get(), 28)}<span class="ms-2 d-xl-none" aria-hidden="true">My Profile</span>
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -239,6 +270,8 @@
     COMPETENCIES,
     Store,
     Progress,
+    Profile,
+    avatar,
     loadMissions: () => loadJSON('missions'),
     loadScenarios: () => loadJSON('scenarios'),
     esc,
