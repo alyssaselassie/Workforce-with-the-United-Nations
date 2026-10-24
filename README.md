@@ -14,7 +14,7 @@ An interactive educational web application that helps United Nations personnel b
 | `toolkit.html` | Bias library (14 biases), the PAUSE protocol, CQ capabilities, humanitarian principles and an assumption-check worksheet |
 | `collaboration.html` | Team Debrief: facilitated sessions with a perspective wall, a "who's missing" prompt, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
 | `progress.html` | Competency profile, completed scenarios, recurring biases, reflections, export and reset |
-| `profile.html` | Personal profile: photo upload (cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus competencies, badges, recent activity and backup/restore of profile and progress |
+| `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus competencies, badges, recent activity and backup/restore of profile and progress |
 
 ### Scoring
 
