@@ -20,6 +20,21 @@
   document.getElementById('cq-list').innerHTML = F.cqCapabilities.map((c) => `
     <p class="mb-2"><strong>${esc(c.name)}:</strong> <span class="small">${esc(c.question)}</span></p>`).join('');
 
+  document.getElementById('dims-intro').textContent = F.dimensionsIntro;
+  document.getElementById('dims-rule').textContent = F.dimensionsRule;
+  document.getElementById('dims-grid').innerHTML = Object.entries(S.dimensions).map(([id, d]) => `
+    <div class="col-md-6 col-lg-3">
+      <article class="card dim-card dim-${id} h-100">
+        <div class="card-body">
+          <div class="dim-icon mb-2"><i class="bi ${esc(d.icon)}" aria-hidden="true"></i></div>
+          <h3 class="h6 mb-1">${esc(d.label)}</h3>
+          <p class="small mb-2">${esc(d.description)}</p>
+          <p class="small mb-2"><strong>Ask:</strong> ${esc(d.ask)}</p>
+          <ul class="small text-muted-2 ps-3 mb-0">${d.examples.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+        </div>
+      </article>
+    </div>`).join('');
+
   document.getElementById('hp-list').innerHTML = F.humanitarianPrinciples.map((h) => `
     <p class="mb-2"><strong>${esc(h.name)}:</strong> <span class="small">${esc(h.text)}</span></p>`).join('');
 

@@ -900,6 +900,52 @@ window.APP_DATA = {
     "description": "Anticipating unintended effects, protecting people at risk and including those most affected, in line with humanitarian principles."
    }
   },
+  "dimensions": {
+   "position": {
+    "label": "Social position",
+    "short": "Position",
+    "icon": "bi-person-vcard",
+    "description": "Role, gender, and national, international or uniformed status.",
+    "ask": "How do role, gender and status shape this situation, and who holds power?",
+    "examples": [
+     "Older male leaders vs. the women and girls who collect the water.",
+     "A national staff member vs. the team lead."
+    ]
+   },
+   "place": {
+    "label": "Place",
+    "short": "Place",
+    "icon": "bi-geo-alt",
+    "description": "Where the decision happens: a meeting room, a private conversation, a water point, a patrol route or a virtual meeting.",
+    "ask": "Where is this happening, and is that setting safe and reachable for everyone?",
+    "examples": [
+     "The mission meeting vs. the route to the water point.",
+     "The meeting room vs. a private conversation afterward."
+    ]
+   },
+   "emotion": {
+    "label": "Emotion / experience",
+    "short": "Emotion",
+    "icon": "bi-heart-pulse",
+    "description": "Feeling safe or exposed, heard or overlooked, in that place.",
+    "ask": "Who feels safe or exposed here, and who feels heard or overlooked?",
+    "examples": [
+     "Harassment risk on the way to the water point.",
+     "Contradicting a supervisor in public can feel disrespectful; raising it privately feels responsible."
+    ]
+   },
+   "voice": {
+    "label": "Voice / power",
+    "short": "Voice",
+    "icon": "bi-megaphone",
+    "description": "Who speaks, who is missing and whose opinion counts.",
+    "ask": "Who is speaking, who is missing and whose input is being counted?",
+    "examples": [
+     "Who was consulted, and who was missing from the consultation?",
+     "Is input given privately counted or discounted?"
+    ]
+   }
+  },
   "biases": [
    {
     "id": "affinity",
@@ -1001,6 +1047,8 @@ window.APP_DATA = {
    }
   ],
   "frameworks": {
+   "dimensionsIntro": "A person cannot be defined by a single dimension. Building on the ReliefMaps+ approach to lived experience (social positions, places and emotions), this tool adds Voice / power for UN fieldwork. Every scenario is tagged with the dimensions it involves, and every response choice records which dimensions it overlooks.",
+   "dimensionsRule": "Each scenario names at least three dimensions in its stem. A dimension is only included when it changes the decision. The dimensions describe the situation; the four competencies score the response.",
    "cqCapabilities": [
     {
      "name": "CQ Drive",
@@ -1083,6 +1131,12 @@ window.APP_DATA = {
      "affinity",
      "availability"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "Your team leader suggests holding the consultation tomorrow morning with the five community leaders who usually attend mission meetings, all of them older men. What do you recommend?",
@@ -1101,6 +1155,12 @@ window.APP_DATA = {
          "availability",
          "gender"
         ],
+        "missed": [
+         "position",
+         "place",
+         "emotion",
+         "voice"
+        ],
         "feedback": "The leaders matter, but they are the easiest voices to reach, not necessarily the most affected ones. Women and girls carry most of the risk on the water route, so a meeting without them could produce a plan that increases harm."
        },
        {
@@ -1113,6 +1173,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "This respects existing structures and makes sure the people most affected are heard safely. Separate, facilitated sessions are standard good practice for accountability to affected populations."
        },
        {
@@ -1127,6 +1188,10 @@ window.APP_DATA = {
         "biasTags": [
          "stereotyping"
         ],
+        "missed": [
+         "position",
+         "place"
+        ],
         "feedback": "You are right to center women, but bypassing recognized leaders can cause tension and backlash against the women who spoke up. Approaching people at the water point also isn't a safe or private space for them."
        },
        {
@@ -1140,6 +1205,10 @@ window.APP_DATA = {
         "rating": "weak",
         "biasTags": [
          "availability"
+        ],
+        "missed": [
+         "position",
+         "voice"
         ],
         "feedback": "Digital access is unequal by gender, age and income, and routing the survey through gatekeepers filters who receives it. The data will look tidy but be unrepresentative."
        }
@@ -1161,6 +1230,11 @@ window.APP_DATA = {
         "biasTags": [
          "attribution"
         ],
+        "missed": [
+         "place",
+         "emotion",
+         "voice"
+        ],
         "feedback": "This is the fundamental attribution error: reading the situation as indifference when the timing may simply have been unworkable."
        },
        {
@@ -1173,6 +1247,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "You looked for circumstantial explanations and drew on local knowledge, which is CQ Strategy in practice. Market days, care work and safety on the way to a venue often explain low turnout."
        },
        {
@@ -1186,6 +1261,9 @@ window.APP_DATA = {
         "rating": "partial",
         "biasTags": [
          "saviour"
+        ],
+        "missed": [
+         "place"
         ],
         "feedback": "Paying people for their time can be appropriate if the policy allows it, but it doesn't address the cause, can distort who attends and can create expectations. Fix access first."
        }
@@ -1219,6 +1297,11 @@ window.APP_DATA = {
      "language",
      "affinity"
     ],
+    "dimensions": [
+     "position",
+     "emotion",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "For three weeks, every interview about the dispute has gone through one highly regarded interpreter, Samir, who is from one of the two villages. His accounts consistently favor one side. What do you do?",
@@ -1237,6 +1320,10 @@ window.APP_DATA = {
          "confirmation",
          "affinity"
         ],
+        "missed": [
+         "position",
+         "voice"
+        ],
         "feedback": "The accounts may be consistent because they all come through one channel. Liking and trusting an interpreter (affinity) can hide a structural source of bias, and the report risks taking sides."
        },
        {
@@ -1249,6 +1336,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Triangulating sources and stating uncertainty openly protects the mission's impartiality. It also handles the issue discreetly, without accusing Samir of anything."
        },
        {
@@ -1262,6 +1350,10 @@ window.APP_DATA = {
         "rating": "partial",
         "biasTags": [
          "attribution"
+        ],
+        "missed": [
+         "emotion",
+         "voice"
         ],
         "feedback": "This assumes bad faith without evidence. It may harm a colleague who could face risks for working with the UN, and it throws away usable data. Diversify your sources instead."
        }
@@ -1284,6 +1376,10 @@ window.APP_DATA = {
          "ethnocentrism",
          "language"
         ],
+        "missed": [
+         "emotion",
+         "voice"
+        ],
         "feedback": "Judging one communication style by the norms of another is ethnocentrism. Indirect speech can carry precise meaning that is lost if you only accept direct answers."
        },
        {
@@ -1296,6 +1392,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "This is CQ Knowledge and Strategy: you recognize that communication norms differ and draw on contextual expertise to understand the testimony."
        },
        {
@@ -1309,6 +1406,9 @@ window.APP_DATA = {
         "rating": "partial",
         "biasTags": [
          "ethnocentrism"
+        ],
+        "missed": [
+         "emotion"
         ],
         "feedback": "Including the testimony is good, but demanding a different communication style can come across as disrespectful and may reduce how much people are willing to say."
        }
@@ -1343,6 +1443,12 @@ window.APP_DATA = {
      "language",
      "groupthink"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "An international consultant recommends holding a dialogue forum in the regional capital next month. Amani, a national officer with 12 years' experience, warns quietly after the meeting that the date falls during a period of local mourning observances and that the venue is linked to one faction. What do you do?",
@@ -1361,6 +1467,12 @@ window.APP_DATA = {
          "authority",
          "groupthink"
         ],
+        "missed": [
+         "position",
+         "place",
+         "emotion",
+         "voice"
+        ],
         "feedback": "Endorsement isn't evidence. Ignoring contextual warnings because of rank or presentation style is authority bias, and here it could undermine the forum and the mission's perceived neutrality."
        },
        {
@@ -1373,6 +1485,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "You weighed the advice on its merits, verified it and gave credit visibly, which builds a team culture where local expertise is heard."
        },
        {
@@ -1386,6 +1499,9 @@ window.APP_DATA = {
         "rating": "partial",
         "biasTags": [
          "authority"
+        ],
+        "missed": [
+         "voice"
         ],
         "feedback": "The decision may improve, but taking the credit reinforces the hierarchy that kept Amani quiet. Credit matters for retention and inclusion."
        }
@@ -1405,6 +1521,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "These structural changes reduce language and hierarchy barriers. Inviting junior or national staff to speak first counters anchoring on senior opinions."
        },
        {
@@ -1419,6 +1536,10 @@ window.APP_DATA = {
         "biasTags": [
          "groupthink"
         ],
+        "missed": [
+         "position",
+         "place"
+        ],
         "feedback": "Good intentions are not enough. Without structural changes, the same people will keep talking."
        },
        {
@@ -1432,6 +1553,10 @@ window.APP_DATA = {
         "rating": "weak",
         "biasTags": [
          "authority"
+        ],
+        "missed": [
+         "position",
+         "voice"
         ],
         "feedback": "A meeting that runs efficiently but leaves out contextual knowledge produces worse decisions."
        }
@@ -1466,6 +1591,12 @@ window.APP_DATA = {
      "deficit",
      "confirmation"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "A rapid assessment shows the highest needs in the city's displacement sites. But 80% of the data came from areas reachable by road, and some rural districts weren't surveyed at all. Leadership wants a one-page summary by tomorrow. What do you write?",
@@ -1483,6 +1614,10 @@ window.APP_DATA = {
         "biasTags": [
          "availability"
         ],
+        "missed": [
+         "place",
+         "voice"
+        ],
         "feedback": "This presents a gap in coverage as a finding. Areas that weren't surveyed aren't low-need, they are unknown, and the people in them may need help most."
        },
        {
@@ -1495,6 +1630,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "This is honest about uncertainty and keeps decision-makers from mistaking the absence of data for the absence of need. Impartiality means acting on need, which means finding it."
        },
        {
@@ -1508,6 +1644,9 @@ window.APP_DATA = {
         "rating": "partial",
         "biasTags": [
          "availability"
+        ],
+        "missed": [
+         "voice"
         ],
         "feedback": "This swaps one unverified picture for another. Anecdotes are signals worth checking, not evidence on which to reallocate everything."
        }
@@ -1530,6 +1669,11 @@ window.APP_DATA = {
          "deficit",
          "saviour"
         ],
+        "missed": [
+         "position",
+         "emotion",
+         "voice"
+        ],
         "feedback": "Deficit framing strips people of agency and can shape programs that sideline community structures that already work."
        },
        {
@@ -1542,6 +1686,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Pairing needs with capacities is more accurate, more respectful and better for programming, because it points to partners rather than passive recipients."
        }
       ]
@@ -1573,6 +1718,12 @@ window.APP_DATA = {
      "stereotyping",
      "confirmation"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "A colleague says the rumor is 'obviously enemy propaganda that only uneducated people believe' and proposes a strongly worded denial. What is your first step?",
@@ -1591,6 +1742,11 @@ window.APP_DATA = {
          "attribution",
          "stereotyping"
         ],
+        "missed": [
+         "position",
+         "emotion",
+         "voice"
+        ],
         "feedback": "Writing believers off as 'uneducated' misreads a real grievance. A denial in the wrong languages and with the wrong tone can deepen distrust."
        },
        {
@@ -1603,6 +1759,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Rumors often express real fears and unmet expectations. Engaging with the underlying grievance and being candid about the mandate's limits builds more trust than a denial alone."
        },
        {
@@ -1615,6 +1772,10 @@ window.APP_DATA = {
         },
         "rating": "partial",
         "biasTags": [],
+        "missed": [
+         "emotion",
+         "voice"
+        ],
         "feedback": "Sometimes not amplifying a rumor is wise, but silence while people feel unprotected can come across as indifference and put staff and civilians at risk."
        }
       ]
@@ -1635,6 +1796,10 @@ window.APP_DATA = {
         "biasTags": [
          "authority"
         ],
+        "missed": [
+         "position",
+         "voice"
+        ],
         "feedback": "Leadership presence matters, but a panel made up only of outsiders reinforces the distance that feeds rumors."
        },
        {
@@ -1647,6 +1812,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Shared platforms and follow-up commitments show accountability and respect for local credibility networks."
        }
       ]
@@ -1678,6 +1844,11 @@ window.APP_DATA = {
      "ethnocentrism",
      "stereotyping"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion"
+    ],
     "steps": [
      {
       "prompt": "After a productive meeting, your counterpart warmly invites you to a family dinner and offers a handcrafted gift. How do you respond?",
@@ -1695,6 +1866,9 @@ window.APP_DATA = {
         "biasTags": [
          "ethnocentrism"
         ],
+        "missed": [
+         "emotion"
+        ],
         "feedback": "Integrity matters, but a blunt refusal can damage trust. You can follow the rules and still respect the relationship."
        },
        {
@@ -1707,6 +1881,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "This honors the hospitality while following UN standards on gifts and conflicts of interest. Check with your ethics focal point when in doubt."
        },
        {
@@ -1720,6 +1895,9 @@ window.APP_DATA = {
         "rating": "weak",
         "biasTags": [
          "stereotyping"
+        ],
+        "missed": [
+         "position"
         ],
         "feedback": "Cultural sensitivity never overrides integrity obligations. Assuming you must accept everything also stereotypes your host, since many officials understand UN rules perfectly well."
        }
@@ -1751,6 +1929,12 @@ window.APP_DATA = {
      "attribution",
      "deficit"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "At your first community meeting, a resident angrily lists past harms caused by international actors and says, 'Why should we trust you?' What do you say?",
@@ -1768,6 +1952,11 @@ window.APP_DATA = {
         "biasTags": [
          "attribution"
         ],
+        "missed": [
+         "position",
+         "emotion",
+         "voice"
+        ],
         "feedback": "To the community it is one institution. Dismissing the history invalidates real experience and confirms the distrust."
        },
        {
@@ -1780,6 +1969,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Acknowledging history, pointing to concrete accountability channels and asking what trust would look like treats residents as partners."
        },
        {
@@ -1793,6 +1983,9 @@ window.APP_DATA = {
         "rating": "partial",
         "biasTags": [
          "saviour"
+        ],
+        "missed": [
+         "voice"
         ],
         "feedback": "The intent is good, but promises you can't personally guarantee can deepen distrust when they aren't kept. Commit to specific, verifiable actions instead."
        }
@@ -1812,6 +2005,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Accessible, confidential and survivor-centered reporting mechanisms are central to accountability to affected populations."
        },
        {
@@ -1825,6 +2019,10 @@ window.APP_DATA = {
         "rating": "weak",
         "biasTags": [
          "availability"
+        ],
+        "missed": [
+         "place",
+         "voice"
         ],
         "feedback": "An email address in a foreign language is a barrier for many people. Reporting channels must be accessible to everyone, including people without internet access or literacy in that language."
        }
@@ -1855,6 +2053,12 @@ window.APP_DATA = {
      "deficit",
      "gender"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "A municipal official says host families 'won't sit with ex-combatants' and suggests holding separate meetings permanently. What do you do?",
@@ -1873,6 +2077,10 @@ window.APP_DATA = {
          "stereotyping",
          "authority"
         ],
+        "missed": [
+         "emotion",
+         "voice"
+        ],
         "feedback": "A sweeping claim about a whole group is a hypothesis, not a fact. Permanent separation can entrench stigma."
        },
        {
@@ -1885,6 +2093,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Phased, consent-based approaches respect safety concerns and test assumptions instead of accepting them. Recognizing ethnic authorities also respects collective rights."
        },
        {
@@ -1898,6 +2107,10 @@ window.APP_DATA = {
         "rating": "partial",
         "biasTags": [
          "saviour"
+        ],
+        "missed": [
+         "emotion",
+         "place"
         ],
         "feedback": "Forcing a timeline puts the mission's goals ahead of participants' safety and readiness."
        }
@@ -1917,6 +2130,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Labels can fix people in their past. Asking people how they want to be described respects their agency."
        },
        {
@@ -1930,6 +2144,10 @@ window.APP_DATA = {
         "rating": "weak",
         "biasTags": [
          "deficit"
+        ],
+        "missed": [
+         "position",
+         "emotion"
         ],
         "feedback": "Technical terms have their place in mandates, but in community materials they can reinforce stigma."
        }
@@ -1968,6 +2186,11 @@ window.APP_DATA = {
      "language",
      "anchoring"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "Your draft situation report uses the place names favored by the community you work with most often. A colleague from the other community notices. What do you do?",
@@ -1986,6 +2209,10 @@ window.APP_DATA = {
          "affinity",
          "anchoring"
         ],
+        "missed": [
+         "position",
+         "place"
+        ],
         "feedback": "Familiar terms can signal that the mission has taken a side and undermine its impartiality in the eyes of the other community."
        },
        {
@@ -1998,6 +2225,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Approved terminology protects impartiality. Welcoming the correction encourages colleagues to raise issues in future."
        },
        {
@@ -2010,6 +2238,9 @@ window.APP_DATA = {
         },
         "rating": "partial",
         "biasTags": [],
+        "missed": [
+         "position"
+        ],
         "feedback": "This just moves the bias to the other side. Use the mission's approved neutral terms."
        }
       ]
@@ -2040,6 +2271,12 @@ window.APP_DATA = {
      "stereotyping",
      "anchoring"
     ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion",
+     "voice"
+    ],
     "steps": [
      {
       "prompt": "A man in his twenties walks quickly toward your patrol, waving his arms and shouting in a language your team doesn't speak. Your morning briefing mentioned 'tensions with young men in the area'. What do you do?",
@@ -2059,10 +2296,15 @@ window.APP_DATA = {
          "anchoring",
          "stereotyping"
         ],
+        "missed": [
+         "position",
+         "emotion",
+         "voice"
+        ],
         "feedback": "The briefing anchored a group stereotype onto one individual. Escalating without any information could harm a civilian and damage community relations."
        },
        {
-        "text": "Follow force-protection procedures while signalling calm, keep a safe distance, call the language assistant forward and find out what he needs.",
+        "text": "Follow force-protection procedures while signaling calm, keep a safe distance, call the language assistant forward and find out what he needs.",
         "scores": {
          "cq": 3,
          "bias": 3,
@@ -2071,6 +2313,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Safety and de-escalation go together. He might be warning you about unexploded ordnance or crop damage. Information comes before interpretation."
        },
        {
@@ -2083,6 +2326,9 @@ window.APP_DATA = {
         },
         "rating": "partial",
         "biasTags": [],
+        "missed": [
+         "voice"
+        ],
         "feedback": "This avoids escalation but may miss urgent information and reinforce a view of the mission as indifferent."
        }
       ]
@@ -2101,6 +2347,7 @@ window.APP_DATA = {
         },
         "rating": "strong",
         "biasTags": [],
+        "missed": [],
         "feedback": "Reflecting openly on how the briefing primed the team's reaction turns one incident into learning for the whole team."
        },
        {
@@ -2113,6 +2360,9 @@ window.APP_DATA = {
         },
         "rating": "partial",
         "biasTags": [],
+        "missed": [
+         "emotion"
+        ],
         "feedback": "This handles the immediate risk but misses the chance to learn about how the team reacted."
        }
       ]
@@ -2125,6 +2375,115 @@ window.APP_DATA = {
       "Debrief your reactions as well as your actions."
      ],
      "reflection": "How do your briefings describe local populations, and what might that prime you to see?"
+    }
+   },
+   {
+    "id": "sc-who-gets-heard",
+    "title": "Who gets heard, and how?",
+    "summary": "A colleague raises a problem privately instead of in the meeting. Respond as the team lead.",
+    "missionIds": [
+     "unscol",
+     "unifil",
+     "unama",
+     "unvmc"
+    ],
+    "role": "Team Leader",
+    "setting": "A coordination meeting at a field office in Sarel, a fictional city. Maya is a fictional colleague; her preference for raising concerns privately is personal, not a cultural label for any group.",
+    "minutes": 4,
+    "biasFocus": [
+     "attribution",
+     "stereotyping",
+     "availability"
+    ],
+    "dimensions": [
+     "position",
+     "place",
+     "emotion",
+     "voice"
+    ],
+    "steps": [
+     {
+      "prompt": "In a coordination meeting, you propose a new distribution schedule. Maya, a national staff member, notices it overlaps with a local holiday when several community partners will be unavailable. She stays quiet in the meeting and raises it with you privately afterward. Another colleague says Maya \"lacks leadership presence\" because she did not speak up. How do you respond?",
+      "context": "Contradicting a supervisor in front of the team can feel disrespectful; raising a concern privately can feel like the responsible thing to do.",
+      "choices": [
+       {
+        "text": "Agree that Maya lacks leadership presence and note it in her performance review.",
+        "scores": {
+         "cq": 0,
+         "bias": 0,
+         "evidence": 0,
+         "harm": 0
+        },
+        "rating": "weak",
+        "biasTags": [
+         "attribution",
+         "stereotyping"
+        ],
+        "missed": [
+         "place",
+         "voice"
+        ],
+        "feedback": "This judges how Maya spoke, not what she said. It counts only the meeting-room voice and ignores the correct concern she raised privately, and a performance review would penalize a communication style."
+       },
+       {
+        "text": "Tell Maya she must raise concerns in meetings from now on, regardless of her background.",
+        "scores": {
+         "cq": 1,
+         "bias": 1,
+         "evidence": 1,
+         "harm": 1
+        },
+        "rating": "partial",
+        "biasTags": [
+         "ethnocentrism"
+        ],
+        "missed": [
+         "position",
+         "place"
+        ],
+        "feedback": "It keeps the channel open, but it forces one norm on everyone. It does not account for her role, the power gap with the team lead, or where she feels able to speak."
+       },
+       {
+        "text": "Ignore Maya's private feedback because it was not raised in the meeting.",
+        "scores": {
+         "cq": 0,
+         "bias": 0,
+         "evidence": 0,
+         "harm": 0
+        },
+        "rating": "weak",
+        "biasTags": [
+         "availability"
+        ],
+        "missed": [
+         "emotion",
+         "voice"
+        ],
+        "feedback": "The schedule problem does not go away because it was raised quietly. Treating private, correct input as no input means partners miss the distribution."
+       },
+       {
+        "text": "Thank Maya for raising the issue, fix the schedule, and make clear that input is welcome both in meetings and privately. Judge the concern on its merits, not on how it was delivered.",
+        "scores": {
+         "cq": 3,
+         "bias": 3,
+         "evidence": 3,
+         "harm": 3
+        },
+        "rating": "strong",
+        "biasTags": [],
+        "missed": [],
+        "feedback": "This is the strongest option. It fixes the real problem and widens who gets heard, which is the same \"who's missing\" check Team Compass is built for."
+       }
+      ]
+     }
+    ],
+    "debrief": {
+     "takeaways": [
+      "Judge a concern on its merits, not on how or where it was raised.",
+      "Quiet in the meeting room is not the same as having nothing to say.",
+      "Offer several ways to give input (in meetings, in writing and in private) and count all of them."
+     ],
+     "reflection": "Whose input in your team usually arrives after the meeting, and how is it counted?"
     }
    }
   ]
