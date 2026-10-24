@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Progress · CQ &amp; Bias Navigator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body data-page="progress">
+  <header id="site-header"></header>
+
+  <main id="main">
+    <section class="page-head py-4">
+      <div class="container-xl">
+        <h1 class="h2 mb-2">My Progress</h1>
+        <p class="mb-0">Your competency profile across completed scenarios, using your latest attempt at each. Progress is stored only in this browser.</p>
+      </div>
+    </section>
+    <div class="container-xl py-4" id="progress-root" aria-live="polite">
+      <p class="text-muted-2">Loading…</p>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <script src="data/data-bundle.js"></script>
+  <script src="script.js"></script>
+  <script src="js/progress.js"></script>
+</body>
+</html>

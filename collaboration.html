@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Debrief · CQ &amp; Bias Navigator</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="styles.css" rel="stylesheet">
+</head>
+<body data-page="collaboration">
+  <header id="site-header"></header>
+
+  <main id="main">
+    <section class="page-head py-4">
+      <div class="container-xl">
+        <h1 class="h2 mb-2">Team Debrief</h1>
+        <p class="mb-0">Run a facilitated discussion around a scenario: gather perspectives from across the team, record a group vote, compare it with the guidance and agree on action points. Built for one shared screen in a meeting room or video call.</p>
+      </div>
+    </section>
+
+    <div class="container-xl py-4">
+      <div class="alert alert-info small d-flex gap-2 no-print" role="note">
+        <i class="bi bi-hdd" aria-hidden="true"></i>
+        <div>Sessions are saved only in this browser, and nothing is sent to a server. To share with colleagues on other devices, <strong>export</strong> the session file and have them <strong>import</strong> it. Imported files are merged with matching sessions. Avoid recording names or details that could identify community members.</div>
+      </div>
+
+      <div class="row g-4">
+        <aside class="col-lg-4 no-print">
+          <section class="surface p-3 mb-3" aria-labelledby="new-h">
+            <h2 id="new-h" class="h6">Start a new debrief</h2>
+            <form id="new-session">
+              <div class="mb-2">
+                <label class="form-label small" for="ns-title">Session title</label>
+                <input class="form-control" id="ns-title" required placeholder="e.g. Civil Affairs team, week 2">
+              </div>
+              <div class="mb-2">
+                <label class="form-label small" for="ns-scenario">Scenario</label>
+                <select class="form-select" id="ns-scenario" required></select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label small" for="ns-facilitator">Facilitator (optional)</label>
+                <input class="form-control" id="ns-facilitator">
+              </div>
+              <button class="btn btn-primary w-100" type="submit"><i class="bi bi-plus-circle" aria-hidden="true"></i> Create session</button>
+            </form>
+          </section>
+
+          <section class="surface p-3 mb-3" aria-labelledby="saved-h">
+            <h2 id="saved-h" class="h6">Saved sessions</h2>
+            <div id="session-list" class="list-group list-group-flush small"></div>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+              <label class="btn btn-outline-primary btn-sm mb-0">
+                <i class="bi bi-upload" aria-hidden="true"></i> Import file
+                <input type="file" id="import-file" accept="application/json,.json" hidden>
+              </label>
+            </div>
+            <p class="small mt-2 mb-0" id="import-msg" role="status"></p>
+          </section>
+
+          <section class="surface p-3" aria-labelledby="guide-h">
+            <h2 id="guide-h" class="h6"><i class="bi bi-chat-square-heart" aria-hidden="true"></i> Facilitation norms</h2>
+            <ul class="small mb-0 ps-3">
+              <li>Invite national staff and junior colleagues to speak first, which reduces anchoring on senior views.</li>
+              <li>Ask someone to act as "devil's advocate" for each option.</li>
+              <li>Describe behaviour and circumstances, not people's character.</li>
+              <li>Speak from your own experience. Don't speak for a whole group.</li>
+              <li>Keep it confidential: no identifiable community details.</li>
+              <li>Before voting, ask whose perspective is missing.</li>
+            </ul>
+          </section>
+        </aside>
+
+        <div class="col-lg-8" id="workspace" aria-live="polite">
+          <div class="surface p-4 text-center text-muted-2">
+            <i class="bi bi-people fs-1" aria-hidden="true"></i>
+            <p class="mb-0 mt-2">Create a session or open a saved one to begin.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <script src="data/data-bundle.js"></script>
+  <script src="script.js"></script>
+  <script src="js/collaboration.js"></script>
+</body>
+</html>
