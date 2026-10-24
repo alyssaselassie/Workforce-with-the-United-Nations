@@ -1,0 +1,253 @@
+/*
+ * UN Cultural Intelligence & Bias Navigator — shared core.
+ * Loads data, stores progress, renders the site header/footer and exposes
+ * small helpers on window.App for the page modules in js/.
+ */
+(function () {
+  'use strict';
+
+  const PROGRESS_KEY = 'uncq.progress.v1';
+  const COMPETENCIES = ['cq', 'bias', 'evidence', 'harm'];
+
+  // ---------- storage (never throws; works in private mode) ----------
+  const Store = {
+    read(key, fallback) {
+      try {
+        const raw = window.localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    },
+    write(key, value) {
+      try {
+        window.localStorage.setItem(key, JSON.stringify(value));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+    remove(key) {
+      try { window.localStorage.removeItem(key); } catch (e) { /* ignore */ }
+    }
+  };
+
+  // ---------- data loading ----------
+  // Prefer the live JSON files (served over http). When the site is opened
+  // from file://, fetch is blocked, so fall back to data/data-bundle.js.
+  const cache = {};
+  async function loadJSON(name) {
+    if (cache[name]) return cache[name];
+    const bundled = window.APP_DATA && window.APP_DATA[name];
+    if (window.location.protocol === 'file:' && bundled) {
+      cache[name] = bundled;
+      return cache[name];
+    }
+    try {
+      const res = await fetch(`data/${name}.json`, { cache: 'no-cache' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      cache[name] = await res.json();
+    } catch (err) {
+      if (bundled) {
+        cache[name] = bundled;
+      } else {
+        throw new Error(`Could not load data/${name}.json (${err.message}). Serve the folder over http (see README) or run tools/bundle_data.py.`);
+      }
+    }
+    return cache[name];
+  }
+
+  // ---------- progress ----------
+  function emptyProgress() {
+    return { completed: {}, reflections: {} };
+  }
+
+  const Progress = {
+    get() {
+      const p = Store.read(PROGRESS_KEY, null);
+      return p && p.completed ? p : emptyProgress();
+    },
+    record(scenarioId, result) {
+      const p = Progress.get();
+      const prev = p.completed[scenarioId];
+      p.completed[scenarioId] = {
+        at: new Date().toISOString(),
+        attempts: prev ? prev.attempts + 1 : 1,
+        scores: result.scores,
+        choices: result.choices,
+        biasTags: result.biasTags
+      };
+      Store.write(PROGRESS_KEY, p);
+      return p;
+    },
+    saveReflection(scenarioId, text) {
+      const p = Progress.get();
+      p.reflections[scenarioId] = { text, at: new Date().toISOString() };
+      return Store.write(PROGRESS_KEY, p);
+    },
+    reset() {
+      Store.remove(PROGRESS_KEY);
+    },
+    // Sum earned/max per competency across completed scenarios.
+    totals() {
+      const p = Progress.get();
+      const t = {};
+      COMPETENCIES.forEach((k) => { t[k] = { earned: 0, max: 0 }; });
+      Object.values(p.completed).forEach((c) => {
+        COMPETENCIES.forEach((k) => {
+          if (c.scores && c.scores[k]) {
+            t[k].earned += c.scores[k].earned;
+            t[k].max += c.scores[k].max;
+          }
+        });
+      });
+      return t;
+    }
+  };
+
+  // ---------- helpers ----------
+  function esc(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function pct(score) {
+    if (!score || !score.max) return 0;
+    return Math.round((score.earned / score.max) * 100);
+  }
+
+  function param(name) {
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function download(filename, data) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  const RATING = {
+    strong: { label: 'Strong approach', cls: 'text-bg-success', icon: 'bi-check-circle-fill' },
+    partial: { label: 'Partially effective', cls: 'text-bg-warning', icon: 'bi-exclamation-circle-fill' },
+    weak: { label: 'Reconsider', cls: 'text-bg-danger', icon: 'bi-x-circle-fill' }
+  };
+
+  function ratingBadge(rating) {
+    const r = RATING[rating] || RATING.partial;
+    return `<span class="badge ${r.cls}"><i class="bi ${r.icon}" aria-hidden="true"></i> ${r.label}</span>`;
+  }
+
+  // Bootstrap-styled progress bar used on results and progress pages.
+  function meter(label, value, extraClass) {
+    return `
+      <div class="meter ${extraClass || ''}">
+        <div class="d-flex justify-content-between small mb-1">
+          <span class="fw-semibold">${esc(label)}</span><span>${value}%</span>
+        </div>
+        <div class="progress" role="progressbar" aria-label="${esc(label)}" aria-valuenow="${value}" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" style="width:${value}%"></div>
+        </div>
+      </div>`;
+  }
+
+  function showError(container, err) {
+    container.innerHTML = `
+      <div class="alert alert-danger" role="alert">
+        <h2 class="h6 mb-1"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Data could not be loaded</h2>
+        <p class="mb-0 small">${esc(err.message || err)}</p>
+      </div>`;
+  }
+
+  // ---------- shared chrome ----------
+  const NAV = [
+    { href: 'index.html', page: 'home', label: 'Home', icon: 'bi-house' },
+    { href: 'map.html', page: 'map', label: 'Mission Map', icon: 'bi-globe-americas' },
+    { href: 'scenarios.html', page: 'scenarios', label: 'Scenarios', icon: 'bi-signpost-split' },
+    { href: 'toolkit.html', page: 'toolkit', label: 'Bias Toolkit', icon: 'bi-lightbulb' },
+    { href: 'collaboration.html', page: 'collaboration', label: 'Team Debrief', icon: 'bi-people' },
+    { href: 'progress.html', page: 'progress', label: 'My Progress', icon: 'bi-bar-chart' }
+  ];
+
+  function renderChrome() {
+    const current = document.body.dataset.page;
+    const header = document.getElementById('site-header');
+    if (header) {
+      header.innerHTML = `
+        <a class="visually-hidden-focusable skip-link" href="#main">Skip to main content</a>
+        <nav class="navbar navbar-expand-lg navbar-dark site-nav" aria-label="Main">
+          <div class="container-xl">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+              <span class="brand-mark" aria-hidden="true"><i class="bi bi-compass"></i></span>
+              <span><span class="fw-semibold">CQ &amp; Bias Navigator</span><span class="brand-sub d-none d-sm-block">UN fieldwork learning prototype</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMain">
+              <ul class="navbar-nav ms-auto">
+                ${NAV.map((n) => `
+                  <li class="nav-item">
+                    <a class="nav-link${n.page === current ? ' active' : ''}" ${n.page === current ? 'aria-current="page"' : ''} href="${n.href}">
+                      <i class="bi ${n.icon}" aria-hidden="true"></i> ${n.label}
+                    </a>
+                  </li>`).join('')}
+              </ul>
+            </div>
+          </div>
+        </nav>`;
+    }
+
+    const footer = document.getElementById('site-footer');
+    if (footer) {
+      footer.innerHTML = `
+        <div class="container-xl py-4">
+          <div class="row g-3 align-items-start">
+            <div class="col-md-7">
+              <p class="mb-1 fw-semibold">UN Cultural Intelligence &amp; Bias Navigator</p>
+              <p class="small mb-0">An educational technology prototype. <strong>This is not an official United Nations product</strong> and is not endorsed by the UN. Scenarios are fictional composites. Check mission information against official sources.</p>
+            </div>
+            <div class="col-md-5">
+              <p class="small fw-semibold mb-1">Official sources</p>
+              <ul class="list-unstyled small mb-0">
+                <li><a href="https://www.unmissions.org/en" target="_blank" rel="noopener">unmissions.org</a></li>
+                <li><a href="https://www.unmissions.org/en/united-nations-field-missions" target="_blank" rel="noopener">United Nations Field Missions</a></li>
+                <li><a href="https://www.un.org/en/our-work/deliver-humanitarian-aid" target="_blank" rel="noopener">UN: Deliver Humanitarian Aid</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', renderChrome);
+
+  window.App = {
+    COMPETENCIES,
+    Store,
+    Progress,
+    loadMissions: () => loadJSON('missions'),
+    loadScenarios: () => loadJSON('scenarios'),
+    esc,
+    pct,
+    param,
+    uid,
+    download,
+    ratingBadge,
+    meter,
+    showError
+  };
+})();
