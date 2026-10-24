@@ -185,7 +185,7 @@
       'Which groups, such as women, youth, minorities, people with disabilities or displaced people, are least likely to be heard by this mission, and how can I reach them?'
     ];
     if (m.multiCountry) {
-      prompts.unshift(`This mandate covers ${m.scope.length > 1 ? m.scope.length + ' countries or areas' : 'a multi-country region'}. How will I avoid generalising one place's dynamics onto the others?`);
+      prompts.unshift(`This mandate covers ${m.scope.length > 1 ? m.scope.length + ' countries or areas' : 'a multi-country region'}. How will I avoid generalizing one place's dynamics onto the others?`);
     }
     if (m.scopeNote && /status|terminology|position|resolution 1244/i.test(m.scopeNote)) {
       prompts.push('Which terms are contested in this context, and what is the mission\'s approved terminology?');
@@ -244,7 +244,7 @@
       <ul class="small ps-3">${reflectionPrompts(m).map((p) => `<li class="mb-1">${esc(p)}</li>`).join('')}</ul>
       <p class="small text-muted-2">Treat cultural knowledge as a hypothesis to test with local colleagues, never as a conclusion about individuals.</p>
 
-      <h3 class="h6 mt-3"><i class="bi bi-signpost-split" aria-hidden="true"></i> Practise with linked scenarios</h3>
+      <h3 class="h6 mt-3"><i class="bi bi-signpost-split" aria-hidden="true"></i> Practice with linked scenarios</h3>
       ${linked.length ? `<div class="d-grid gap-2">${linked.map((s) => `
         <a class="btn btn-outline-primary btn-sm text-start" href="scenarios.html?id=${s.id}&amp;mission=${m.id}">
           <strong>${esc(s.title)}</strong><br><span class="small">${esc(s.summary)}</span></a>`).join('')}</div>`

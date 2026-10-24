@@ -39,7 +39,7 @@
               <dt>In the field</dt><dd>${esc(b.fieldExample)}</dd>
               <dt>Counter-strategy</dt><dd>${esc(b.counter)}</dd>
             </dl>
-            ${scenarioCount[b.id] ? `<a class="small" href="scenarios.html">Practised in ${scenarioCount[b.id]} scenario${scenarioCount[b.id] > 1 ? 's' : ''}</a>` : ''}
+            ${scenarioCount[b.id] ? `<a class="small" href="scenarios.html">Practiced in ${scenarioCount[b.id]} scenario${scenarioCount[b.id] > 1 ? 's' : ''}</a>` : ''}
           </div>
         </article>
       </div>`).join('') || '<p class="text-muted-2">No biases match your search.</p>';

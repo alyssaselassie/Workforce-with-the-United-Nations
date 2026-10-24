@@ -187,7 +187,10 @@ h1, h2, h3, .h1, .h2, .h3, .h4, .h5, .navbar-brand { font-weight: 800; letter-sp
 .avatar-empty { background: linear-gradient(135deg, #cfe9fb, #e4dcff); color: var(--lilac-ink); font-weight: 800; }
 .nav-profile { display: flex; align-items: center; }
 .site-nav .nav-profile .avatar { box-shadow: 0 0 0 2px rgba(255,255,255,.75); }
-.site-nav .nav-link.nav-profile.active { background: rgba(255,255,255,.16); color: #fff; }
+.site-nav .nav-link.nav-profile { background: rgba(255,255,255,.12); padding-left: .35rem !important; }
+.site-nav .nav-link.nav-profile.active { background: #fff; color: #12406f; }
+.site-nav .nav-link.nav-profile.is-cta { background: #fff; color: var(--brand-strong); font-weight: 800; }
+.site-nav .nav-link.nav-profile.is-cta:hover { background: #eaf2ff; }
 .profile-card { overflow: hidden; padding: 0; }
 .profile-cover {
   height: 130px;

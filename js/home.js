@@ -4,6 +4,14 @@
   const { esc } = App;
   const ICONS = { cq: 'bi-globe2', bias: 'bi-eye', evidence: 'bi-clipboard-data', harm: 'bi-shield-heart' };
 
+  // Returning learners see their name instead of the sign-up prompt.
+  const firstName = String(App.Profile.get().name || '').trim().split(/\s+/)[0];
+  if (firstName) {
+    const btn = document.getElementById('hero-profile');
+    btn.href = 'profile.html';
+    btn.innerHTML = `<i class="bi bi-person-circle" aria-hidden="true"></i> Welcome back, ${esc(firstName)}`;
+  }
+
   try {
     const [missions, scenarios] = await Promise.all([App.loadMissions(), App.loadScenarios()]);
     const countries = new Set();

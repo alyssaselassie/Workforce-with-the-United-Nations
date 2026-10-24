@@ -10,27 +10,27 @@
     "harm": { "label": "Do No Harm & Inclusion", "short": "Do No Harm", "description": "Anticipating unintended effects, protecting people at risk and including those most affected, in line with humanitarian principles." }
   },
   "biases": [
-    { "id": "affinity", "name": "Affinity bias", "definition": "Favouring people who seem similar to us in language, education, nationality or manner.", "fieldExample": "Treating the English-speaking community member as the 'reliable' voice.", "counter": "Ask whose perspective is missing, and seek it out on purpose." },
+    { "id": "affinity", "name": "Affinity bias", "definition": "Favoring people who seem similar to us in language, education, nationality or manner.", "fieldExample": "Treating the English-speaking community member as the 'reliable' voice.", "counter": "Ask whose perspective is missing, and seek it out on purpose." },
     { "id": "confirmation", "name": "Confirmation bias", "definition": "Seeking or weighting information that supports what we already believe.", "fieldExample": "Accepting reports that match the briefing and discounting those that don't.", "counter": "Before deciding, write down what evidence would change your mind." },
     { "id": "anchoring", "name": "Anchoring", "definition": "Relying too heavily on the first piece of information we receive.", "fieldExample": "A first-day security briefing frames a whole community as hostile for months.", "counter": "Revisit early assessments on a schedule and compare them with new data." },
-    { "id": "attribution", "name": "Fundamental attribution error", "definition": "Explaining others' behaviour by character rather than circumstance.", "fieldExample": "Reading low turnout at a meeting as 'apathy' when the timing clashed with harvest or prayer.", "counter": "Ask what circumstances could explain the behaviour." },
-    { "id": "stereotyping", "name": "Stereotyping", "definition": "Applying a generalisation about a group to an individual.", "fieldExample": "Assuming all young men in an area are linked to an armed group.", "counter": "Treat cultural knowledge as a hypothesis to test, never as a conclusion about a person." },
-    { "id": "availability", "name": "Availability heuristic", "definition": "Judging how likely or common something is by how easily examples come to mind.", "fieldExample": "Prioritising the needs of the district that was in the news.", "counter": "Use systematic data and note where coverage is thin." },
-    { "id": "authority", "name": "Authority and credential bias", "definition": "Over-weighting views from people with formal titles or international credentials.", "fieldExample": "Overriding a national colleague's contextual advice in favour of a visiting consultant.", "counter": "Weigh advice on reasoning and local knowledge, not rank." },
-    { "id": "saviour", "name": "Saviour / paternalism bias", "definition": "Assuming outsiders know best and communities need rescuing rather than partnership.", "fieldExample": "Designing a programme for a community without consulting it.", "counter": "Start from local capacities and priorities, and share decision-making." },
+    { "id": "attribution", "name": "Fundamental attribution error", "definition": "Explaining others' behavior by character rather than circumstance.", "fieldExample": "Reading low turnout at a meeting as 'apathy' when the timing clashed with harvest or prayer.", "counter": "Ask what circumstances could explain the behavior." },
+    { "id": "stereotyping", "name": "Stereotyping", "definition": "Applying a generalization about a group to an individual.", "fieldExample": "Assuming all young men in an area are linked to an armed group.", "counter": "Treat cultural knowledge as a hypothesis to test, never as a conclusion about a person." },
+    { "id": "availability", "name": "Availability heuristic", "definition": "Judging how likely or common something is by how easily examples come to mind.", "fieldExample": "Prioritizing the needs of the district that was in the news.", "counter": "Use systematic data and note where coverage is thin." },
+    { "id": "authority", "name": "Authority and credential bias", "definition": "Over-weighting views from people with formal titles or international credentials.", "fieldExample": "Overriding a national colleague's contextual advice in favor of a visiting consultant.", "counter": "Weigh advice on reasoning and local knowledge, not rank." },
+    { "id": "saviour", "name": "Savior / paternalism bias", "definition": "Assuming outsiders know best and communities need rescuing rather than partnership.", "fieldExample": "Designing a program for a community without consulting it.", "counter": "Start from local capacities and priorities, and share decision-making." },
     { "id": "gender", "name": "Gender bias", "definition": "Assumptions about roles, competence or needs based on gender.", "fieldExample": "Consulting only male leaders on decisions about water points.", "counter": "Use separate, safe consultation spaces and sex- and age-disaggregated data." },
-    { "id": "ethnocentrism", "name": "Ethnocentrism", "definition": "Judging other cultures by the norms of your own.", "fieldExample": "Labelling indirect communication as 'evasive'.", "counter": "Learn local communication norms from colleagues and suspend judgement." },
-    { "id": "groupthink", "name": "Groupthink", "definition": "Going along with group consensus to avoid conflict, at the cost of good judgement.", "fieldExample": "No one questions a team plan because the chief proposed it.", "counter": "Assign a 'devil's advocate' and invite junior staff to speak first." },
+    { "id": "ethnocentrism", "name": "Ethnocentrism", "definition": "Judging other cultures by the norms of your own.", "fieldExample": "Labeling indirect communication as 'evasive'.", "counter": "Learn local communication norms from colleagues and suspend judgment." },
+    { "id": "groupthink", "name": "Groupthink", "definition": "Going along with group consensus to avoid conflict, at the cost of good judgment.", "fieldExample": "No one questions a team plan because the chief proposed it.", "counter": "Assign a 'devil's advocate' and invite junior staff to speak first." },
     { "id": "deficit", "name": "Deficit framing", "definition": "Describing people mainly by what they lack rather than by their strengths and agency.", "fieldExample": "Reports that describe a community only as 'vulnerable' or 'beneficiaries'.", "counter": "Pair needs with capacities and use people's own descriptions of themselves." },
     { "id": "language", "name": "Language bias", "definition": "Equating fluency in a dominant or UN working language with competence or credibility.", "fieldExample": "Treating halting French as a sign that someone has less expertise.", "counter": "Provide interpretation and judge the content, not the fluency." },
-    { "id": "threat", "name": "Threat bias", "definition": "Seeing ambiguous behaviour as hostile, especially in insecure settings.", "fieldExample": "Treating a farmer approaching a patrol as a threat by default.", "counter": "Combine force-protection procedures with de-escalation and local liaison." }
+    { "id": "threat", "name": "Threat bias", "definition": "Seeing ambiguous behavior as hostile, especially in insecure settings.", "fieldExample": "Treating a farmer approaching a patrol as a threat by default.", "counter": "Combine force-protection procedures with de-escalation and local liaison." }
   ],
   "frameworks": {
     "cqCapabilities": [
       { "name": "CQ Drive", "question": "Am I motivated and confident enough to engage across cultures, even when it is uncomfortable?" },
       { "name": "CQ Knowledge", "question": "What do I know, and not know, about the systems, norms and history of this context?" },
       { "name": "CQ Strategy", "question": "Am I planning, checking my assumptions and adjusting as I learn?" },
-      { "name": "CQ Action", "question": "Am I adapting my words, tone and behaviour appropriately?" }
+      { "name": "CQ Action", "question": "Am I adapting my words, tone and behavior appropriately?" }
     ],
     "humanitarianPrinciples": [
       { "name": "Humanity", "text": "Human suffering must be addressed wherever it is found." },
@@ -63,7 +63,7 @@
           "choices": [
             { "text": "Go ahead as planned. The leaders represent the community and know the site best.", "scores": { "cq": 0, "bias": 0, "evidence": 1, "harm": 0 }, "rating": "weak", "biasTags": ["availability", "gender"], "feedback": "The leaders matter, but they are the easiest voices to reach, not necessarily the most affected ones. Women and girls carry most of the risk on the water route, so a meeting without them could produce a plan that increases harm." },
             { "text": "Meet the leaders, and also hold separate sessions with women and adolescent girls, run by female staff, at times and places they choose.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "This respects existing structures and makes sure the people most affected are heard safely. Separate, facilitated sessions are standard good practice for accountability to affected populations." },
-            { "text": "Skip the leaders, who may be gatekeepers, and talk only to women at the water point.", "scores": { "cq": 1, "bias": 2, "evidence": 2, "harm": 1 }, "rating": "partial", "biasTags": ["stereotyping"], "feedback": "You are right to centre women, but bypassing recognised leaders can cause tension and backlash against the women who spoke up. Approaching people at the water point also isn't a safe or private space for them." },
+            { "text": "Skip the leaders, who may be gatekeepers, and talk only to women at the water point.", "scores": { "cq": 1, "bias": 2, "evidence": 2, "harm": 1 }, "rating": "partial", "biasTags": ["stereotyping"], "feedback": "You are right to center women, but bypassing recognized leaders can cause tension and backlash against the women who spoke up. Approaching people at the water point also isn't a safe or private space for them." },
             { "text": "Send an online survey to the leaders' phones so they can forward it.", "scores": { "cq": 0, "bias": 1, "evidence": 1, "harm": 0 }, "rating": "weak", "biasTags": ["availability"], "feedback": "Digital access is unequal by gender, age and income, and routing the survey through gatekeepers filters who receives it. The data will look tidy but be unrepresentative." }
           ]
         },
@@ -93,8 +93,8 @@
       "biasFocus": ["confirmation", "language", "affinity"],
       "steps": [
         {
-          "prompt": "For three weeks, every interview about the dispute has gone through one highly regarded interpreter, Samir, who is from one of the two villages. His accounts consistently favour one side. What do you do?",
-          "context": "Samir is professional and well liked. Your draft report already leans towards the side his accounts support.",
+          "prompt": "For three weeks, every interview about the dispute has gone through one highly regarded interpreter, Samir, who is from one of the two villages. His accounts consistently favor one side. What do you do?",
+          "context": "Samir is professional and well liked. Your draft report already leans toward the side his accounts support.",
           "choices": [
             { "text": "Keep working with Samir. He has been reliable, and the accounts are consistent.", "scores": { "cq": 0, "bias": 0, "evidence": 0, "harm": 1 }, "rating": "weak", "biasTags": ["confirmation", "affinity"], "feedback": "The accounts may be consistent because they all come through one channel. Liking and trusting an interpreter (affinity) can hide a structural source of bias, and the report risks taking sides." },
             { "text": "Bring in a second interpreter who is not affiliated with either village, re-interview key sources, and note the limitation in the report.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Triangulating sources and stating uncertainty openly protects the mission's impartiality. It also handles the issue discreetly, without accusing Samir of anything." },
@@ -106,7 +106,7 @@
           "context": "Several national staff members say this style is a respected way of discussing sensitive matters.",
           "choices": [
             { "text": "Leave it out. You need clear, direct statements.", "scores": { "cq": 0, "bias": 0, "evidence": 1, "harm": 0 }, "rating": "weak", "biasTags": ["ethnocentrism", "language"], "feedback": "Judging one communication style by the norms of another is ethnocentrism. Indirect speech can carry precise meaning that is lost if you only accept direct answers." },
-            { "text": "Ask national colleagues to help interpret the meaning and context, and record both the literal and the interpreted meaning.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 2 }, "rating": "strong", "biasTags": [], "feedback": "This is CQ Knowledge and Strategy: you recognise that communication norms differ and draw on contextual expertise to understand the testimony." },
+            { "text": "Ask national colleagues to help interpret the meaning and context, and record both the literal and the interpreted meaning.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 2 }, "rating": "strong", "biasTags": [], "feedback": "This is CQ Knowledge and Strategy: you recognize that communication norms differ and draw on contextual expertise to understand the testimony." },
             { "text": "Include the testimony, but ask the elder to answer yes or no next time.", "scores": { "cq": 1, "bias": 1, "evidence": 2, "harm": 1 }, "rating": "partial", "biasTags": ["ethnocentrism"], "feedback": "Including the testimony is good, but demanding a different communication style can come across as disrespectful and may reduce how much people are willing to say." }
           ]
         }
@@ -121,7 +121,7 @@
       "title": "Whose expertise counts?",
       "summary": "A national colleague's warning conflicts with a visiting consultant's recommendation.",
       "missionIds": ["monusco", "unama", "unowas", "unoau", "osesg-hoa"],
-      "role": "Programme Manager",
+      "role": "Program Manager",
       "setting": "A fictional mission planning cell preparing a community dialogue initiative.",
       "minutes": 5,
       "biasFocus": ["authority", "language", "groupthink"],
@@ -153,10 +153,10 @@
     {
       "id": "sc-needs-assessment-data",
       "title": "The data we can reach",
-      "summary": "Prioritise assistance using a needs assessment with significant gaps.",
+      "summary": "Prioritize assistance using a needs assessment with significant gaps.",
       "missionIds": ["unmiss", "untmis", "unsos", "unsco", "osesgy"],
       "role": "Humanitarian Liaison Officer",
-      "setting": "A fictional region with an accessible urban centre and rural areas that are hard to reach.",
+      "setting": "A fictional region with an accessible urban center and rural areas that are hard to reach.",
       "minutes": 5,
       "biasFocus": ["availability", "deficit", "confirmation"],
       "steps": [
@@ -173,46 +173,46 @@
           "prompt": "Your draft calls the displaced population 'helpless beneficiaries'. A community representative who reviewed it objects. How do you revise it?",
           "context": "Displaced people have set up their own water committees and a school.",
           "choices": [
-            { "text": "Keep the wording. It emphasises urgency for donors.", "scores": { "cq": 0, "bias": 0, "evidence": 1, "harm": 0 }, "rating": "weak", "biasTags": ["deficit", "saviour"], "feedback": "Deficit framing strips people of agency and can shape programmes that sideline community structures that already work." },
+            { "text": "Keep the wording. It emphasizes urgency for donors.", "scores": { "cq": 0, "bias": 0, "evidence": 1, "harm": 0 }, "rating": "weak", "biasTags": ["deficit", "saviour"], "feedback": "Deficit framing strips people of agency and can shape programs that sideline community structures that already work." },
             { "text": "Describe both needs and community capacities, such as the committees and the school, and use the terms the community uses for itself.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Pairing needs with capacities is more accurate, more respectful and better for programming, because it points to partners rather than passive recipients." }
           ]
         }
       ],
       "debrief": {
-        "takeaways": ["Areas without data are unknown, not low-need.", "State the limits of your coverage explicitly.", "Words shape programmes, so describe capacities as well as needs."],
-        "reflection": "What does your organisation's language say about the people it serves?"
+        "takeaways": ["Areas without data are unknown, not low-need.", "State the limits of your coverage explicitly.", "Words shape programs, so describe capacities as well as needs."],
+        "reflection": "What does your organization's language say about the people it serves?"
       }
     },
     {
       "id": "sc-rumour-response",
-      "title": "When rumours spread",
-      "summary": "Respond to a damaging rumour about the mission circulating on social media.",
+      "title": "When rumors spread",
+      "summary": "Respond to a damaging rumor about the mission circulating on social media.",
       "missionIds": ["monusco", "minusca", "osesg-gl"],
       "role": "Public Information Officer",
-      "setting": "Benza, a fictional city where a rumour claims peacekeepers are protecting an armed group.",
+      "setting": "Benza, a fictional city where a rumor claims peacekeepers are protecting an armed group.",
       "minutes": 5,
       "biasFocus": ["attribution", "stereotyping", "confirmation"],
       "steps": [
         {
-          "prompt": "A colleague says the rumour is 'obviously enemy propaganda that only uneducated people believe' and proposes a strongly worded denial. What is your first step?",
+          "prompt": "A colleague says the rumor is 'obviously enemy propaganda that only uneducated people believe' and proposes a strongly worded denial. What is your first step?",
           "context": "Community radio hosts say people are frustrated that attacks happened near a mission base.",
           "choices": [
             { "text": "Issue the denial right away in French and English.", "scores": { "cq": 0, "bias": 0, "evidence": 1, "harm": 1 }, "rating": "weak", "biasTags": ["attribution", "stereotyping"], "feedback": "Writing believers off as 'uneducated' misreads a real grievance. A denial in the wrong languages and with the wrong tone can deepen distrust." },
-            { "text": "Listen first: meet community radio hosts, civil society and youth groups to understand the grievances behind the rumour, then respond in local languages with verifiable facts and a clear account of what the mission can and cannot do.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Rumours often express real fears and unmet expectations. Engaging with the underlying grievance and being candid about the mandate's limits builds more trust than a denial alone." },
-            { "text": "Say nothing. Responding gives the rumour oxygen.", "scores": { "cq": 1, "bias": 1, "evidence": 1, "harm": 1 }, "rating": "partial", "biasTags": [], "feedback": "Sometimes not amplifying a rumour is wise, but silence while people feel unprotected can come across as indifference and put staff and civilians at risk." }
+            { "text": "Listen first: meet community radio hosts, civil society and youth groups to understand the grievances behind the rumor, then respond in local languages with verifiable facts and a clear account of what the mission can and cannot do.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Rumors often express real fears and unmet expectations. Engaging with the underlying grievance and being candid about the mandate's limits builds more trust than a denial alone." },
+            { "text": "Say nothing. Responding gives the rumor oxygen.", "scores": { "cq": 1, "bias": 1, "evidence": 1, "harm": 1 }, "rating": "partial", "biasTags": [], "feedback": "Sometimes not amplifying a rumor is wise, but silence while people feel unprotected can come across as indifference and put staff and civilians at risk." }
           ]
         },
         {
           "prompt": "The mission plans a town hall. Who should be on the panel?",
           "context": "",
           "choices": [
-            { "text": "Senior mission leadership only, to show authority.", "scores": { "cq": 1, "bias": 1, "evidence": 1, "harm": 1 }, "rating": "partial", "biasTags": ["authority"], "feedback": "Leadership presence matters, but a panel made up only of outsiders reinforces the distance that feeds rumours." },
+            { "text": "Senior mission leadership only, to show authority.", "scores": { "cq": 1, "bias": 1, "evidence": 1, "harm": 1 }, "rating": "partial", "biasTags": ["authority"], "feedback": "Leadership presence matters, but a panel made up only of outsiders reinforces the distance that feeds rumors." },
             { "text": "Mission leaders alongside trusted local voices, such as women's and youth representatives and faith leaders, with a Q&A in local languages and a commitment to follow up.", "scores": { "cq": 3, "bias": 2, "evidence": 2, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Shared platforms and follow-up commitments show accountability and respect for local credibility networks." }
           ]
         }
       ],
       "debrief": {
-        "takeaways": ["Behind a rumour there is often a real grievance.", "Language and messenger matter as much as the message.", "Be candid about what the mandate can and cannot do."],
+        "takeaways": ["Behind a rumor there is often a real grievance.", "Language and messenger matter as much as the message.", "Be candid about what the mandate can and cannot do."],
         "reflection": "When people believe something you know is false, what explanations do you reach for first?"
       }
     },
@@ -222,7 +222,7 @@
       "summary": "Balance local hospitality norms with UN standards of conduct.",
       "missionIds": ["unowas", "unoca", "unrcca", "unsos"],
       "role": "Regional Liaison Officer",
-      "setting": "A fictional capital where you are meeting a regional organisation's delegation for the first time.",
+      "setting": "A fictional capital where you are meeting a regional organization's delegation for the first time.",
       "minutes": 4,
       "biasFocus": ["ethnocentrism", "stereotyping"],
       "steps": [
@@ -231,7 +231,7 @@
           "context": "In this context, declining hospitality outright can be read as a rejection of the relationship.",
           "choices": [
             { "text": "Decline both firmly, citing UN rules.", "scores": { "cq": 0, "bias": 1, "evidence": 1, "harm": 1 }, "rating": "partial", "biasTags": ["ethnocentrism"], "feedback": "Integrity matters, but a blunt refusal can damage trust. You can follow the rules and still respect the relationship." },
-            { "text": "Accept the dinner graciously if it is consistent with the code of conduct, accept the gift on behalf of the office and declare it according to UN rules, and explain this warmly.", "scores": { "cq": 3, "bias": 2, "evidence": 2, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "This honours the hospitality while following UN standards on gifts and conflicts of interest. Check with your ethics focal point when in doubt." },
+            { "text": "Accept the dinner graciously if it is consistent with the code of conduct, accept the gift on behalf of the office and declare it according to UN rules, and explain this warmly.", "scores": { "cq": 3, "bias": 2, "evidence": 2, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "This honors the hospitality while following UN standards on gifts and conflicts of interest. Check with your ethics focal point when in doubt." },
             { "text": "Accept both privately. Refusing would be culturally insensitive.", "scores": { "cq": 1, "bias": 1, "evidence": 0, "harm": 0 }, "rating": "weak", "biasTags": ["stereotyping"], "feedback": "Cultural sensitivity never overrides integrity obligations. Assuming you must accept everything also stereotypes your host, since many officials understand UN rules perfectly well." }
           ]
         }
@@ -264,7 +264,7 @@
           "prompt": "Residents ask how they can report misconduct by any UN or partner personnel. What do you do?",
           "context": "",
           "choices": [
-            { "text": "Share clear, accessible information about confidential reporting channels, including protection from sexual exploitation and abuse (PSEA), in the local language, and explain how the information is protected.", "scores": { "cq": 2, "bias": 2, "evidence": 2, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Accessible, confidential and survivor-centred reporting mechanisms are central to accountability to affected populations." },
+            { "text": "Share clear, accessible information about confidential reporting channels, including protection from sexual exploitation and abuse (PSEA), in the local language, and explain how the information is protected.", "scores": { "cq": 2, "bias": 2, "evidence": 2, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Accessible, confidential and survivor-centered reporting mechanisms are central to accountability to affected populations." },
             { "text": "Tell them to email the mission's headquarters.", "scores": { "cq": 0, "bias": 1, "evidence": 1, "harm": 0 }, "rating": "weak", "biasTags": ["availability"], "feedback": "An email address in a foreign language is a barrier for many people. Reporting channels must be accessible to everyone, including people without internet access or literacy in that language." }
           ]
         }
@@ -289,7 +289,7 @@
           "context": "Some host community members do want dialogue. Others fear stigma or reprisals.",
           "choices": [
             { "text": "Accept the official's assessment.", "scores": { "cq": 1, "bias": 0, "evidence": 0, "harm": 1 }, "rating": "weak", "biasTags": ["stereotyping", "authority"], "feedback": "A sweeping claim about a whole group is a hypothesis, not a fact. Permanent separation can entrench stigma." },
-            { "text": "Consult each group separately and safely first, including ethnic authorities and women's organisations, then design gradual joint activities around shared interests if communities agree.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Phased, consent-based approaches respect safety concerns and test assumptions instead of accepting them. Recognising ethnic authorities also respects collective rights." },
+            { "text": "Consult each group separately and safely first, including ethnic authorities and women's organizations, then design gradual joint activities around shared interests if communities agree.", "scores": { "cq": 3, "bias": 3, "evidence": 3, "harm": 3 }, "rating": "strong", "biasTags": [], "feedback": "Phased, consent-based approaches respect safety concerns and test assumptions instead of accepting them. Recognizing ethnic authorities also respects collective rights." },
             { "text": "Insist on a joint meeting next week to show reconciliation is possible.", "scores": { "cq": 1, "bias": 2, "evidence": 1, "harm": 0 }, "rating": "partial", "biasTags": ["saviour"], "feedback": "Forcing a timeline puts the mission's goals ahead of participants' safety and readiness." }
           ]
         },
@@ -318,7 +318,7 @@
       "biasFocus": ["affinity", "language", "anchoring"],
       "steps": [
         {
-          "prompt": "Your draft situation report uses the place names favoured by the community you work with most often. A colleague from the other community notices. What do you do?",
+          "prompt": "Your draft situation report uses the place names favored by the community you work with most often. A colleague from the other community notices. What do you do?",
           "context": "The UN has established terminology guidance for this context.",
           "choices": [
             { "text": "Keep the names. They are the ones you know.", "scores": { "cq": 0, "bias": 0, "evidence": 1, "harm": 0 }, "rating": "weak", "biasTags": ["affinity", "anchoring"], "feedback": "Familiar terms can signal that the mission has taken a side and undermine its impartiality in the eyes of the other community." },
@@ -335,7 +335,7 @@
     {
       "id": "sc-patrol-encounter",
       "title": "The approaching farmer",
-      "summary": "Make a split-second judgement during a patrol near agricultural land.",
+      "summary": "Make a split-second judgment during a patrol near agricultural land.",
       "missionIds": ["unifil", "unscol"],
       "role": "Patrol Leader / Civil-Military Liaison",
       "setting": "Farmland near a fictional village during the harvest season.",
@@ -343,7 +343,7 @@
       "biasFocus": ["threat", "stereotyping", "anchoring"],
       "steps": [
         {
-          "prompt": "A man in his twenties walks quickly towards your patrol, waving his arms and shouting in a language your team doesn't speak. Your morning briefing mentioned 'tensions with young men in the area'. What do you do?",
+          "prompt": "A man in his twenties walks quickly toward your patrol, waving his arms and shouting in a language your team doesn't speak. Your morning briefing mentioned 'tensions with young men in the area'. What do you do?",
           "context": "Your language assistant is with the vehicle about 30 metres behind.",
           "choices": [
             { "text": "Treat him as a threat and order him to stop and get on the ground.", "scores": { "cq": 0, "bias": 0, "evidence": 0, "harm": 0 }, "rating": "weak", "biasTags": ["threat", "anchoring", "stereotyping"], "feedback": "The briefing anchored a group stereotype onto one individual. Escalating without any information could harm a civilian and damage community relations." },
@@ -361,7 +361,7 @@
         }
       ],
       "debrief": {
-        "takeaways": ["Briefings can prime threat bias, so separate group trends from individual behaviour.", "De-escalation and force protection go together.", "Debrief your reactions as well as your actions."],
+        "takeaways": ["Briefings can prime threat bias, so separate group trends from individual behavior.", "De-escalation and force protection go together.", "Debrief your reactions as well as your actions."],
         "reflection": "How do your briefings describe local populations, and what might that prime you to see?"
       }
     }

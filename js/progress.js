@@ -49,7 +49,7 @@
             <p class="mb-2">Your lowest competency so far is <strong>${esc(S.competencies[weakest].label)}</strong>: <span class="small">${esc(S.competencies[weakest].description)}</span></p>
             ${topTags.length ? `<p class="mb-1">Biases that came up most often in your choices:</p>
               <ul class="small">${topTags.map(([t, n]) => `<li><a href="toolkit.html#bias-${t}">${esc(biasById[t].name)}</a> (${n}×): ${esc(biasById[t].counter)}</li>`).join('')}</ul>`
-              : '<p class="small">None of your choices relied on the biases these scenarios target. Try the remaining scenarios to keep practising.</p>'}
+              : '<p class="small">None of your choices relied on the biases these scenarios target. Try the remaining scenarios to keep practicing.</p>'}
             <p class="small text-muted-2 mb-0">These scores reflect choices in fictional scenarios. They are a prompt for reflection, not an assessment of you.</p>
           </div>
         </div>
