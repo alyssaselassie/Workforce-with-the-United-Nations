@@ -91,7 +91,7 @@
   // ================= player =================
   function play(s) {
     const ctxMission = missionById[App.param('mission')];
-    const state = { step: -1, choices: [], earned: {}, max: {}, tags: new Set() };
+    const state = { step: -1, choices: [], earned: {}, max: {}, tags: new Set(), missed: new Set() };
     COMPETENCIES.forEach((k) => { state.earned[k] = 0; state.max[k] = 0; });
     document.title = `${s.title} · Scenarios`;
 
@@ -122,6 +122,9 @@
               <p>${esc(s.setting)}</p>
               <p class="eyebrow mb-1">This scenario explores</p>
               <ul class="small">${s.biasFocus.map((b) => `<li><strong>${esc(biasById[b].name)}</strong>: ${esc(biasById[b].definition)}</li>`).join('')}</ul>
+              <p class="eyebrow mb-1">Dimensions in play</p>
+              <div class="mb-1">${orderDims(s.dimensions).map((d) => App.dimChip(S, d)).join(' ')}</div>
+              <p class="small text-muted-2 mb-3">A person cannot be defined by a single dimension. <a href="toolkit.html#dimensions">About the dimensions</a></p>
               <button class="btn btn-primary btn-lg" id="begin">Begin scenario <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
             </div>
           </div>
@@ -169,6 +172,9 @@
         state.max[k] += Math.max(...step.choices.map((c) => c.scores[k]));
       });
       choice.biasTags.forEach((t) => state.tags.add(t));
+      (choice.missed || []).forEach((d) => state.missed.add(d));
+      const tested = orderDims(App.stepDimensions(step));
+      const missed = orderDims(choice.missed || []);
 
       document.querySelectorAll('.choice-btn').forEach((b, idx) => {
         b.disabled = true;
@@ -187,6 +193,9 @@
           </div>
           ${choice.biasTags.length ? `<p class="small mb-2"><i class="bi bi-eye" aria-hidden="true"></i> <strong>Bias at play:</strong>
             ${choice.biasTags.map((t) => `${esc(biasById[t].name)}. <em>Counter-strategy:</em> ${esc(biasById[t].counter)}`).join(' ')}</p>` : ''}
+          ${tested.length ? `<p class="small mb-2 dim-line"><i class="bi bi-layers" aria-hidden="true"></i> <strong>Dimensions:</strong>
+            ${missed.length ? `this choice overlooks ${missed.map((d) => App.dimChip(S, d)).join(' ')}`
+              : `this choice accounts for every dimension in play ${tested.map((d) => App.dimChip(S, d)).join(' ')}`}</p>` : ''}
           ${best !== i ? `<details class="small"><summary>See the strongest option</summary>
             <p class="mt-2 mb-0"><strong>${KEYS[best]}.</strong> ${esc(step.choices[best].feedback)}</p></details>` : ''}
         </div>
@@ -200,6 +209,11 @@
         else finish();
         window.scrollTo({ top: root.offsetTop - 80, behavior: 'smooth' });
       });
+    }
+
+    // Keep dimensions in the framework's order: position, place, emotion, voice.
+    function orderDims(list) {
+      return Object.keys(S.dimensions).filter((d) => list.includes(d));
     }
 
     function sum(c) {
@@ -225,6 +239,9 @@
               ${state.tags.size ? `<p class="small mb-0"><strong>Biases that shaped your choices:</strong> ${[...state.tags].map((t) => esc(biasById[t].name)).join(', ')}.
                 <a href="toolkit.html#bias-${[...state.tags][0]}">Review in the toolkit</a>.</p>`
               : '<p class="small mb-0">None of your choices relied on the biases this scenario targets. Well done.</p>'}
+              <p class="small mt-3 mb-0"><strong>Dimensions:</strong>
+                ${state.missed.size ? `you overlooked ${orderDims([...state.missed]).map((d) => App.dimChip(S, d)).join(' ')}`
+                  : 'you accounted for every dimension in play.'}</p>
             </div>
           </div>
           <div class="col-lg-7">

@@ -46,6 +46,17 @@
     ];
   }
 
+  // ---------- dimensions ----------
+  // Miss counts per dimension, plus the one the learner overlooks most often.
+  function dimensionSummary() {
+    const stats = Progress.dimensionStats(S);
+    const rows = Object.keys(S.dimensions).map((id) => Object.assign({ id }, S.dimensions[id], stats[id]));
+    const tested = rows.reduce((a, r) => a + r.tested, 0);
+    const worst = rows.filter((r) => r.missed > 0)
+      .sort((a, b) => (b.missed / b.tested) - (a.missed / a.tested) || b.missed - a.missed)[0] || null;
+    return { rows, tested, worst };
+  }
+
   // ---------- render ----------
   function render() {
     const pr = Profile.get();
@@ -56,6 +67,7 @@
     const mission = missionById[pr.mission];
     const langs = String(pr.languages || '').split(',').map((l) => l.trim()).filter(Boolean);
     const list = badges();
+    const dims = dimensionSummary();
     const earned = list.filter((b) => b.earned).length;
     const recent = done.slice().sort((a, b) => p.completed[b.id].at.localeCompare(p.completed[a.id].at)).slice(0, 4);
 
@@ -130,6 +142,26 @@
             ${done.length ? COMPETENCIES.map((k) => App.meter(S.competencies[k].label, App.pct(totals[k]), 'mb-3')).join('')
               : '<p class="small text-muted-2">Complete a scenario to build your competency profile.</p>'}
             <a class="small" href="progress.html">See full progress <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          </section>
+
+          <section class="surface p-4 mb-4" aria-labelledby="dims-h">
+            <h2 class="h5" id="dims-h">Dimensions you tend to miss</h2>
+            ${dims.tested ? `
+              ${dims.worst ? `
+                <div class="dim-callout dim-${dims.worst.id} mb-3">
+                  <strong>You most often miss ${esc(dims.worst.label)}</strong>: overlooked in ${dims.worst.missed} of ${dims.worst.tested} decisions where it mattered.
+                  <div class="small mt-1">Next time, ask: ${esc(dims.worst.ask)}</div>
+                </div>` : '<p class="small">You have not overlooked any dimension so far. Keep it up.</p>'}
+              ${dims.rows.map((r) => `
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between align-items-center small mb-1">
+                    ${App.dimChip(S, r.id)}
+                    <span class="text-muted-2">${r.tested ? `missed ${r.missed} of ${r.tested}` : 'not tested yet'}</span>
+                  </div>
+                  <div class="dim-bar" role="img" aria-label="${esc(r.label)}: missed ${r.missed} of ${r.tested} decisions"><div class="dim-${r.id}" style="width:${r.tested ? Math.round((r.missed / r.tested) * 100) : 0}%"></div></div>
+                </div>`).join('')}`
+              : '<p class="small text-muted-2">Complete a scenario to see which dimensions you tend to miss.</p>'}
+            <a class="small" href="toolkit.html#dimensions">About the dimensions <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
           </section>
 
           <section class="surface p-4 mb-4" aria-labelledby="activity-h">

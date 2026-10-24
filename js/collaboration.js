@@ -184,7 +184,8 @@
       <div class="surface p-3 mb-3">
         <p class="eyebrow mb-1">Discussion prompts</p>
         <ol class="small mb-2">${sc.steps.map((st) => `<li class="mb-1">${esc(st.prompt)}</li>`).join('')}</ol>
-        <p class="small mb-0"><strong>Reflection:</strong> ${esc(sc.debrief.reflection)}</p>
+        <p class="small mb-2"><strong>Reflection:</strong> ${esc(sc.debrief.reflection)}</p>
+        <p class="small mb-0"><strong>Dimensions in play:</strong> ${inPlay(sc).map((d) => App.dimChip(S, d)).join(' ')}</p>
       </div>
       <form class="surface p-3 mb-3 no-print" id="contrib-form">
         <div class="row g-2">
@@ -200,6 +201,10 @@
             <label class="form-label small" for="c-pause">Related PAUSE step</label>
             <select class="form-select" id="c-pause"><option value="">None</option>${S.frameworks.pause.map((p) => `<option value="${p.letter}">${p.letter}: ${esc(p.name)}</option>`).join('')}</select>
           </div>
+          <div class="col-sm-6">
+            <label class="form-label small" for="c-dim">Dimension it raises</label>
+            <select class="form-select" id="c-dim"><option value="">None</option>${Object.entries(S.dimensions).map(([id, d]) => `<option value="${id}">${esc(d.label)}</option>`).join('')}</select>
+          </div>
           <div class="col-12">
             <label class="form-label small" for="c-text">Contribution</label>
             <textarea class="form-control" id="c-text" rows="3" required placeholder="What would you do, and why? What might others be missing?"></textarea>
@@ -211,7 +216,7 @@
       <div id="wall">${s.contributions.length ? s.contributions.slice().reverse().map((c) => `
         <div class="card contrib-card mb-2"><div class="card-body py-2">
           <div class="d-flex justify-content-between align-items-start gap-2">
-            <div class="small text-muted-2">${esc(c.author || 'Anonymous')} · ${esc(c.perspective)}${c.pause ? ` · <span class="badge text-bg-primary">${esc(c.pause)}</span>` : ''}</div>
+            <div class="small text-muted-2">${esc(c.author || 'Anonymous')} · ${esc(c.perspective)}${c.pause ? ` · <span class="badge text-bg-primary">${esc(c.pause)}</span>` : ''}${c.dimension ? ` · ${App.dimChip(S, c.dimension)}` : ''}</div>
             <div class="d-flex gap-1 no-print">
               <button class="btn btn-sm btn-outline-secondary" data-plus="${c.id}" aria-label="Agree with this contribution"><i class="bi bi-hand-thumbs-up" aria-hidden="true"></i> ${c.votes || 0}</button>
               <button class="btn btn-sm btn-outline-secondary" data-act="${c.id}" title="Turn into an action point" aria-label="Turn into an action point"><i class="bi bi-list-check" aria-hidden="true"></i></button>
@@ -228,6 +233,7 @@
         author: document.getElementById('c-author').value.trim(),
         perspective: document.getElementById('c-perspective').value,
         pause: document.getElementById('c-pause').value,
+        dimension: document.getElementById('c-dim').value,
         text: document.getElementById('c-text').value.trim(),
         votes: 0,
         at: new Date().toISOString()
@@ -251,9 +257,29 @@
     });
   }
 
+  // Dimensions the scenario involves, in the framework's order.
+  function inPlay(sc) {
+    return Object.keys(S.dimensions).filter((d) => (sc.dimensions || []).includes(d));
+  }
+
+  // Before voting: which dimensions in play has the team actually discussed?
+  function dimensionCheck(s, sc) {
+    const counts = {};
+    s.contributions.forEach((c) => { if (c.dimension) counts[c.dimension] = (counts[c.dimension] || 0) + 1; });
+    const notYet = inPlay(sc).filter((d) => !counts[d]);
+    return `
+      <div class="surface p-3 mb-3" id="dimension-check">
+        <p class="eyebrow mb-1">Dimension check before voting</p>
+        <p class="small mb-2">Which of these dimensions are in play in this case, and which is missing from the discussion?</p>
+        <div class="d-flex flex-wrap gap-3 mb-2">${inPlay(sc).map((d) => `<span>${App.dimChip(S, d)} <span class="small text-muted-2">${counts[d] || 0} comment${counts[d] === 1 ? '' : 's'}</span></span>`).join('')}</div>
+        ${notYet.length ? `<div class="alert alert-warning small py-2 mb-0"><strong>Not discussed yet:</strong> ${notYet.map((d) => esc(S.dimensions[d].label)).join(', ')}. When someone raises it, tag their comment on the Discuss tab.</div>`
+          : '<p class="small text-success mb-0"><i class="bi bi-check-circle" aria-hidden="true"></i> Every dimension in play has been discussed.</p>'}
+      </div>`;
+  }
+
   // --- Vote ---
   function vote(body, s, sc) {
-    body.innerHTML = sc.steps.map((st, si) => {
+    body.innerHTML = dimensionCheck(s, sc) + sc.steps.map((st, si) => {
       const tally = s.votes[si] || {};
       const total = Object.values(tally).reduce((a, n) => a + n, 0);
       const revealed = s.revealed[si];
@@ -351,6 +377,8 @@
         <p class="small text-muted-2">Scenario: ${esc(sc.title)} · ${new Date(s.createdAt).toLocaleString()}${s.facilitator ? ` · Facilitator: ${esc(s.facilitator)}` : ''}</p>
         <h4 class="h6 mt-3">Participation by perspective</h4>
         <p class="small">${PERSPECTIVES.map((p) => `${esc(p)}: <strong>${counts[p] || 0}</strong>`).join(' · ')}</p>
+        <h4 class="h6 mt-3">Dimensions discussed</h4>
+        <p class="small">${Object.entries(S.dimensions).map(([id, d]) => `${esc(d.label)}: <strong>${s.contributions.filter((c) => c.dimension === id).length}</strong>`).join(' · ')}</p>
         <h4 class="h6 mt-3">Group decisions</h4>
         <ul class="small">${sc.steps.map((st, si) => {
           const tally = s.votes[si] || {};

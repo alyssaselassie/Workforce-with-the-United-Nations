@@ -228,6 +228,21 @@ h1, h2, h3, .h1, .h2, .h3, .h4, .h5, .navbar-brand { font-weight: 800; letter-sp
 .cover-status { padding: .5rem 1.5rem 0; color: #b42318; font-weight: 600; }
 .demo-banner { background: #fff6e8; border-bottom: 1px solid #f6e0bd; color: #7a5200; font-size: .82rem; padding: .35rem 0; }
 
+/* ---------- dimensions ---------- */
+.dim-position { --dim-bg: var(--sky); --dim-ink: var(--sky-ink); }
+.dim-place { --dim-bg: var(--mint); --dim-ink: var(--mint-ink); }
+.dim-emotion { --dim-bg: var(--peach); --dim-ink: var(--peach-ink); }
+.dim-voice { --dim-bg: var(--rose); --dim-ink: var(--rose-ink); }
+.dim-chip {
+  display: inline-flex; align-items: center; gap: .3rem; border-radius: 999px; padding: .12rem .6rem;
+  font-size: .78rem; font-weight: 700; background: var(--dim-bg); color: var(--dim-ink); white-space: nowrap; vertical-align: middle;
+}
+.dim-bar { height: .55rem; background: #edf0f7; border-radius: 999px; overflow: hidden; }
+.dim-bar > div { height: 100%; border-radius: 999px; background: var(--dim-ink); }
+.dim-callout { background: var(--dim-bg); border-left: 5px solid var(--dim-ink); border-radius: 1rem; padding: .75rem 1rem; }
+.dim-card { border-top: 4px solid var(--dim-ink); }
+.dim-icon { width: 2.5rem; height: 2.5rem; border-radius: .9rem; display: grid; place-items: center; background: var(--dim-bg); color: var(--dim-ink); font-size: 1.2rem; }
+
 /* ---------- print ---------- */
 @media print {
   #site-header, #site-footer, .no-print, .prototype-banner { display: none !important; }

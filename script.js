@@ -120,8 +120,43 @@
         });
       });
       return t;
+    },
+    // Per dimension: how many decisions tested it, and how often the learner's
+    // latest choice overlooked it.
+    dimensionStats(S) {
+      const p = Progress.get();
+      const stats = {};
+      Object.keys(S.dimensions).forEach((d) => { stats[d] = { tested: 0, missed: 0 }; });
+      S.scenarios.forEach((s) => {
+        const c = p.completed[s.id];
+        if (!c || !Array.isArray(c.choices)) return;
+        s.steps.forEach((step, i) => {
+          const choice = step.choices[c.choices[i]];
+          if (!choice) return;
+          stepDimensions(step).forEach((d) => {
+            if (!stats[d]) return;
+            stats[d].tested += 1;
+            if ((choice.missed || []).includes(d)) stats[d].missed += 1;
+          });
+        });
+      });
+      return stats;
     }
   };
+
+  // A decision tests a dimension when at least one of its choices overlooks it.
+  function stepDimensions(step) {
+    const set = new Set();
+    step.choices.forEach((c) => (c.missed || []).forEach((d) => set.add(d)));
+    return [...set];
+  }
+
+  // Small colored tag for a dimension, e.g. "Voice / power".
+  function dimChip(S, id, extraClass) {
+    const d = S.dimensions[id];
+    if (!d) return '';
+    return `<span class="dim-chip dim-${esc(id)} ${extraClass || ''}" title="${esc(d.description)}"><i class="bi ${esc(d.icon)}" aria-hidden="true"></i> ${esc(d.label)}</span>`;
+  }
 
   // ---------- profile ----------
   const Profile = {
@@ -293,6 +328,8 @@
     Profile,
     avatar,
     renderChrome,
+    stepDimensions,
+    dimChip,
     loadMissions: () => loadJSON('missions'),
     loadScenarios: () => loadJSON('scenarios'),
     esc,

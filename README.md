@@ -10,11 +10,11 @@ An interactive educational web application that helps United Nations personnel b
 | --- | --- |
 | `index.html` | Landing page: overview, live stats, competency framework, learning path |
 | `map.html` | Interactive world map of UN field missions (Leaflet), with filters, a table view, mandate scope, source links, verification status and pre-deployment reflection prompts |
-| `scenarios.html` | Scenario library and branching player. Each choice gets feedback and is scored on four competencies. A results screen and saved reflection follow each scenario |
-| `toolkit.html` | Bias library (14 biases), the PAUSE protocol, CQ capabilities, humanitarian principles and an assumption-check worksheet |
-| `collaboration.html` | Team Debrief: facilitated sessions with a perspective wall, a "who's missing" prompt, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
+| `scenarios.html` | Scenario library and branching player (11 scenarios). Each choice gets feedback, is scored on four competencies and shows which dimensions it overlooks. A results screen and saved reflection follow each scenario |
+| `toolkit.html` | Dimensions framework, bias library (14 biases), the PAUSE protocol, CQ capabilities, humanitarian principles and an assumption-check worksheet |
+| `collaboration.html` | Team Debrief: facilitated sessions with a perspective wall, a "who's missing" prompt, contributions tagged by dimension, a dimension check before voting, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
 | `progress.html` | Competency profile, completed scenarios, recurring biases, reflections, export and reset |
-| `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus competencies, badges, recent activity and backup/restore of profile and progress |
+| `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus competencies, the dimensions the learner most often misses, badges, recent activity and backup/restore of profile and progress |
 
 ### Scoring
 
@@ -26,6 +26,17 @@ Each choice earns 0–3 points on four competencies:
 - **Do No Harm & Inclusion**: humanitarian principles, safety and participation of affected people.
 
 A scenario score is points earned divided by the best points available at each step. Scores are prompts for reflection, not assessments. The app does **not** measure anyone's implicit bias.
+
+### Dimensions framework
+
+A person cannot be defined by a single dimension. Building on the ReliefMaps+ approach to lived experience (social positions, places and emotions), the Navigator adds a fourth dimension for UN fieldwork:
+
+- **Social position**: role, gender, and national, international or uniformed status.
+- **Place**: where the decision happens (meeting room, private conversation, water point, patrol route, virtual meeting).
+- **Emotion / experience**: feeling safe or exposed, heard or overlooked, in that place.
+- **Voice / power**: who speaks, who is missing and whose opinion counts.
+
+Each scenario is tagged with the dimensions its stem names (at least three), and each response choice records the dimensions it overlooks (`missed`). A decision *tests* a dimension when at least one of its choices overlooks it. The profile shows how often the learner's choices missed each tested dimension. The dimensions describe the situation; the competencies score the response.
 
 ## Project structure
 
@@ -106,7 +117,7 @@ Before demonstrating to faculty or UN personnel, open the live directory, reconc
 
 ### Adding a scenario
 
-Add an object to `scenarios` in `data/scenarios.json` with `id`, `title`, `summary`, `missionIds`, `role`, `setting`, `minutes`, `biasFocus` (ids from `biases`), `steps` and `debrief`. Each step has a `prompt`, an optional `context` and `choices`. Each choice has `text`, `scores` (`cq`, `bias`, `evidence`, `harm`, each 0–3), `rating` (`strong | partial | weak`), `biasTags` and `feedback`. Link scenarios to missions from either file.
+Add an object to `scenarios` in `data/scenarios.json` with `id`, `title`, `summary`, `missionIds`, `role`, `setting`, `minutes`, `biasFocus` (ids from `biases`), `dimensions` (at least three of `position`, `place`, `emotion`, `voice`), `steps` and `debrief`. Each step has a `prompt`, an optional `context` and `choices`. Each choice has `text`, `scores` (`cq`, `bias`, `evidence`, `harm`, each 0–3), `rating` (`strong | partial | weak`), `biasTags`, `missed` (dimensions the choice overlooks; empty for strong choices) and `feedback`. Link scenarios to missions from either file.
 
 ## Data, privacy and collaboration
 
