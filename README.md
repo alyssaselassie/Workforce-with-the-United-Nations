@@ -14,6 +14,7 @@ An interactive educational web application that helps United Nations personnel b
 | `toolkit.html` | Bias library (14 biases), the PAUSE protocol, CQ capabilities, humanitarian principles and an assumption-check worksheet |
 | `collaboration.html` | Team Debrief: facilitated sessions with a perspective wall, a "who's missing" prompt, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
 | `progress.html` | Competency profile, completed scenarios, recurring biases, reflections, export and reset |
+| `profile.html` | Personal profile: photo upload (cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus competencies, badges, recent activity and backup/restore of profile and progress |
 
 ### Scoring
 
@@ -109,7 +110,7 @@ Add an object to `scenarios` in `data/scenarios.json` with `id`, `title`, `summa
 
 ## Data, privacy and collaboration
 
-Everything runs in the browser. Progress, reflections, worksheet drafts and debrief sessions are stored in `localStorage` on the user's device, and nothing is sent to a server. Team Debrief is built for one shared screen in a meeting room or call. For use across devices, export and import session files; re-importing merges by id without duplicating entries. A future version could replace the storage layer in `js/collaboration.js` with a real-time backend (e.g. Firebase or Supabase). If it did, it would need authentication and a data-protection review, because it would hold staff reflections.
+Everything runs in the browser. Profiles (including the photo, stored as a small resized JPEG), progress, reflections, worksheet drafts and debrief sessions are stored in `localStorage` on the user's device, and nothing is sent to a server. Team Debrief is built for one shared screen in a meeting room or call. For use across devices, export and import session files; re-importing merges by id without duplicating entries. A future version could replace the storage layer in `js/collaboration.js` with a real-time backend (e.g. Firebase or Supabase). If it did, it would need authentication and a data-protection review, because it would hold staff reflections.
 
 ## Content principles
 
