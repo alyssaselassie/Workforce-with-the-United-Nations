@@ -193,14 +193,27 @@ h1, h2, h3, .h1, .h2, .h3, .h4, .h5, .navbar-brand { font-weight: 800; letter-sp
 .site-nav .nav-link.nav-profile.is-cta:hover { background: #eaf2ff; }
 .profile-card { overflow: hidden; padding: 0; }
 .profile-cover {
-  height: 130px;
   background:
     radial-gradient(circle at 15% 30%, rgba(127, 214, 245, .55) 0, transparent 35%),
     radial-gradient(circle at 80% 70%, rgba(171, 146, 255, .5) 0, transparent 35%),
     linear-gradient(120deg, #1f56ad, #3b7fe0 60%, #6d8cf0);
 }
+.profile-cover, .cover-preview { background-size: cover; background-position: center; }
+.profile-cover { position: relative; width: 100%; height: clamp(110px, 22vw, 240px); }
+.cover-edit {
+  position: absolute; top: .75rem; right: .75rem; width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  display: grid; place-items: center; background: rgba(255,255,255,.92); color: var(--brand-strong);
+  cursor: pointer; box-shadow: var(--shadow); margin: 0;
+}
+.cover-edit:hover { background: #fff; }
+.cover-edit:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.cover-preview {
+  aspect-ratio: 4 / 1; border-radius: .9rem; border: 1px solid var(--line);
+  background-color: #dbe7f6;
+  background-image: linear-gradient(120deg, #1f56ad, #3b7fe0 60%, #6d8cf0);
+}
 .profile-body { padding: 0 1.5rem 1.5rem; }
-.profile-avatar { margin-top: -64px; margin-bottom: .75rem; }
+.profile-avatar { position: relative; z-index: 1; margin-top: -64px; margin-bottom: .75rem; }
 .profile-avatar .avatar { border: 5px solid #fff; box-shadow: var(--shadow); background-color: #fff; }
 .profile-stat { background: var(--page); border-radius: 1rem; padding: .75rem .5rem; }
 .badge-tile { display: flex; gap: .6rem; align-items: center; border: 1px dashed var(--line); border-radius: 1rem; padding: .6rem .7rem; height: 100%; opacity: .7; }

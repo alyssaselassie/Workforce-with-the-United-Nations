@@ -5,6 +5,9 @@
   const root = document.getElementById('profile-root');
   const SESSIONS_KEY = 'uncq.sessions.v1';
   const PHOTO_SIZE = 320;
+  // Banner is 4:1, like a LinkedIn background photo.
+  const COVER_W = 1200;
+  const COVER_H = 300;
   const BACKUP_APP = 'uncq-navigator';
 
   let S, M;
@@ -18,6 +21,7 @@
   const modalEl = document.getElementById('edit-modal');
   const modal = window.bootstrap ? new bootstrap.Modal(modalEl) : null;
   let draftPhoto = null;
+  let draftCover = null;
 
   // ---------- badges ----------
   // Each badge is earned from progress already stored in this browser.
@@ -63,7 +67,12 @@
         </div>`}
 
       <section class="surface profile-card mb-4" aria-label="Profile summary">
-        <div class="profile-cover"></div>
+        <div class="profile-cover"${pr.cover ? ` style="background-image:url('${esc(pr.cover)}')"` : ''}>
+          <label class="cover-edit no-print" title="${pr.cover ? 'Change banner photo' : 'Add a banner photo'}">
+            <i class="bi bi-camera" aria-hidden="true"></i><span class="visually-hidden">${pr.cover ? 'Change banner photo' : 'Add a banner photo'}</span>
+            <input type="file" id="cover-quick" accept="image/*" hidden>
+          </label>
+        </div>
         <div class="profile-body">
           <div class="profile-avatar">${App.avatar(pr, 128)}</div>
           <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
@@ -148,6 +157,16 @@
       </div>`;
 
     root.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', openEditor));
+    // Changing the banner from the card saves straight away.
+    document.getElementById('cover-quick').addEventListener('change', async (e) => {
+      const cover = await readImage(e, document.getElementById('backup-msg'), COVER_W, COVER_H);
+      if (!cover) return;
+      if (!Profile.save(Object.assign(Profile.get(), { cover }))) {
+        document.getElementById('backup-msg').textContent = 'Could not save the banner. Browser storage may be full.';
+        return;
+      }
+      refreshAll();
+    });
     document.getElementById('backup').addEventListener('click', backup);
     document.getElementById('restore').addEventListener('change', restore);
     document.getElementById('delete-profile').addEventListener('click', () => {
@@ -174,52 +193,77 @@
     const name = document.getElementById('pf-name').value;
     document.getElementById('photo-preview').innerHTML = App.avatar({ name, photo: draftPhoto }, 88);
     document.getElementById('photo-remove').disabled = !draftPhoto;
+    const cover = document.getElementById('cover-preview');
+    cover.style.backgroundImage = draftCover ? `url('${draftCover}')` : '';
+    document.getElementById('cover-remove').disabled = !draftCover;
   }
 
   function openEditor() {
     const pr = Profile.get();
     fields.forEach((f) => { document.getElementById(`pf-${f}`).value = pr[f] || ''; });
     draftPhoto = pr.photo || null;
+    draftCover = pr.cover || null;
     document.getElementById('photo-msg').textContent = "JPG, PNG or WebP. It's cropped to a square and stays on this device.";
+    document.getElementById('cover-msg').textContent = 'A wide image works best. It is cropped to a 4:1 banner.';
     showPreview();
     if (modal) modal.show();
   }
 
   document.getElementById('pf-name').addEventListener('input', showPreview);
   document.getElementById('photo-remove').addEventListener('click', () => { draftPhoto = null; showPreview(); });
+  document.getElementById('cover-remove').addEventListener('click', () => { draftCover = null; showPreview(); });
 
-  // Center-crop to a square and shrink, so the photo fits comfortably in browser storage.
-  function processPhoto(file) {
+  // Center-crop to the target shape and shrink, so images fit comfortably in browser storage.
+  function cropImage(file, width, height) {
     return new Promise((resolve, reject) => {
       const url = URL.createObjectURL(file);
       const img = new Image();
       img.onload = () => {
-        const side = Math.min(img.naturalWidth, img.naturalHeight);
+        const scale = Math.min(img.naturalWidth / width, img.naturalHeight / height);
+        const sw = width * scale, sh = height * scale;
         const canvas = document.createElement('canvas');
-        canvas.width = canvas.height = PHOTO_SIZE;
-        canvas.getContext('2d').drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, PHOTO_SIZE, PHOTO_SIZE);
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, (img.naturalWidth - sw) / 2, (img.naturalHeight - sh) / 2, sw, sh, 0, 0, width, height);
         URL.revokeObjectURL(url);
-        resolve(canvas.toDataURL('image/jpeg', 0.85));
+        resolve(canvas.toDataURL('image/jpeg', 0.82));
       };
       img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('That file could not be read as an image.')); };
       img.src = url;
     });
   }
 
-  document.getElementById('photo-input').addEventListener('change', async (e) => {
+  // Validate a chosen file and return the cropped image, or null with a message.
+  async function readImage(e, msg, width, height) {
     const file = e.target.files[0];
     e.target.value = '';
-    const msg = document.getElementById('photo-msg');
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { msg.textContent = 'Please choose an image file.'; return; }
-    if (file.size > 15 * 1024 * 1024) { msg.textContent = 'That image is over 15 MB. Please choose a smaller one.'; return; }
+    if (!file) return null;
+    if (!file.type.startsWith('image/')) { msg.textContent = 'Please choose an image file.'; return null; }
+    if (file.size > 15 * 1024 * 1024) { msg.textContent = 'That image is over 15 MB. Please choose a smaller one.'; return null; }
     try {
-      draftPhoto = await processPhoto(file);
-      msg.textContent = 'Photo ready. Save the profile to keep it.';
-      showPreview();
+      return await cropImage(file, width, height);
     } catch (err) {
       msg.textContent = err.message;
+      return null;
     }
+  }
+
+  document.getElementById('photo-input').addEventListener('change', async (e) => {
+    const msg = document.getElementById('photo-msg');
+    const photo = await readImage(e, msg, PHOTO_SIZE, PHOTO_SIZE);
+    if (!photo) return;
+    draftPhoto = photo;
+    msg.textContent = 'Photo ready. Save the profile to keep it.';
+    showPreview();
+  });
+
+  document.getElementById('cover-input').addEventListener('change', async (e) => {
+    const msg = document.getElementById('cover-msg');
+    const cover = await readImage(e, msg, COVER_W, COVER_H);
+    if (!cover) return;
+    draftCover = cover;
+    msg.textContent = 'Banner ready. Save the profile to keep it.';
+    showPreview();
   });
 
   document.getElementById('edit-form').addEventListener('submit', (e) => {
@@ -227,9 +271,10 @@
     const pr = {};
     fields.forEach((f) => { pr[f] = document.getElementById(`pf-${f}`).value.trim(); });
     if (draftPhoto) pr.photo = draftPhoto;
+    if (draftCover) pr.cover = draftCover;
     pr.updatedAt = new Date().toISOString();
     if (!Profile.save(pr)) {
-      document.getElementById('photo-msg').textContent = 'Could not save. Browser storage may be full or blocked. Try a smaller photo.';
+      document.getElementById('photo-msg').textContent = 'Could not save. Browser storage may be full or blocked. Try smaller images.';
       return;
     }
     if (modal) modal.hide();
