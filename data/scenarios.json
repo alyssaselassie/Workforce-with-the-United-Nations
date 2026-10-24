@@ -4,7 +4,7 @@
     "scoring": "Each choice earns 0–3 points on each of four competencies. A scenario score is points earned divided by points available, per competency."
   },
   "competencies": {
-    "cq": { "label": "Cultural Intelligence", "short": "CQ", "description": "Drive, knowledge, strategy and action: being curious about other perspectives, checking your own assumptions and adapting how you behave." },
+    "cq": { "label": "Cultural Intelligence (CQ)", "short": "CQ", "description": "CQ stands for Cultural Quotient. Drive, knowledge, strategy and action: being curious about other perspectives, checking your own assumptions and adapting how you behave." },
     "bias": { "label": "Bias Awareness", "short": "Bias", "description": "Noticing mental shortcuts such as stereotyping, anchoring and affinity bias, and slowing down when they are likely to shape a decision." },
     "evidence": { "label": "Evidence-Based Decisions", "short": "Evidence", "description": "Seeking several independent sources and disaggregated data, and stating uncertainty plainly." },
     "harm": { "label": "Do No Harm & Inclusion", "short": "Do No Harm", "description": "Anticipating unintended effects, protecting people at risk and including those most affected, in line with humanitarian principles." }

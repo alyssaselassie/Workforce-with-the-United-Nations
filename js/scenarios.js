@@ -183,7 +183,7 @@
           <div class="mb-2">${App.ratingBadge(choice.rating)}</div>
           <p class="mb-2">${esc(choice.feedback)}</p>
           <div class="d-flex flex-wrap gap-1 mb-2">
-            ${COMPETENCIES.map((k) => `<span class="score-chip">${esc(S.competencies[k].short)} <strong>${choice.scores[k]}/3</strong></span>`).join('')}
+            ${COMPETENCIES.map((k) => `<span class="score-chip" title="${esc(S.competencies[k].label)}">${esc(S.competencies[k].short)} <strong>${choice.scores[k]}/3</strong></span>`).join('')}
           </div>
           ${choice.biasTags.length ? `<p class="small mb-2"><i class="bi bi-eye" aria-hidden="true"></i> <strong>Bias at play:</strong>
             ${choice.biasTags.map((t) => `${esc(biasById[t].name)}. <em>Counter-strategy:</em> ${esc(biasById[t].counter)}`).join(' ')}</p>` : ''}
