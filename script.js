@@ -11,10 +11,27 @@
   const COMPETENCIES = ['cq', 'bias', 'evidence', 'harm'];
 
   // ---------- storage (never throws; works in private mode) ----------
+  // Prototype demo mode: everything lives in sessionStorage, so it survives moving
+  // between pages but is gone when the tab is closed, and it is cleared on refresh
+  // so every demo starts with no one signed in.
+  const KEY_PREFIX = 'uncq.';
+  const session = (() => { try { return window.sessionStorage; } catch (e) { return null; } })();
+  function clearDemoData(storage) {
+    try {
+      Object.keys(storage).filter((k) => k.startsWith(KEY_PREFIX)).forEach((k) => storage.removeItem(k));
+    } catch (e) { /* ignore */ }
+  }
+  try {
+    const nav = performance.getEntriesByType('navigation')[0];
+    if (session && nav && nav.type === 'reload') clearDemoData(session);
+    // Earlier versions kept data in localStorage; remove it so nothing lingers.
+    clearDemoData(window.localStorage);
+  } catch (e) { /* ignore */ }
+
   const Store = {
     read(key, fallback) {
       try {
-        const raw = window.localStorage.getItem(key);
+        const raw = session.getItem(key);
         return raw ? JSON.parse(raw) : fallback;
       } catch (e) {
         return fallback;
@@ -22,14 +39,14 @@
     },
     write(key, value) {
       try {
-        window.localStorage.setItem(key, JSON.stringify(value));
+        session.setItem(key, JSON.stringify(value));
         return true;
       } catch (e) {
         return false;
       }
     },
     remove(key) {
-      try { window.localStorage.removeItem(key); } catch (e) { /* ignore */ }
+      try { session.removeItem(key); } catch (e) { /* ignore */ }
     }
   };
 
@@ -241,7 +258,8 @@
               </ul>
             </div>
           </div>
-        </nav>`;
+        </nav>
+        ${current === 'home' ? '' : '<div class="demo-banner no-print"><div class="container-xl"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <strong>Demo mode:</strong> your profile and progress reset when you refresh or reopen the site.</div></div>'}`;
     }
 
     const footer = document.getElementById('site-footer');

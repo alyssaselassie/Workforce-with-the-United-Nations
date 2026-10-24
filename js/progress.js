@@ -83,7 +83,7 @@
 
     document.getElementById('export').addEventListener('click', () => App.download('cq-navigator-progress.json', App.Progress.get()));
     document.getElementById('reset').addEventListener('click', () => {
-      if (window.confirm('Delete all scenario results and reflections stored in this browser?')) {
+      if (window.confirm('Delete all scenario results and reflections?')) {
         App.Progress.reset();
         render();
       }

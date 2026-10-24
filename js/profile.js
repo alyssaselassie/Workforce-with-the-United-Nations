@@ -24,7 +24,7 @@
   let draftCover = null;
 
   // ---------- badges ----------
-  // Each badge is earned from progress already stored in this browser.
+  // Each badge is earned from progress made in this demo session.
   function badges() {
     const p = Progress.get();
     const done = Object.values(p.completed);
@@ -69,10 +69,11 @@
       <section class="surface profile-card mb-4" aria-label="Profile summary">
         <div class="profile-cover"${pr.cover ? ` style="background-image:url('${esc(pr.cover)}')"` : ''}>
           <label class="cover-edit no-print" title="${pr.cover ? 'Change banner photo' : 'Add a banner photo'}">
-            <i class="bi bi-camera" aria-hidden="true"></i><span class="visually-hidden">${pr.cover ? 'Change banner photo' : 'Add a banner photo'}</span>
-            <input type="file" id="cover-quick" accept="image/*" hidden>
+            <i class="bi bi-camera" aria-hidden="true"></i><span>${pr.cover ? 'Change banner' : 'Add banner photo'}</span>
+            <input type="file" id="cover-quick" accept="image/*" class="file-input">
           </label>
         </div>
+        <p class="cover-status small mb-0 no-print" id="cover-status" role="status"></p>
         <div class="profile-body">
           <div class="profile-avatar">${App.avatar(pr, 128)}</div>
           <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
@@ -144,11 +145,11 @@
 
           <section class="surface p-4" aria-labelledby="backup-h">
             <h2 class="h5" id="backup-h"><i class="bi bi-cloud-arrow-down" aria-hidden="true"></i> Save and restore</h2>
-            <p class="small text-muted-2">Your profile and progress are saved automatically in this browser only. Download a backup to keep a copy or to move to another device, then restore it there.</p>
+            <p class="small text-muted-2">This is a prototype, so your profile and progress reset when you refresh or reopen the site. Download a backup to keep them, then restore it any time.</p>
             <div class="d-flex flex-wrap gap-2">
               <button class="btn btn-outline-primary btn-sm" id="backup"><i class="bi bi-download" aria-hidden="true"></i> Download backup</button>
               <label class="btn btn-outline-primary btn-sm mb-0"><i class="bi bi-upload" aria-hidden="true"></i> Restore backup
-                <input type="file" id="restore" accept="application/json,.json" hidden></label>
+                <input type="file" id="restore" accept="application/json,.json" class="file-input"></label>
               <button class="btn btn-outline-danger btn-sm" id="delete-profile"><i class="bi bi-trash" aria-hidden="true"></i> Delete profile</button>
             </div>
             <p class="small mt-2 mb-0" id="backup-msg" role="status"></p>
@@ -159,10 +160,12 @@
     root.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', openEditor));
     // Changing the banner from the card saves straight away.
     document.getElementById('cover-quick').addEventListener('change', async (e) => {
-      const cover = await readImage(e, document.getElementById('backup-msg'), COVER_W, COVER_H);
+      const status = document.getElementById('cover-status');
+      status.textContent = 'Loading banner…';
+      const cover = await readImage(e, status, COVER_W, COVER_H);
       if (!cover) return;
       if (!Profile.save(Object.assign(Profile.get(), { cover }))) {
-        document.getElementById('backup-msg').textContent = 'Could not save the banner. Browser storage may be full.';
+        status.textContent = 'Could not save the banner. Browser storage may be full or blocked.';
         return;
       }
       refreshAll();
@@ -170,7 +173,7 @@
     document.getElementById('backup').addEventListener('click', backup);
     document.getElementById('restore').addEventListener('change', restore);
     document.getElementById('delete-profile').addEventListener('click', () => {
-      if (!window.confirm('Delete your profile details and photo from this browser? Your scenario progress is kept.')) return;
+      if (!window.confirm('Delete your profile details and photos? Your scenario progress is kept.')) return;
       Profile.clear();
       refreshAll();
     });
@@ -203,7 +206,7 @@
     fields.forEach((f) => { document.getElementById(`pf-${f}`).value = pr[f] || ''; });
     draftPhoto = pr.photo || null;
     draftCover = pr.cover || null;
-    document.getElementById('photo-msg').textContent = "JPG, PNG or WebP. It's cropped to a square and stays on this device.";
+    document.getElementById('photo-msg').textContent = "JPG, PNG or WebP. It's cropped to a square.";
     document.getElementById('cover-msg').textContent = 'A wide image works best. It is cropped to a 4:1 banner.';
     showPreview();
     if (modal) modal.show();
@@ -228,7 +231,7 @@
         URL.revokeObjectURL(url);
         resolve(canvas.toDataURL('image/jpeg', 0.82));
       };
-      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('That file could not be read as an image.')); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Your browser can\'t open this image format (for example HEIC photos from an iPhone). Save it as JPG or PNG and try again.')); };
       img.src = url;
     });
   }
@@ -237,7 +240,7 @@
   async function readImage(e, msg, width, height) {
     const file = e.target.files[0];
     e.target.value = '';
-    if (!file) return null;
+    if (!file) { msg.textContent = ''; return null; }
     if (!file.type.startsWith('image/')) { msg.textContent = 'Please choose an image file.'; return null; }
     if (file.size > 15 * 1024 * 1024) { msg.textContent = 'That image is over 15 MB. Please choose a smaller one.'; return null; }
     try {
@@ -274,7 +277,7 @@
     if (draftCover) pr.cover = draftCover;
     pr.updatedAt = new Date().toISOString();
     if (!Profile.save(pr)) {
-      document.getElementById('photo-msg').textContent = 'Could not save. Browser storage may be full or blocked. Try smaller images.';
+      document.getElementById('photo-msg').textContent = 'Could not save. Browser storage may be full or blocked.';
       return;
     }
     if (modal) modal.hide();
@@ -306,7 +309,7 @@
       if (!data || data.app !== BACKUP_APP || !data.progress || !data.progress.completed) {
         throw new Error('This file is not a Navigator backup.');
       }
-      if (!window.confirm('Replace the profile and progress in this browser with the backup?')) return;
+      if (!window.confirm('Replace your current profile and progress with the backup?')) return;
       Profile.save(data.profile || {});
       Store.write('uncq.progress.v1', data.progress);
       // Keep any local debrief sessions and add the ones from the backup.

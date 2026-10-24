@@ -162,7 +162,7 @@
       App.download(`debrief-${safe}.json`, s);
     });
     document.getElementById('delete').addEventListener('click', () => {
-      if (!window.confirm(`Delete "${s.title}" from this browser? Export it first if you want to keep a copy.`)) return;
+      if (!window.confirm(`Delete "${s.title}"? Export it first if you want to keep a copy.`)) return;
       delete sessions[currentId];
       currentId = null;
       save();
