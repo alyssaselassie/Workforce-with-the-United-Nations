@@ -7,10 +7,12 @@
   const SKIN = ['#fde4cf', '#f5cfaa', '#e8b388', '#d49a68', '#b77a4c', '#93603a', '#6e4427', '#4d2f1c'];
   const LIPS = ['#c26f60', '#b9654f', '#a95a44', '#97503b', '#7f4231', '#683525', '#552a1d', '#432016'];
   const HAIR_COLORS = { black: '#2b2422', brown: '#5b3a24', chestnut: '#8c512b', auburn: '#a8442a', blonde: '#dcb56a', gray: '#b9b9c0', teal: '#21a69a', purple: '#8a57d6' };
+  const EYE_COLORS = { brown: '#7b4b2a', dark: '#3e2819', hazel: '#8f6b34', green: '#4f7d46', blue: '#3d76b9', gray: '#6c7a89' };
   const COLORS = { sky: '#4f8fd6', coral: '#e2735f', mint: '#3faa86', sun: '#e6b13e', violet: '#8268cc', navy: '#2f3f73', rose: '#d45c86', white: '#eef0f4', teal: '#1f9c90' };
 
   const OPTIONS = {
     skin: SKIN.map((_, i) => i),
+    eyes: Object.keys(EYE_COLORS),
     hair: ['short', 'curly', 'long', 'bun', 'braids', 'ponytail', 'buzz', 'none'],
     hairColor: Object.keys(HAIR_COLORS),
     headwear: ['none', 'hijab', 'turban', 'cap', 'beanie', 'sunhat', 'headphones'],
@@ -30,22 +32,22 @@
   // Fun extras unlock with levels. Identity options (skin, hair, head coverings) are never locked.
   const UNLOCK = { headwear: { sunhat: 3, headphones: 5 }, gear: { backpack: 2, camera: 3, radio: 4, binoculars: 6, medal: 8 }, hairColor: { teal: 4, purple: 4 } };
 
-  const DEFAULT = { skin: 3, hair: 'curly', hairColor: 'black', headwear: 'none', hwColor: 'teal', facial: 'none', glasses: 'none', shirt: 'sky', vest: 'field', gear: 'lanyard' };
+  const DEFAULT = { skin: 3, eyes: 'brown', hair: 'curly', hairColor: 'black', headwear: 'none', hwColor: 'teal', facial: 'none', glasses: 'none', shirt: 'sky', vest: 'field', gear: 'lanyard' };
 
   // Story characters. Looks are varied on purpose; head coverings appear on helpful characters.
   const NPC = {
-    mentor: { skin: 4, hair: 'short', hairColor: 'gray', headwear: 'turban', hwColor: 'teal', facial: 'beard', glasses: 'round', shirt: 'mint', vest: 'none', gear: 'lanyard' },
-    lead: { skin: 1, hair: 'buzz', hairColor: 'brown', shirt: 'navy', vest: 'field', gear: 'lanyard' },
+    mentor: { eyes: 'dark', skin: 4, hair: 'short', hairColor: 'gray', headwear: 'turban', hwColor: 'teal', facial: 'beard', glasses: 'round', shirt: 'mint', vest: 'none', gear: 'lanyard' },
+    lead: { eyes: 'blue', skin: 1, hair: 'buzz', hairColor: 'brown', shirt: 'navy', vest: 'field', gear: 'lanyard' },
     samir: { skin: 5, hair: 'short', hairColor: 'black', facial: 'mustache', shirt: 'violet', vest: 'none', gear: 'none', pants: '#4a4f5c' },
-    amani: { skin: 6, hair: 'braids', hairColor: 'black', glasses: 'square', shirt: 'sun', vest: 'none', gear: 'lanyard' },
-    rep: { skin: 3, headwear: 'hijab', hwColor: 'rose', shirt: 'coral', vest: 'none', gear: 'none', pants: '#4b4058' },
-    colleague: { skin: 0, hair: 'long', hairColor: 'auburn', shirt: 'sky', vest: 'none', gear: 'lanyard' },
-    colleague2: { skin: 2, hair: 'short', hairColor: 'brown', glasses: 'square', shirt: 'mint', vest: 'none', gear: 'lanyard' },
+    amani: { eyes: 'dark', skin: 6, hair: 'braids', hairColor: 'black', glasses: 'square', shirt: 'sun', vest: 'none', gear: 'lanyard' },
+    rep: { eyes: 'hazel', skin: 3, headwear: 'hijab', hwColor: 'rose', shirt: 'coral', vest: 'none', gear: 'none', pants: '#4b4058' },
+    colleague: { eyes: 'green', skin: 0, hair: 'long', hairColor: 'auburn', shirt: 'sky', vest: 'none', gear: 'lanyard' },
+    colleague2: { eyes: 'hazel', skin: 2, hair: 'short', hairColor: 'brown', glasses: 'square', shirt: 'mint', vest: 'none', gear: 'lanyard' },
     host: { skin: 5, hair: 'bun', hairColor: 'black', shirt: 'violet', vest: 'none', gear: 'none', pants: '#3a3d48' },
-    resident: { skin: 6, hair: 'short', hairColor: 'gray', facial: 'beard', shirt: 'coral', vest: 'none', gear: 'none', pants: '#5b4a3a' },
-    official: { skin: 2, hair: 'ponytail', hairColor: 'brown', glasses: 'square', shirt: 'navy', vest: 'none', gear: 'lanyard', pants: '#2b2f3a' },
+    resident: { eyes: 'dark', skin: 6, hair: 'short', hairColor: 'gray', facial: 'beard', shirt: 'coral', vest: 'none', gear: 'none', pants: '#5b4a3a' },
+    official: { eyes: 'gray', skin: 2, hair: 'ponytail', hairColor: 'brown', glasses: 'square', shirt: 'navy', vest: 'none', gear: 'lanyard', pants: '#2b2f3a' },
     farmer: { skin: 6, hair: 'short', hairColor: 'black', headwear: 'sunhat', shirt: 'mint', vest: 'none', gear: 'none', pants: '#7a6a4c' },
-    maya: { skin: 4, hair: 'long', hairColor: 'black', shirt: 'coral', vest: 'none', gear: 'lanyard' }
+    maya: { eyes: 'dark', skin: 4, hair: 'long', hairColor: 'black', shirt: 'coral', vest: 'none', gear: 'lanyard' }
   };
 
   // ---------- drawing ----------
@@ -63,7 +65,7 @@
     const c = (v) => Math.max(0, Math.min(255, Math.round(v * f))).toString(16).padStart(2, '0');
     return `#${c(n >> 16)}${c((n >> 8) & 255)}${c(n & 255)}`;
   }
-  const edge = (c, w) => `stroke="${shade(c, 0.6)}" stroke-opacity=".42" stroke-width="${w || 0.6}" stroke-linejoin="round"`;
+  const edge = (c, w) => `stroke="${shade(c, 0.5)}" stroke-opacity=".6" stroke-width="${w || 0.6}" stroke-linejoin="round"`;
   const lit = (id, c, hi, lo) => `<linearGradient id="${id}" x1=".1" y1="0" x2=".9" y2="1"><stop offset="0" stop-color="${shade(c, hi)}"/><stop offset="1" stop-color="${shade(c, lo)}"/></linearGradient>`;
   const line = (d, c, w, o) => `<path d="${d}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"${o ? ` opacity="${o}"` : ''}/>`;
 
@@ -157,41 +159,74 @@
     }
   }
 
+  // Expressive avatar faces: almond eyes with colored irises and a bold lash line, shaped brows,
+  // a defined nose, colored lips and a toothy laugh. dir is -1 for the eye or brow on the viewer's left.
+  function eyeShape(x, y, dir, h) {
+    const w = 2.8;
+    const [ix, ox] = [x - dir * w, x + dir * w];
+    return {
+      top: `M${ix} ${y + 0.25}C${x - dir * w * 0.5} ${y - h}, ${x + dir * w * 0.6} ${y - h * 1.05}, ${ox} ${y - 0.2}`,
+      bottom: `C${x + dir * w * 0.55} ${y + h * 0.78}, ${x - dir * w * 0.5} ${y + h * 0.82}, ${ix} ${y + 0.25}`,
+      ox
+    };
+  }
+  function browShape(x, y, dir) {
+    return `M${x - dir * 2.5} ${y + 0.55}C${x - dir * 1.2} ${y - 0.75}, ${x + dir * 1.2} ${y - 1.05}, ${x + dir * 2.9} ${y + 0.15}C${x + dir * 1.3} ${y - 0.3}, ${x - dir * 1.1} ${y + 0.05}, ${x - dir * 2.5} ${y + 1.45}z`;
+  }
+
   function face(s, o) {
     const look = o.look === 'left' ? -1.4 : o.look === 'right' ? 1.4 : 0;
     const mood = o.mood || 'happy';
     const skin = SKIN[s.skin] || SKIN[3];
     const hair = HAIR_COLORS[s.hairColor] || HAIR_COLORS.black;
-    const brow = shade(hair, ['blonde', 'gray'].includes(s.hairColor) ? 0.62 : 0.85);
+    const brow = shade(hair, ['blonde', 'gray'].includes(s.hairColor) ? 0.62 : 0.8);
     const lips = LIPS[s.skin] || LIPS[3];
     const [lx, rx, ey] = [45.1 + look, 54.9 + look, 30.6];
-    const [mx, my] = [50 + look * 0.7, 39.8];
-    const p = [`<ellipse cx="${43.4 + look * 0.5}" cy="35.6" rx="2.5" ry="1.5" fill="#f08a78" opacity=".2"/><ellipse cx="${56.6 + look * 0.5}" cy="35.6" rx="2.5" ry="1.5" fill="#f08a78" opacity=".2"/>`];
+    const [mx, my] = [50 + look * 0.7, 39.6];
+    const lash = '#2a1f1c';
+    // Soft shading toward the edges of the face, and rosy cheeks.
+    const p = [`<path d="${FACE}" fill="url(#${o.u}fs)"/><ellipse cx="${43 + look * 0.5}" cy="35.5" rx="2.7" ry="1.6" fill="#f07a6a" opacity=".22"/><ellipse cx="${57 + look * 0.5}" cy="35.5" rx="2.7" ry="1.6" fill="#f07a6a" opacity=".22"/>`];
     if (mood === 'grin') {
-      p.push(line(`M${lx - 2} ${ey + 0.6}q2-2.6 4 0M${rx - 2} ${ey + 0.6}q2-2.6 4 0`, EYE, 1));
+      // Laughing: closed, upturned eyes.
+      p.push([[lx, -1], [rx, 1]].map(([x, dir]) => line(`M${x - dir * 2.7} ${ey + 0.8}Q${x} ${ey - 2.3} ${x + dir * 2.7} ${ey + 0.6}l${dir * 0.5} -.4`, lash, 1)).join(''));
     } else {
-      // Friendly eyes: warm brown with two catchlights, and a soft lash line that hugs the top of each eye.
-      const [dx, dy] = mood === 'think' ? [0.5, -0.5] : [0, 0];
-      p.push([lx, rx].map((x) => `<ellipse cx="${x + dx}" cy="${ey + dy}" rx="1.9" ry="2.3" fill="url(#${o.u}e)"/>
-        <circle cx="${x + dx - 0.6}" cy="${ey + dy - 0.8}" r=".72" fill="#fff"/><circle cx="${x + dx + 0.65}" cy="${ey + dy + 0.75}" r=".32" fill="#fff" opacity=".85"/>`).join(''));
-      p.push(line(`M${lx + dx - 2.1} ${ey + dy - 0.9}q2.1-2.5 4.2-.1M${rx + dx - 2.1} ${ey + dy - 0.9}q2.1-2.5 4.2-.1`, EYE, 0.6, 0.85));
+      const [gx, gy] = mood === 'think' ? [0.55, -0.45] : [Math.sign(look) * 0.4, 0];
+      const h = mood === 'oops' ? 2.75 : 2.45;
+      const r = mood === 'oops' ? 1.5 : 1.7;
+      p.push([[lx, -1], [rx, 1]].map(([x, dir]) => {
+        const e = eyeShape(x, ey, dir, h);
+        const id = `${o.u}c${dir < 0 ? 'l' : 'r'}`;
+        const [cx, cy] = [x + gx, ey + 0.1 + gy];
+        return `<clipPath id="${id}"><path d="${e.top}${e.bottom}z"/></clipPath><path d="${e.top}${e.bottom}z" fill="url(#${o.u}ew)"/>
+          <g clip-path="url(#${id})"><circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${o.u}ir)" stroke="${shade(EYE_COLORS[s.eyes] || EYE_COLORS.brown, 0.5)}" stroke-width=".25"/>
+          <circle cx="${cx}" cy="${cy}" r="${r * 0.45}" fill="#160f0d"/><circle cx="${cx - 0.6}" cy="${cy - 0.6}" r=".6" fill="#fff"/><circle cx="${cx + 0.6}" cy="${cy + 0.5}" r=".25" fill="#fff" opacity=".85"/></g>
+          ${line(`M${e.ox} ${ey - 0.2}${e.bottom}`, shade(skin, 0.62), 0.32, 0.55)}${line(`${e.top}l${dir * 0.5} -.42`, lash, 0.8)}`;
+      }).join(''));
     }
-    const brows = mood === 'think' ? `M${lx - 2.6} ${ey - 5.2}q2.6-1.9 5.2-.5M${rx - 2.6} ${ey - 3.9}q2.6-1.1 5.2.1`
-      : mood === 'oops' ? `M${lx - 2.6} ${ey - 3.6}q2.8-.4 5-1.9M${rx - 2.4} ${ey - 5.5}q2.2 1.5 5 1.9`
-        : `M${lx - 2.6} ${ey - 3.9}q2.6-1.6 5.2-.2M${rx - 2.6} ${ey - 4.1}q2.6-1.4 5.2.2`;
-    p.push(line(brows, brow, 1.05));
-    p.push(line(`M${50.4 + look} 33.2c.9 1.4 1.1 2.4.4 3.1-.6.5-1.5.5-2.2.2`, shade(skin, 0.72), 0.75));
+    // Brows move with the mood: a raised brow to think, worried inner ends for "oops", lifted for a laugh.
+    const lift = mood === 'grin' ? -0.5 : 0;
+    const tilt = mood === 'oops' ? 12 : 0;
+    p.push([[lx, -1], [rx, 1]].map(([x, dir]) => {
+      const y = ey - 4.25 + lift + (mood === 'think' ? (dir < 0 ? -0.9 : 0.2) : 0);
+      return `<path d="${browShape(x, y, dir)}" fill="${brow}"${tilt ? ` transform="rotate(${dir * tilt} ${x} ${y})"` : ''}/>`;
+    }).join(''));
+    // Nose: a soft shadow down one side and a rounded tip.
+    p.push(line(`M${50.9 + look} 30.9c.5 1.6.8 2.8.5 3.7`, shade(skin, 0.74), 0.55, 0.55));
+    p.push(line(`M${48.6 + look} 35.6c.4.7 1 .95 1.6.8M${50.2 + look} 36.4c.7.15 1.2-.1 1.6-.8`, shade(skin, 0.6), 0.55, 0.9));
     if (s.facial === 'beard') {
       p.push(`<path d="M37.6 29.6c.2 9.2 4.6 17 12.4 17.3 7.8-.3 12.2-8.1 12.4-17.3-1.3 4.7-3.4 7.8-6.2 8.9-1.6-1.4-3.8-2-6.2-1-2.4-1-4.6-.4-6.2 1-2.8-1.1-4.9-4.2-6.2-8.9z" fill="url(#${o.u}h)" ${edge(hair)}/>`);
     }
+    const mouthLine = shade(lips, 0.55);
     if (mood === 'grin') {
-      p.push(`<path d="M${mx - 3.4} ${my - 0.8}q3.4 4.6 6.8 0z" fill="#5a2622"/><path d="M${mx - 2.9} ${my - 0.55}q2.9 1.1 5.8 0l-.3.8q-2.6.9-5.2 0z" fill="#fff"/>`);
+      p.push(`<path d="M${mx - 4} ${my - 0.9}q4 6.4 8 0z" fill="#4e1f1f"/><path d="M${mx - 2.3} ${my + 2.3}q2.3-1.5 4.6 0q-2.3 1.3-4.6 0z" fill="#e8737a"/>
+        <path d="M${mx - 3.55} ${my - 0.65}q3.55 1.45 7.1 0l-.4 1.1q-3.15 1.25-6.3 0z" fill="#fff"/>${line(`M${mx - 4} ${my - 0.9}q4 6.4 8 0z`, mouthLine, 0.5)}`);
     } else if (mood === 'oops') {
-      p.push(`<ellipse cx="${mx}" cy="${my + 0.4}" rx="1.3" ry="1.1" fill="#5a2622"/>`);
+      p.push(`<ellipse cx="${mx}" cy="${my + 0.5}" rx="1.4" ry="1.55" fill="#4e1f1f" stroke="${lips}" stroke-width=".7"/>`);
     } else if (mood === 'think') {
-      p.push(line(`M${mx - 2} ${my + 0.6}q2.2.6 4.4-.6`, lips, 1));
+      p.push(`<path d="M${mx - 2.4} ${my + 0.6}q2.3.8 4.7-.9q-1.8 2.4-4.7.9z" fill="${lips}" opacity=".85"/>${line(`M${mx - 2.4} ${my + 0.6}q2.3.8 4.7-.9`, mouthLine, 0.6)}`);
     } else {
-      p.push(line(`M${mx - 3} ${my - 0.3}q3 2.4 6 0`, lips, 1));
+      p.push(`<path d="M${mx - 3.3} ${my - 0.4}q3.3 2.5 6.6 0q-3.3 3.7-6.6 0z" fill="${lips}" opacity=".85"/>${line(`M${mx - 3.3} ${my - 0.4}q3.3 2.5 6.6 0`, mouthLine, 0.62)}`
+        + line(`M${mx - 3.6} ${my - 0.85}q.15.35.45.5M${mx + 3.6} ${my - 0.85}q-.15.35-.45.5`, mouthLine, 0.45, 0.6));
     }
     if (s.facial === 'mustache') {
       p.push(`<path d="M45.6 37.9c1.4-1.5 3.3-1.6 4.4-.6 1.1-1 3-.9 4.4.6-1.2 1.2-2.8 1.4-4.4.8-1.6.6-3.2.4-4.4-.8z" transform="translate(${look * 0.7} 0)" fill="url(#${o.u}h)" ${edge(hair)}/>`);
@@ -202,15 +237,15 @@
   function glassesHtml(kind, f) {
     const { lx, rx, ey } = f;
     const frame = '#2e3446';
-    const temples = line(`M${lx - 3.3} ${ey - 0.5}L37.6 ${ey - 1.2}M${rx + 3.3} ${ey - 0.5}L62.4 ${ey - 1.2}`, frame, 0.7);
+    const temples = line(`M${lx - 3.6} ${ey - 0.5}L37.6 ${ey - 1.2}M${rx + 3.6} ${ey - 0.5}L62.4 ${ey - 1.2}`, frame, 0.7);
     const glint = line(`M${lx - 1.8} ${ey - 1.6}q.9-.8 2-.9M${rx - 1.8} ${ey - 1.6}q.9-.8 2-.9`, '#fff', 0.45, 0.75);
     if (kind === 'round') {
-      return `${temples}<circle cx="${lx}" cy="${ey}" r="3.3" fill="#fff" fill-opacity=".12" stroke="${frame}" stroke-width=".75"/><circle cx="${rx}" cy="${ey}" r="3.3" fill="#fff" fill-opacity=".12" stroke="${frame}" stroke-width=".75"/>
-        ${line(`M${lx + 3.3} ${ey - 0.4}q${(rx - lx - 6.6) / 2} -1.1 ${rx - lx - 6.6} 0`, frame, 0.75)}${glint}`;
+      return `${temples}<circle cx="${lx}" cy="${ey}" r="3.6" fill="#fff" fill-opacity=".12" stroke="${frame}" stroke-width=".75"/><circle cx="${rx}" cy="${ey}" r="3.6" fill="#fff" fill-opacity=".12" stroke="${frame}" stroke-width=".75"/>
+        ${line(`M${lx + 3.6} ${ey - 0.4}q${(rx - lx - 7.2) / 2} -1.1 ${rx - lx - 7.2} 0`, frame, 0.75)}${glint}`;
     }
     if (kind === 'square') {
-      return `${temples}<rect x="${lx - 3.6}" y="${ey - 3}" width="7.2" height="6" rx="1.5" fill="#fff" fill-opacity=".12" stroke="${frame}" stroke-width=".75"/><rect x="${rx - 3.6}" y="${ey - 3}" width="7.2" height="6" rx="1.5" fill="#fff" fill-opacity=".12" stroke="${frame}" stroke-width=".75"/>
-        ${line(`M${lx + 3.6} ${ey - 0.6}h${rx - lx - 7.2}`, frame, 0.75)}${glint}`;
+      return `${temples}<rect x="${lx - 3.75}" y="${ey - 3}" width="7.5" height="6" rx="1.5" fill="#fff" fill-opacity=".12" stroke="${frame}" stroke-width=".75"/><rect x="${rx - 3.75}" y="${ey - 3}" width="7.5" height="6" rx="1.5" fill="#fff" fill-opacity=".12" stroke="${frame}" stroke-width=".75"/>
+        ${line(`M${lx + 3.75} ${ey - 0.6}h${rx - lx - 7.5}`, frame, 0.75)}${glint}`;
     }
     return '';
   }
@@ -224,6 +259,7 @@
     const skin = SKIN[s.skin] || SKIN[3];
     const hair = HAIR_COLORS[s.hairColor] || HAIR_COLORS.black;
     const hw = COLORS[s.hwColor] || COLORS.teal;
+    const eyes = EYE_COLORS[s.eyes] || EYE_COLORS.brown;
     const shirt = COLORS[s.shirt] || COLORS.sky;
     const pants = /^#[0-9a-f]{6}$/i.test(s.pants || '') ? s.pants : TROUSERS;
     const hijab = s.headwear === 'hijab';
@@ -234,53 +270,61 @@
 
     p.push(`<defs>${lit(`${u}k`, skin, 1.05, 0.9)}${lit(`${u}h`, hair, 1.18, 0.78)}${lit(`${u}s`, shirt, 1.08, 0.82)}${lit(`${u}w`, hw, 1.1, 0.8)}
       ${lit(`${u}v`, VEST, 1.15, 0.8)}${lit(`${u}t`, pants, 1.15, 0.8)}${lit(`${u}p`, '#d9b878', 1.08, 0.86)}${lit(`${u}b`, '#c26a3a', 1.1, 0.82)}
-      <linearGradient id="${u}e" x1="0" y1="0" x2="0" y2="1"><stop offset=".45" stop-color="#2b1d18"/><stop offset="1" stop-color="#6e4a39"/></linearGradient>
+      <linearGradient id="${u}ew" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dde2ea"/><stop offset=".5" stop-color="#fff"/></linearGradient>
+      <radialGradient id="${u}ir" cx=".5" cy=".62" r=".6"><stop offset="0" stop-color="${shade(eyes, 1.5)}"/><stop offset=".55" stop-color="${eyes}"/><stop offset="1" stop-color="${shade(eyes, 0.62)}"/></radialGradient>
+      <radialGradient id="${u}fs" cx=".46" cy=".42" r=".6"><stop offset=".6" stop-color="${shade(skin, 0.8)}" stop-opacity="0"/><stop offset="1" stop-color="${shade(skin, 0.8)}" stop-opacity=".5"/></radialGradient>
       <radialGradient id="${u}g"><stop offset="0" stop-color="#0b1e44" stop-opacity=".26"/><stop offset="1" stop-color="#0b1e44" stop-opacity="0"/></radialGradient>
       <radialGradient id="${u}l" cx=".35" cy=".35"><stop offset="0" stop-color="#b9d4f5"/><stop offset="1" stop-color="#22355c"/></radialGradient>
       <radialGradient id="${u}m" cx=".35" cy=".3"><stop offset="0" stop-color="#ffe58a"/><stop offset=".6" stop-color="#f2b632"/><stop offset="1" stop-color="#b47a10"/></radialGradient></defs>`);
-    if (o.view !== 'head') p.push(`<ellipse cx="50" cy="153.4" rx="21" ry="3.4" fill="url(#${u}g)"/>`);
+    // Avatar proportions: a big head (scaled up around the chin) on a slimmer, slightly shorter body (scaled around the feet).
+    const B = (html) => (html ? `<g transform="translate(50 153.4) scale(.88 .93) translate(-50 -153.4)">${html}</g>` : '');
+    const H = (html) => (html ? `<g transform="translate(50 53.15) scale(1.22) translate(-50 -45.6)">${html}</g>` : '');
+    if (o.view !== 'head') p.push(`<ellipse cx="50" cy="153.4" rx="18.5" ry="3.4" fill="url(#${u}g)"/>`);
 
     // Behind the figure.
-    if (hijab) p.push(`<path d="${HIJAB_BACK}" fill="url(#${u}w)" ${edge(hw)}/>`);
-    else if (showHair('back')) p.push(hairBack(s.hair, `url(#${u}h)`, hair));
-    if (s.gear === 'backpack') p.push(`<rect x="27.6" y="53.6" width="44.8" height="40" rx="8" fill="url(#${u}b)" ${edge('#c26a3a')}/>`);
+    if (hijab) p.push(H(`<clipPath id="${u}hb"><rect width="100" height="48"/></clipPath><path d="${HIJAB_BACK}" clip-path="url(#${u}hb)" fill="url(#${u}w)" ${edge(hw)}/>`));
+    else if (showHair('back')) p.push(H(hairBack(s.hair, `url(#${u}h)`, hair)));
+    const body = [];
+    if (s.gear === 'backpack') body.push(`<rect x="27.6" y="53.6" width="44.8" height="40" rx="8" fill="url(#${u}b)" ${edge('#c26a3a')}/>`);
 
     // Body.
-    p.push(ARMS.map((d) => `<path d="${d}" fill="url(#${u}s)" ${edge(shirt)}/>`).join(''));
-    p.push(`<path d="M26.3 89.4h7.15l-.05 2.4H26.25zM66.6 89.4h7.15l.05 2.4H66.6z" fill="${shade(shirt, 0.84)}"/>`);
-    p.push(`<path d="${LEGS}" fill="url(#${u}t)" ${edge(pants)}/>${line('M42 111v36M58 111v36', shade(pants, 1.5), 0.6, 0.3)}`);
-    p.push(`<path d="${SHOES}" fill="${SHOE}"/>${line('M37.4 150.2h9M53 150.2h9', '#fff', 0.7, 0.16)}`);
-    p.push(`<path d="M45.4 39.5h9.2v10.6c0 1.7-2.1 2.7-4.6 2.7s-4.6-1-4.6-2.7z" fill="${shade(skin, 0.9)}"/><path d="M45.4 41.4c1.4 2.4 3 3.4 4.6 3.4s3.2-1 4.6-3.4v3.6c-1.5 1.4-3 2-4.6 2s-3.1-.6-4.6-2z" fill="${shade(skin, 0.72)}" opacity=".55"/>`);
-    p.push(`<path d="${TORSO}" fill="url(#${u}s)" ${edge(shirt)}/>`);
-    p.push(`<path d="M44.6 49.6L50 54.4l-2.6 4.2-5.6-6.4zM55.4 49.6L50 54.4l2.6 4.2 5.6-6.4z" fill="${shade(shirt, 1.1)}" ${edge(shirt)}/>`);
-    p.push(`${line('M50 54.6V99', shade(shirt, 0.7), 0.55, 0.5)}${[61, 69, 77, 85].map((y) => `<circle cx="50" cy="${y}" r=".6" fill="${shade(shirt, 0.62)}"/>`).join('')}`);
+    body.push(ARMS.map((d) => `<path d="${d}" fill="url(#${u}s)" ${edge(shirt)}/>`).join(''));
+    body.push(`<path d="M26.3 89.4h7.15l-.05 2.4H26.25zM66.6 89.4h7.15l.05 2.4H66.6z" fill="${shade(shirt, 0.84)}"/>`);
+    body.push(`<path d="${LEGS}" fill="url(#${u}t)" ${edge(pants)}/>${line('M42 111v36M58 111v36', shade(pants, 1.5), 0.6, 0.3)}`);
+    body.push(`<path d="${SHOES}" fill="${SHOE}"/>${line('M37.4 150.2h9M53 150.2h9', '#fff', 0.7, 0.16)}`);
+    body.push(`<path d="M45.4 39.5h9.2v10.6c0 1.7-2.1 2.7-4.6 2.7s-4.6-1-4.6-2.7z" fill="${shade(skin, 0.9)}"/><path d="M45.4 41.4c1.4 2.4 3 3.4 4.6 3.4s3.2-1 4.6-3.4v3.6c-1.5 1.4-3 2-4.6 2s-3.1-.6-4.6-2z" fill="${shade(skin, 0.72)}" opacity=".55"/>`);
+    body.push(`<path d="${TORSO}" fill="url(#${u}s)" ${edge(shirt)}/>`);
+    body.push(`<path d="M44.6 49.6L50 54.4l-2.6 4.2-5.6-6.4zM55.4 49.6L50 54.4l2.6 4.2 5.6-6.4z" fill="${shade(shirt, 1.1)}" ${edge(shirt)}/>`);
+    body.push(`${line('M50 54.6V99', shade(shirt, 0.7), 0.55, 0.5)}${[61, 69, 77, 85].map((y) => `<circle cx="50" cy="${y}" r=".6" fill="${shade(shirt, 0.62)}"/>`).join('')}`);
     if (s.vest === 'field') {
-      p.push(`<path d="${VEST_PANELS}" fill="url(#${u}v)" ${edge(VEST)}/>`);
-      p.push(`<path d="M33.2 77.2h14.4v2.2H33.3zM52.4 77.2h14.4l-.1 2.2H52.4z" fill="#dfe5ee" opacity=".85"/>`);
-      p.push(['36.6', '55.8'].map((x) => `<rect x="${x}" y="62.4" width="7.6" height="6.4" rx=".9" fill="${shade(VEST, 0.86)}" ${edge(VEST)}/><rect x="${x}" y="62.4" width="7.6" height="2" rx=".6" fill="${shade(VEST, 0.74)}"/>`).join(''));
-      p.push(['35.8', '54.8'].map((x) => `<rect x="${x}" y="83" width="9.4" height="8.6" rx="1" fill="${shade(VEST, 0.86)}" ${edge(VEST)}/><rect x="${x}" y="83" width="9.4" height="2.2" rx=".6" fill="${shade(VEST, 0.74)}"/>`).join(''));
-      p.push(line('M47.7 57v43.6M52.3 57v43.6', shade(VEST, 1.45), 0.5, 0.5));
+      body.push(`<path d="${VEST_PANELS}" fill="url(#${u}v)" ${edge(VEST)}/>`);
+      body.push(`<path d="M33.2 77.2h14.4v2.2H33.3zM52.4 77.2h14.4l-.1 2.2H52.4z" fill="#dfe5ee" opacity=".85"/>`);
+      body.push(['36.6', '55.8'].map((x) => `<rect x="${x}" y="62.4" width="7.6" height="6.4" rx=".9" fill="${shade(VEST, 0.86)}" ${edge(VEST)}/><rect x="${x}" y="62.4" width="7.6" height="2" rx=".6" fill="${shade(VEST, 0.74)}"/>`).join(''));
+      body.push(['35.8', '54.8'].map((x) => `<rect x="${x}" y="83" width="9.4" height="8.6" rx="1" fill="${shade(VEST, 0.86)}" ${edge(VEST)}/><rect x="${x}" y="83" width="9.4" height="2.2" rx=".6" fill="${shade(VEST, 0.74)}"/>`).join(''));
+      body.push(line('M47.7 57v43.6M52.3 57v43.6', shade(VEST, 1.45), 0.5, 0.5));
     }
-    if (s.gear !== 'radio') p.push(gearHtml(s.gear, u));
-    if (hijab) p.push(`<path d="${HIJAB_DRAPE}" fill="url(#${u}w)" ${edge(hw)}/>${line('M40.6 51.6c3 2.6 6.1 3.6 9.4 3.6s6.4-1 9.4-3.6M36.4 55.8c4.2 2.4 8.6 3.4 13.6 3.4s9.4-1 13.6-3.4', shade(hw, 0.7), 0.7, 0.35)}`);
-    p.push(`<ellipse cx="29.8" cy="95.4" rx="3.4" ry="3.9" fill="url(#${u}k)" ${edge(skin)}/><ellipse cx="70.2" cy="95.4" rx="3.4" ry="3.9" fill="url(#${u}k)" ${edge(skin)}/>`);
-    if (s.gear === 'radio') p.push(gearHtml('radio', u));
-    if (showHair('back')) p.push(hairDrape(s.hair, `url(#${u}h)`, hair));
+    if (s.gear !== 'radio') body.push(gearHtml(s.gear, u));
+    p.push(B(body.join('')));
+    if (hijab) p.push(B(`<path d="${HIJAB_DRAPE}" fill="url(#${u}w)" ${edge(hw)}/>${line('M40.6 51.6c3 2.6 6.1 3.6 9.4 3.6s6.4-1 9.4-3.6M36.4 55.8c4.2 2.4 8.6 3.4 13.6 3.4s9.4-1 13.6-3.4', shade(hw, 0.7), 0.7, 0.35)}`));
+    p.push(B(`<ellipse cx="29.8" cy="95.4" rx="3.4" ry="3.9" fill="url(#${u}k)" ${edge(skin)}/><ellipse cx="70.2" cy="95.4" rx="3.4" ry="3.9" fill="url(#${u}k)" ${edge(skin)}/>${s.gear === 'radio' ? gearHtml('radio', u) : ''}`));
+    if (showHair('back')) p.push(H(hairDrape(s.hair, `url(#${u}h)`, hair)));
 
     // Head.
+    const head = [];
     if (!hijab) {
-      p.push(`<ellipse cx="37.4" cy="30.6" rx="2.4" ry="3.4" fill="url(#${u}k)" ${edge(skin)}/><ellipse cx="62.6" cy="30.6" rx="2.4" ry="3.4" fill="url(#${u}k)" ${edge(skin)}/>`);
-      p.push(line('M37.8 29.2q-.9 1.4 0 2.8M62.2 29.2q.9 1.4 0 2.8', shade(skin, 0.72), 0.6, 0.7));
+      head.push(`<ellipse cx="37.4" cy="30.6" rx="2.4" ry="3.4" fill="url(#${u}k)" ${edge(skin)}/><ellipse cx="62.6" cy="30.6" rx="2.4" ry="3.4" fill="url(#${u}k)" ${edge(skin)}/>`);
+      head.push(line('M37.8 29.2q-.9 1.4 0 2.8M62.2 29.2q.9 1.4 0 2.8', shade(skin, 0.72), 0.6, 0.7));
     }
-    p.push(`<path d="${FACE}" fill="url(#${u}k)" ${edge(skin)}/>`);
+    head.push(`<path d="${FACE}" fill="url(#${u}k)" ${edge(skin)}/>`);
     const f = face(s, o);
-    p.push(f.html);
-    if (showHair('front')) p.push(hairFront(s.hair, `url(#${u}h)`, hair));
-    p.push(headwearFront(s.headwear, `url(#${u}w)`, hw, `url(#${u}p)`));
-    if (hijab) p.push(`<path d="${HIJAB_FRAME}" fill-rule="evenodd" fill="url(#${u}w)" ${edge(hw)}/>`);
-    p.push(glassesHtml(s.glasses, f));
+    head.push(f.html);
+    if (showHair('front')) head.push(hairFront(s.hair, `url(#${u}h)`, hair));
+    head.push(headwearFront(s.headwear, `url(#${u}w)`, hw, `url(#${u}p)`));
+    if (hijab) head.push(`<path d="${HIJAB_FRAME}" fill-rule="evenodd" fill="url(#${u}w)" ${edge(hw)}/>`);
+    head.push(glassesHtml(s.glasses, f));
 
-    const vb = o.view === 'head' ? '28 5 44 44' : '0 0 100 160';
+    p.push(H(head.join('')));
+    const vb = o.view === 'head' ? '23 3.5 54 54' : '0 0 100 160';
     const a11y = o.title ? `role="img" aria-label="${esc(o.title)}"` : 'aria-hidden="true"';
     return `<svg class="agent-svg" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" focusable="false" data-hair="${esc(s.hair)}" data-headwear="${esc(s.headwear)}" ${a11y}>${p.join('')}</svg>`;
   }
@@ -317,6 +361,7 @@
 
   const ROWS = [
     { key: 'skin', label: 'Skin tone', kind: 'swatch', color: (v) => SKIN[v], name: (v) => `Skin tone ${v + 1}` },
+    { key: 'eyes', label: 'Eye color', kind: 'swatch', color: (v) => EYE_COLORS[v], name: (v) => `${v[0].toUpperCase()}${v.slice(1)} eyes` },
     { key: 'hair', label: 'Hair', kind: 'head' },
     { key: 'hairColor', label: 'Hair color', kind: 'swatch', color: (v) => HAIR_COLORS[v], name: (v) => `${v[0].toUpperCase()}${v.slice(1)} hair` },
     { key: 'headwear', label: 'Headwear', kind: 'head' },
@@ -358,7 +403,7 @@
 
   function draw() {
     const el = document.getElementById('agent-modal');
-    el.querySelector('#agent-preview').innerHTML = svg(draft, { title: 'Your avatar', mood: 'grin' });
+    el.querySelector('#agent-preview').innerHTML = svg(draft, { title: 'Your avatar' });
     el.querySelector('#agent-rows').innerHTML = ROWS.map(rowHtml).join('');
   }
 
