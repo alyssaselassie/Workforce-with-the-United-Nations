@@ -1332,7 +1332,7 @@ window.APP_DATA = {
    }
   ],
   "frameworks": {
-   "dimensionsIntro": "A person cannot be defined by a single dimension. Building on the ReliefMaps+ approach to lived experience (social positions, places and emotions), this tool adds Voice / power for UN fieldwork. Every scenario is tagged with the dimensions it involves, and every response choice records which dimensions it overlooks.",
+   "dimensionsIntro": "A person cannot be defined by a single dimension. Building on the Relief Maps+ approach to lived experience (social positions, places and emotions), this tool adds Voice / power for UN fieldwork. Every scenario is tagged with the dimensions it involves, and every response choice records which dimensions it overlooks.",
    "dimensionsRule": "Each scenario names at least three dimensions in its stem. A dimension is only included when it changes the decision. The dimensions describe the situation; the four competencies score the response.",
    "cqCapabilities": [
     {

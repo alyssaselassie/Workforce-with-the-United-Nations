@@ -305,6 +305,7 @@
             <div class="col-md-7">
               <p class="mb-1 fw-semibold">UN Cultural Intelligence &amp; Bias Navigator</p>
               <p class="small mb-0">An educational technology prototype. <strong>This is not an official United Nations product</strong> and is not endorsed by the UN. Scenarios are fictional composites. Check mission information against official sources.</p>
+              <p class="small mb-0 mt-2">Dimensions framework adapted from <a href="https://reliefmaps.upf.edu" target="_blank" rel="noopener">Relief Maps+</a> by Maria Rodó-Zárate and the INTERMAPS team, Universitat Pompeu Fabra. <a href="toolkit.html#dimensions">Full credit</a>.</p>
             </div>
             <div class="col-md-5">
               <p class="small fw-semibold mb-1">Official sources</p>
