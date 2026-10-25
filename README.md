@@ -52,11 +52,11 @@ The Navigator is built around light, practical gamification: every reward points
 
 ### Deployment globe, avatars and medals
 
-The game layer stays professional: plain language, a calm palette and no leaderboards. All characters and settings are original and built in code, with no third-party models, images or game assets. Where WebGL is available the characters are 3D (`js/world3d.js`, [Three.js](https://threejs.org/) 0.158, loaded only when a 3D view is needed), in the same glossy clay-toy style as our group's companion app: big round heads, shiny eyes, rosy cheeks, chunky glossy hair, pastel hoodies and mitten hands, in soft studio light. Elsewhere, drawn SVG versions are shown instead.
+The game layer stays professional: plain language, a calm palette and no leaderboards. All characters and art are original inline SVG, with no images or third-party game assets.
 
 - **Deployment globe** (`js/deploy.js`): a D3 globe of the world's countries on the home page. Each exercise is pinned to the duty station of its mission context (for example, UNMISS in South Sudan); the scenarios themselves are fictional. Choose a pin or use the exercise list to see the role, time, mission context and route, then select **Fly there**: an airplane follows the great-circle route from your last location (UN Headquarters, New York, at the start) while the globe turns beneath it, and the exercise opens on arrival. The pin for your next quest pulses, and completed exercises show their medal. Drag to turn the globe; with reduced motion, the trip is instant.
-- **Avatars** (`js/avatar.js`): an avatar creator with 8 skin tones, hair styles and colors, head coverings (hijab, turban), facial hair, glasses, shirts and a field vest. Extra gear (backpack, camera, radio, binoculars, award pin, sun hat, headphones, dyed hair) unlocks with levels. Skin tones, hair and head coverings are never locked. In the creator, your 3D avatar waves hello, then sways gently on a pastel card; drag to turn it, and it bounces softly when you change an option. Saving renders a 3D portrait for the nav, the home page and the profile (when there is no photo). Open the creator from the home page, the profile, or any page with `?agent=1`.
-- **Story scenes** (`js/scenes.js`, `js/world3d.js`): six settings (a village, a mission office, a needs-assessment site, a market street, a town square, by day or at dusk, and farmland). In 3D, each scene is a soft pastel card tinted for its setting, like the group's app; without WebGL, painted backdrops with props such as a hand pump, a signpost, a farm track and evening lanterns are shown instead. The characters pop in, your avatar hops into place, and they breathe, blink, talk, look at whoever is speaking and react to your choices: thumbs-up and a laugh for a strong choice, a hand on the chin for a partial one, hands on the cheeks for a weak one, with small colored action lines. The camera holds still and the scene stays live from step to step; with reduced motion the characters hold still too. Pages and scenario steps fade in softly. Each scenario's `scene` field sets its fictional place, mission context, setting and story character. Your choice appears in your speech bubble, Mentor Rio responds, and the full feedback stays below the scene.
+- **Avatars** (`js/avatar.js`): an avatar creator with 8 skin tones, hair styles and colors, head coverings (hijab, turban), facial hair, glasses, shirts and a field vest. Extra gear (backpack, camera, radio, binoculars, award pin, sun hat, headphones, dyed hair) unlocks with levels. Skin tones, hair and head coverings are never locked. The avatar appears in the nav, on the home page, on the profile when there is no photo and in every scene. Open the creator from the home page, the profile, or any page with `?agent=1`.
+- **Story scenes** (`js/scenes.js`): six backdrops (village, office, camp, market, town, fields) with props. Each scenario's `scene` field sets its fictional place, mission context, backdrop and story character. Your choice appears in your speech bubble, Mentor Rio responds, and the full feedback stays below the scene.
 - **Medals:** finishing a scenario earns a bronze, silver or gold medal by stars. Medals show on the globe and in the profile's medal case.
 - **Mentor tips:** Mentor Rio gives a short, practical tip at the top of each module page (`data-tip` attributes).
 
@@ -70,10 +70,8 @@ styles.css             shared styles (Bootstrap 5.3 + design tokens)
 script.js              shared core: data loading, progress storage, header/footer, helpers
 js/game.js             gamification layer: XP ledger, levels, quests, badges, medals, toasts, level chip
 js/avatar.js           avatars, story characters and the avatar creator
-js/scenes.js           story scenes (drawn), speech bubbles, medals and mentor tips
-js/world3d.js          3D clay-style characters, the live story stage, the creator preview and portraits
+js/scenes.js           story scene backdrops, speech bubbles, medals and mentor tips
 js/deploy.js           home page deployment globe and airplane travel
-img/mentor-rio.png     3D clay portrait of Mentor Rio for the tips
 js/detective.js        Bias Detective mini-game on the toolkit page
 js/                    one module per page (home, map, scenarios, toolkit, collaboration, progress, profile)
 data/missions.json     mission locations, scope, status, sources, verification flags
@@ -97,7 +95,7 @@ Option B: double-click `index.html`. Browsers block `fetch()` on `file://`, so t
 python3 tools/bundle_data.py
 ```
 
-An internet connection is needed for the CDN libraries (Bootstrap, Bootstrap Icons, D3, TopoJSON, Three.js), the world map data and the mission photos. Without them, the map page still shows the full mission table.
+An internet connection is needed for the CDN libraries (Bootstrap, Bootstrap Icons, D3, TopoJSON), the world map data and the mission photos. Without them, the map page still shows the full mission table.
 
 ## Deploying to GitHub Pages
 
@@ -173,7 +171,7 @@ Semantic landmarks, a skip link, keyboard-operable map rows and markers, ARIA li
 
 Dimensions framework: adapted from Relief Maps+, created by Maria Rodó-Zárate and the INTERMAPS team at Universitat Pompeu Fabra. Voice / power is this project's addition.
 
-Font: Nunito (SIL Open Font License), via Google Fonts. Map data: Natural Earth (public domain), via world-atlas (ISC). D3 (ISC). topojson-client (ISC). Three.js (MIT). Bootstrap (MIT). Mission photos: Wikimedia Commons, credited individually under each file's own license. Boundaries and names on the map do not imply official endorsement or acceptance by the United Nations.
+Font: Nunito (SIL Open Font License), via Google Fonts. Map data: Natural Earth (public domain), via world-atlas (ISC). D3 (ISC). topojson-client (ISC). Bootstrap (MIT). Mission photos: Wikimedia Commons, credited individually under each file's own license. Boundaries and names on the map do not imply official endorsement or acceptance by the United Nations.
 
 ## References
 
