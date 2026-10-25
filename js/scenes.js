@@ -356,7 +356,7 @@
   function mentorTip(text) {
     return `
       <div class="mentor-tip">
-        <span class="mentor-head" aria-hidden="true">${Avatar.svg(Avatar.NPC.mentor, { view: 'head', look: 'right' })}</span>
+        <span class="mentor-head" aria-hidden="true"><img src="img/mentor-rio.png" alt="" width="52" height="52" loading="lazy"></span>
         <p class="tip-bubble mb-0"><strong>${esc(MENTOR.name)}:</strong> ${esc(text)}</p>
       </div>`;
   }

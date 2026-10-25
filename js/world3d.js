@@ -530,7 +530,7 @@
           head.add(mesh(G('rimSquare', () => new T.ExtrudeGeometry(outer, { depth: 0.004, bevelEnabled: false, curveSegments: 6 })), frame, { p: [x, 0.006, z - 0.002] }, true));
           head.add(mesh(G('lensSquare', () => new T.ShapeGeometry(rr(new T.Shape(), 0.044, 0.03, 0.007))), lens, { p: [x, 0.006, z] }, true));
         }
-        head.add(mesh(G('temple', () => new T.BoxGeometry(0.003, 0.003, 0.085)), frame, { p: [side * 0.072, 0.009, z - 0.045], r: [0, side * 0.32, 0] }, true));
+        head.add(mesh(G('temple', () => new T.BoxGeometry(0.003, 0.003, 0.1)), frame, { p: [side * 0.077, 0.009, 0.052], r: [0, -side * 0.344, 0] }, true));
       });
       head.add(mesh(G('bridge', () => tube([[-0.013, 0.009, 0], [0, 0.014, 0.002], [0.013, 0.009, 0]], 0.0018, 10)), frame, { p: [0, 0, surface(0, 0.01) + 0.005] }, true));
     }
@@ -958,7 +958,7 @@
 
   // A lumpy canopy blob for trees and bushes.
   const canopyGeo = () => G('canopy', () => {
-    const g = new T.IcosahedronGeometry(1, 3);
+    const g = new T.SphereGeometry(1, 32, 22);
     const p = g.attributes.position;
     for (let i = 0; i < p.count; i += 1) {
       const v = V3(p.getX(i), p.getY(i), p.getZ(i));
@@ -1156,6 +1156,21 @@
     return g;
   }
 
+  // A soft additive halo around a light at dusk.
+  function glow(color, size) {
+    const tex = canvasTex('glow', 128, 128, (g) => {
+      const rg = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+      rg.addColorStop(0, 'rgba(255,255,255,0.95)');
+      rg.addColorStop(0.25, 'rgba(255,255,255,0.4)');
+      rg.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = rg;
+      g.fillRect(0, 0, 128, 128);
+    });
+    const sp = new T.Sprite(G(`mat:glow${color}`, () => new T.SpriteMaterial({ map: tex, color, blending: T.AdditiveBlending, depthWrite: false, transparent: true, fog: false })));
+    sp.scale.set(size, size, 1);
+    return sp;
+  }
+
   const SKY = {
     day: { top: '#2f80d0', horizon: '#d4ebf8', glow: '#fff1c8', sun: [-0.35, 0.55, -0.75] },
     golden: { top: '#a7697a', horizon: '#fbd2a2', glow: '#ffcb7a', sun: [0.55, 0.1, -0.85] }
@@ -1299,16 +1314,16 @@
       const { add } = ctx;
       add(ctx.ground('tiles', '#d8c3a0'));
       const row = [[-11, 6, 7.5, '#e8cda6', '#3f8f9a'], [-5.2, 5.4, 6.4, '#dcb894', null], [0.2, 5.2, 8.2, '#efdcc2', '#4d6fa8'], [5.4, 5.2, 6.6, '#d8b48c', null], [10.8, 5.6, 7.8, '#e6d3b8', '#a65d3f']];
-      row.forEach(([x, w, h, wall, shutters], i) => add(building({ w, h, wall, shutters, balcony: i % 2 === 1, awning: ['#c2603f', '#3f8f9a', '#d39a2b'][i % 3] }, { p: [x, 0, -9] })));
+      row.forEach(([x, w, h, wall, shutters], i) => add(building({ w, h, wall, shutters, balcony: i % 2 === 1, awning: ['#c2603f', '#3f8f9a', '#d39a2b'][i % 3] }, { p: [x * 1.15, 0, -12.5] })));
       // Rooftop radio mast.
-      const mast = group({ p: [5.4, 6.6, -10] });
+      const mast = group({ p: [6.2, 6.6, -14] });
       [-1, 1].forEach((s1) => [-1, 1].forEach((s2) => mast.add(mesh(G('mastLeg', () => new T.CylinderGeometry(0.025, 0.025, 3.2, 6)), M('#7d8597', { metalness: 0.6, roughness: 0.3 }), { p: [s1 * 0.12, 1.6, s2 * 0.12], r: [s2 * 0.035, 0, -s1 * 0.035] }, true))));
       mast.add(mesh(G('beacon', () => new T.SphereGeometry(0.08, 12, 8)), G('mat:beacon', () => new T.MeshBasicMaterial({ color: '#ff5d4f' })), { p: [0, 3.25, 0] }, true));
       add(mast);
       add(stall('#c2603f', { p: [-2.0, 0, -3.2], r: [0, 0.1, 0] }));
       add(stall('#3f8f9a', { p: [1.6, 0, -4.2], r: [0, -0.05, 0] }));
       add(stall('#d39a2b', { p: [5.4, 0, -3.4], r: [0, -0.15, 0] }));
-      const flags = catenary([-12, 4.6, -6.5], [12, 4.4, -6.5], 0.8, 24);
+      const flags = catenary([-12, 3.9, -7.5], [12, 3.8, -7.5], 0.7, 26);
       add(mesh(new T.TubeGeometry(new T.CatmullRomCurve3(flags), 48, 0.012, 4), M('#5b4a3e'), null, true));
       const flag = new T.Shape();
       flag.moveTo(-0.16, 0);
@@ -1320,10 +1335,10 @@
     town(ctx) {
       const { add, golden } = ctx;
       add(ctx.ground('tiles', '#cfc8bc'));
-      [[-12, 6.5, 8.5, '#e9d6b9', null], [-6.6, 5, 7, '#d6e0ea', null], [6.8, 5.6, 8.6, '#f0dcc4', '#5a7fa8'], [12.4, 5.8, 7.2, '#dfe8d8', null]]
-        .forEach(([x, w, h, wall, shutters], i) => add(building({ w, h, wall, shutters, glow: golden, balcony: i % 2 === 1, awning: i === 3 ? '#4d6fa8' : null }, { p: [x, 0, -10] })));
+      [[-13.5, 6.5, 7.4, '#e9d6b9', null], [-7.6, 5, 6.2, '#d6e0ea', null], [7.8, 5.6, 7.6, '#f0dcc4', '#5a7fa8'], [13.6, 5.8, 6.4, '#dfe8d8', null]]
+        .forEach(([x, w, h, wall, shutters], i) => add(building({ w, h, wall, shutters, glow: golden, balcony: i % 2 === 1, awning: i === 3 ? '#4d6fa8' : null }, { p: [x, 0, -14] })));
       // The civic portico.
-      const civic = group({ p: [0.2, 0, -10.5] });
+      const civic = group({ p: [0.2, 0, -14.5] });
       const stone = M('#efe5d4', { roughness: 0.85 });
       civic.add(box(8, 5.4, 4, stone, { p: [0, 3.0, -1] }, true));
       civic.add(box(7.4, 4.4, 0.2, M('#cbbda5', { roughness: 0.9 }), { p: [0, 2.8, 1.0] }, true));
@@ -1342,7 +1357,8 @@
         const lamp = group({ p: [x, 0, zz] }, [cyl(0.06, 0.08, 3.6, M('#4a5266', { metalness: 0.5, roughness: 0.4 }), { p: [0, 1.8, 0] }, 12),
           box(0.5, 0.06, 0.06, M('#4a5266'), { p: [0.22, 3.55, 0] }),
           mesh(G('lampHead', () => new T.ConeGeometry(0.2, 0.22, 16, 1, true)), M('#4a5266', { side: T.DoubleSide }), { p: [0.44, 3.45, 0] }),
-          mesh(G('bulb', () => new T.SphereGeometry(0.09, 12, 8)), golden ? G('mat:bulbOn', () => new T.MeshBasicMaterial({ color: '#fff1c4' })) : M('#eef2f6', { roughness: 0.2 }), { p: [0.44, 3.36, 0] }, true)]);
+          mesh(G('bulb', () => new T.SphereGeometry(0.09, 12, 8)), golden ? M('#fff1c4', { emissive: '#ffe2a0', emissiveIntensity: 1.6 }) : M('#eef2f6', { roughness: 0.2 }), { p: [0.44, 3.36, 0] }, true)]);
+        if (golden) lamp.add(place(glow('#ffd9a0', 1.4), { p: [0.44, 3.32, 0] }));
         if (golden) {
           const pl = new T.PointLight('#ffcf8a', 6, 9, 1.6);
           pl.position.set(0.44, 3.2, 0);
@@ -1448,16 +1464,16 @@
       [-0.55, 0.55].forEach((dx) => ctx.add(mesh(G(`rut${dx}`, () => new T.TubeGeometry(new T.CatmullRomCurve3([V3(-1.8 + dx, 0.016, 7), V3(-0.3 + dx * 0.8, 0.016, -2), V3(1.6 + dx * 0.5, 0.016, -14), V3(2.8 + dx * 0.2, 0.016, -40)]), 60, 0.07, 4).scale(1, 0.15, 1)), M('#a8834f', { roughness: 1 }), null, true)));
     },
     lanterns(ctx) {
-      const pts = catenary([-9, 3.6, -2.2], [9, 3.5, -2.2], 0.6, 18);
+      const pts = catenary([-9, 2.85, -2.8], [9, 2.8, -2.8], 0.45, 18);
       ctx.add(mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 40, 0.01, 4), M('#4a3f3a'), null, true));
       pts.forEach((p, i) => {
         if (i === 0 || i === pts.length - 1) return;
         const on = ctx.golden;
-        const lan = group({ p: [p.x, p.y - 0.14, p.z] }, [mesh(G('lantern', () => new T.CylinderGeometry(0.07, 0.07, 0.18, 12)), on ? G(`mat:lanternOn${i % 3}`, () => new T.MeshBasicMaterial({ color: ['#ffd27a', '#ffb07a', '#ffe6a3'][i % 3] })) : M(['#ffd27a', '#ff9f6b', '#ffe6a3'][i % 3], { roughness: 0.5 }), null, true)]);
-        if (on && i % 6 === 3) {
-          const pl = new T.PointLight('#ffc27a', 3, 6, 1.6);
-          lan.add(pl);
-        }
+        const color = ['#ffcf73', '#ff9f6b', '#ffe39a'][i % 3];
+        const lan = group({ p: [p.x, p.y - 0.13, p.z] }, [mesh(G('lantern', () => new T.SphereGeometry(0.075, 16, 12).scale(1, 1.2, 1)), M(color, on ? { roughness: 0.6, emissive: color, emissiveIntensity: 1.4 } : { roughness: 0.6 }), null, true),
+          mesh(G('lanternCap', () => new T.CylinderGeometry(0.03, 0.04, 0.03, 10)), M('#4a3f3a'), { p: [0, 0.095, 0] }, true)]);
+        if (on) lan.add(glow(color, 0.75));
+        if (on && i % 6 === 3) lan.add(new T.PointLight('#ffc27a', 3, 6, 1.6));
         ctx.add(lan);
       });
     }
@@ -1489,7 +1505,7 @@
   // ---------- the live story stage ----------
   // One stage stays alive while a scenario is played: re-rendering the same scene only updates moods,
   // reactions and who is speaking, so the camera doesn't fly in again at every step.
-  const FACING = { you: 0.5, npc: -0.38, mentor: -0.52 };
+  const FACING = { you: 0.42, npc: -0.3, mentor: -0.42 };
   const DEPTH = { you: 0.35, npc: 0, mentor: -0.2 };
   const SPOTS = { wide: { you: 0.13, npc: 0.63, mentor: 0.86 }, narrow: { you: 0.13, npc: 0.58, mentor: 0.875 } };
   let live = null;
@@ -1541,7 +1557,7 @@
     L.renderer.setSize(w, h, false);
     L.camera.aspect = w / h;
     L.camera.updateProjectionMatrix();
-    L.home = { pos: V3(0, 1.62, 5.7), look: V3(0, 0.98, 0) };
+    L.home = { pos: V3(0, 1.55, 5.2), look: V3(0, 1.0, 0) };
     L.camera.position.copy(L.home.pos);
     L.camera.lookAt(L.home.look);
     L.camera.updateMatrixWorld();
@@ -1607,7 +1623,7 @@
 
   function frame(L, now) {
     L.raf = 0;
-    if (L !== live || !L.canvas.isConnected) return;
+    if (L !== live || !L.canvas.isConnected || !L.visible || document.hidden) return;
     const dt = Math.min(0.05, (now - L.last) / 1000);
     L.last = now;
     L.t += dt;
@@ -1617,7 +1633,8 @@
       if (o) {
         const dx = o.root.position.x - f.root.position.x;
         const dz = o.root.position.z - f.root.position.z;
-        f.lookTarget = Math.max(-0.85, Math.min(0.85, Math.atan2(dx, dz) - f.root.rotation.y));
+        // Like actors on a stage, characters turn partly toward each other and keep their faces to the audience.
+        f.lookTarget = Math.max(-0.55, Math.min(0.55, (Math.atan2(dx, dz) - f.root.rotation.y) * 0.6));
       }
       animate(f, t, dt);
     });
@@ -1644,6 +1661,8 @@
       L.shown = true;
       L.canvas.style.opacity = '1';
       L.stage.classList.add('is-3d');
+      const A = window.Avatar;
+      if (A && A.isSet() && !A.portraitUrl()) setTimeout(() => A.storePortrait(portrait(A.get(), 256)), 400);
     }
     const busy = t < L.busyUntil || L.fly || Object.values(L.figs).some((f) => f.action && f.action.name !== 'think-hold' || t < f.talkUntil);
     if (reduceMotion && !busy) return;
@@ -1711,9 +1730,120 @@
     return true;
   }
 
+  // ---------- the avatar turntable ----------
+  // In the creator the avatar stands on a turntable that spins slowly like the globe; drag to turn it.
+  function turntable(host, spec) {
+    const R = renderer(host, { alpha: true });
+    R.domElement.className = 'turntable-3d';
+    R.domElement.setAttribute('role', 'img');
+    R.domElement.setAttribute('aria-label', 'Your avatar in 3D. Drag to turn it.');
+    const scene = new T.Scene();
+    lights(scene, {});
+    const floor = mesh(G('ttFloor', () => new T.CircleGeometry(1.4, 48).rotateX(-Math.PI / 2)), G('mat:ttShadow', () => new T.ShadowMaterial({ opacity: 0.22 })), null, true);
+    floor.receiveShadow = true;
+    scene.add(floor);
+    const cam = new T.PerspectiveCamera(26, 0.8, 0.1, 50);
+    const S = { fig: null, angle: 0.35, spin: reduceMotion ? 0 : 0.32, drag: null, resumeAt: 0, face: null, t: 0, last: performance.now(), raf: 0, alive: true };
+    const set = (sp) => {
+      if (S.fig) dispose(S.fig);
+      S.fig = figure(sp, { mood: 'happy' });
+      S.fig.root.add(blob(0.9));
+      scene.add(S.fig.root);
+    };
+    set(spec);
+    if (!reduceMotion) play(S.fig, 'wave', 0.3);
+    const size = () => {
+      const w = host.clientWidth || 300;
+      const h = host.clientHeight || 380;
+      R.setSize(w, h, false);
+      cam.aspect = w / h;
+      cam.position.set(0, 1.0, 4.6 * Math.max(1, 0.8 / cam.aspect));
+      cam.lookAt(0, 0.9, 0);
+      cam.updateProjectionMatrix();
+    };
+    const ro = new ResizeObserver(size);
+    ro.observe(host);
+    size();
+    const el = R.domElement;
+    el.addEventListener('pointerdown', (e) => {
+      S.drag = { x: e.clientX, angle: S.angle };
+      el.setPointerCapture(e.pointerId);
+    });
+    el.addEventListener('pointermove', (e) => {
+      if (!S.drag) return;
+      S.angle = S.drag.angle + (e.clientX - S.drag.x) * 0.012;
+    });
+    const end = () => {
+      S.drag = null;
+      S.resumeAt = S.t + 2.5;
+    };
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+    function frame(now) {
+      S.raf = 0;
+      if (!S.alive || !el.isConnected) return;
+      const dt = Math.min(0.05, (now - S.last) / 1000);
+      S.last = now;
+      S.t += dt;
+      if (S.face != null && !S.drag) {
+        S.angle = damp(S.angle, S.face, 5, dt);
+        if (Math.abs(S.angle - S.face) < 0.01) S.face = null;
+      } else if (!S.drag && S.t > S.resumeAt) {
+        S.angle += S.spin * dt;
+      }
+      S.fig.root.rotation.y = S.angle;
+      animate(S.fig, S.t, dt);
+      R.render(scene, cam);
+      S.raf = requestAnimationFrame(frame);
+    }
+    S.raf = requestAnimationFrame(frame);
+    return {
+      // A new look turns the avatar to face you for a moment before the spin resumes.
+      update(sp) {
+        set(sp);
+        S.face = S.angle + ((((0.35 - S.angle) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+        S.resumeAt = S.t + 3;
+      },
+      dispose() {
+        S.alive = false;
+        cancelAnimationFrame(S.raf);
+        ro.disconnect();
+        if (S.fig) dispose(S.fig);
+        R.dispose();
+        el.remove();
+      }
+    };
+  }
+
+  // ---------- portraits ----------
+  // A head-and-shoulders render as an image, for the nav, the home card, the profile and mentor tips.
+  let shot = null;
+  function portrait(spec, size, o) {
+    const px = size || 256;
+    if (!shot) {
+      shot = { R: renderer(null, { alpha: true, keep: true, dpr: 1 }), scene: new T.Scene(), cam: new T.PerspectiveCamera(19, 1, 0.1, 20) };
+      lights(shot.scene, {});
+    }
+    const { R, scene, cam } = shot;
+    R.setSize(px, px, false);
+    const f = figure(spec, { mood: (o && o.mood) || 'happy' });
+    f.root.rotation.y = (o && o.turn) != null ? o.turn : 0.28;
+    scene.add(f.root);
+    animate(f, 0.6, 0.016);
+    cam.position.set(0.06, 1.64, 1.45);
+    cam.lookAt(0, 1.6, 0);
+    R.setClearColor(0x000000, 0);
+    R.render(scene, cam);
+    const url = R.domElement.toDataURL('image/png');
+    dispose(f);
+    return url;
+  }
+
   window.World3D = {
     load,
     attachStage,
+    turntable: (host, spec) => turntable(host, spec),
+    portrait: (spec, size, o) => portrait(spec, size, o),
     isLive: (cfg) => Boolean(T && live && live.shown && live.key === sceneKey(cfg)),
     get ready() { return Boolean(T); },
     // Internal pieces shared with the scene builders below.

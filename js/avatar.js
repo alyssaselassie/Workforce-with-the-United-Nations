@@ -4,6 +4,8 @@
   'use strict';
   const { esc, Store } = App;
   const KEY = 'uncq.avatar.v1';
+  const PORTRAIT = 'uncq.portrait.v1';
+  const VER = ((document.currentScript && document.currentScript.src) || '').split('?')[1] || '';
   const SKIN = ['#fde4cf', '#f5cfaa', '#e8b388', '#d49a68', '#b77a4c', '#93603a', '#6e4427', '#4d2f1c'];
   const LIPS = ['#c26f60', '#b9654f', '#a95a44', '#97503b', '#7f4231', '#683525', '#552a1d', '#432016'];
   const HAIR_COLORS = { black: '#2b2422', brown: '#5b3a24', chestnut: '#8c512b', auburn: '#a8442a', blonde: '#dcb56a', gray: '#b9b9c0', teal: '#21a69a', purple: '#8a57d6' };
@@ -304,13 +306,41 @@
   }
 
   // Round head for the nav and profile, sized like the photo avatar it stands in for.
+  // A 3D portrait, rendered when the avatar is saved in a browser with WebGL; else the drawn head.
+  function portraitUrl() {
+    const p = Store.read(PORTRAIT, null);
+    return p && p.key === JSON.stringify(get()) ? p.url : '';
+  }
+  function storePortrait(url) {
+    if (url) Store.write(PORTRAIT, { key: JSON.stringify(get()), url });
+  }
+  function portraitHtml(title) {
+    const url = portraitUrl();
+    return url ? `<img class="agent-portrait" src="${url}" alt="${esc(title || '')}">` : svg(get(), { view: 'head', title });
+  }
   function headHtml(size) {
-    return `<span class="avatar avatar-agent" style="width:${size}px;height:${size}px" aria-hidden="true">${svg(get(), { view: 'head' })}</span>`;
+    return `<span class="avatar avatar-agent" style="width:${size}px;height:${size}px" aria-hidden="true">${portraitHtml()}</span>`;
+  }
+
+  // The creator's preview turns 3D (js/world3d.js) where WebGL is available.
+  let three = null;
+  function load3D() {
+    if (!three) {
+      three = (window.World3D ? Promise.resolve() : new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = `js/world3d.js${VER ? `?${VER}` : ''}`;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      })).then(() => World3D.load());
+    }
+    return three;
   }
 
   // ---------- creator ----------
   let draft = null;
   let modal = null;
+  let turn = null;
 
   const ROWS = [
     { key: 'skin', label: 'Skin tone', kind: 'swatch', color: (v) => SKIN[v], name: (v) => `Skin tone ${v + 1}` },
@@ -355,7 +385,8 @@
 
   function draw() {
     const el = document.getElementById('agent-modal');
-    el.querySelector('#agent-preview').innerHTML = svg(draft, { title: 'Your avatar', mood: 'grin' });
+    if (turn) turn.update(draft);
+    else el.querySelector('#agent-preview').innerHTML = svg(draft, { title: 'Your avatar', mood: 'grin' });
     el.querySelector('#agent-rows').innerHTML = ROWS.map(rowHtml).join('');
   }
 
@@ -408,6 +439,11 @@
     });
     el.querySelector('#agent-save').addEventListener('click', () => {
       save(draft);
+      if (window.World3D && World3D.ready) {
+        try {
+          storePortrait(World3D.portrait(get(), 256));
+        } catch (e) { /* the drawn head stays */ }
+      }
       const name = el.querySelector('#agent-name').value.trim();
       const pr = App.Profile.get();
       if (name && name !== pr.name) App.Profile.save(Object.assign(pr, { name }));
@@ -417,6 +453,23 @@
       if (modal) modal.hide();
     });
     modal = window.bootstrap ? new bootstrap.Modal(el) : null;
+    el.addEventListener('shown.bs.modal', () => {
+      if (window.World3D && World3D.ready && !turn) {
+        const prev = el.querySelector('#agent-preview');
+        prev.innerHTML = '';
+        prev.classList.add('is-3d');
+        turn = World3D.turntable(prev, draft);
+      }
+    });
+    el.addEventListener('hidden.bs.modal', () => {
+      if (turn) {
+        turn.dispose();
+        turn = null;
+      }
+      const prev = el.querySelector('#agent-preview');
+      prev.classList.remove('is-3d');
+      prev.innerHTML = svg(draft || get(), { title: 'Your avatar', mood: 'grin' });
+    });
   }
 
   function openCreator() {
@@ -425,6 +478,15 @@
     document.getElementById('agent-name').value = App.Profile.get().name || '';
     draw();
     if (modal) modal.show();
+    // Swap the drawn preview for a 3D turntable once Three.js is ready.
+    load3D().then(() => {
+      const el = document.getElementById('agent-modal');
+      const prev = el.querySelector('#agent-preview');
+      if (turn || !el.classList.contains('show')) return;
+      prev.innerHTML = '';
+      prev.classList.add('is-3d');
+      turn = World3D.turntable(prev, draft);
+    }).catch(() => {});
   }
 
   // Any page can open the creator with ?agent=1, and any element with data-agent-open.
@@ -440,5 +502,5 @@
 
   const PALETTE = { SKIN, LIPS, HAIR_COLORS, COLORS, TROUSERS, VEST, SHOE };
 
-  window.Avatar = { svg, get, isSet, save, headHtml, openCreator, NPC, OPTIONS, UNLOCK, DEFAULT, PALETTE };
+  window.Avatar = { svg, get, isSet, save, headHtml, portraitHtml, portraitUrl, storePortrait, openCreator, NPC, OPTIONS, UNLOCK, DEFAULT, PALETTE };
 })();
