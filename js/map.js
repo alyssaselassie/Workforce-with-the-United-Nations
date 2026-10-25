@@ -39,7 +39,8 @@
     notice: document.getElementById('data-notice'),
     concluded: document.getElementById('concluded'),
     globe: document.getElementById('globe'),
-    tip: document.getElementById('g-tip')
+    tip: document.getElementById('g-tip'),
+    passport: document.getElementById('passport')
   };
 
   let data, scenarios;
@@ -87,6 +88,32 @@
 
   function syncChips() {
     els.chips.querySelectorAll('.region-chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.region === els.region.value)));
+  }
+
+  // ---------- field passport ----------
+  // Opening a mission stamps it. Region chips show how many of their missions are stamped.
+  function syncPassport() {
+    const stamps = Game.stamps();
+    const stamped = data.missions.filter((m) => stamps[m.id]);
+    const regions = regionNames.filter((r) => stamped.some((m) => m.region === r));
+    const share = Math.round((stamped.length / data.missions.length) * 100);
+    els.chips.querySelectorAll('.region-chip[data-region]:not([data-region=""])').forEach((chip) => {
+      const all = data.missions.filter((m) => m.region === chip.dataset.region);
+      const done = all.filter((m) => stamps[m.id]).length;
+      chip.querySelector('.chip-count').textContent = stamped.length ? `${done}/${all.length}` : all.length;
+      chip.title = `${done} of ${all.length} missions stamped`;
+    });
+    if (!els.passport) return;
+    els.passport.innerHTML = `
+      <span class="passport-icon" aria-hidden="true"><i class="bi bi-passport"></i></span>
+      <div>
+        <div class="fw-bold">Field passport</div>
+        <div class="small text-muted-2">${stamped.length
+          ? `<strong>${stamped.length}</strong> of ${data.missions.length} missions stamped · <strong>${regions.length}</strong> of ${regionNames.length} regions`
+          : 'Open any mission to stamp your passport.'}</div>
+      </div>
+      <div class="progress" role="progressbar" aria-label="Missions stamped" aria-valuenow="${share}" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width:${share}%"></div></div>
+      <span class="xp-avail">+${Game.XP.stamp} XP per mission · +${Game.XP.region} XP per new region</span>`;
   }
 
   els.chips.addEventListener('click', (e) => {
@@ -239,6 +266,9 @@
         pin.append('circle').attr('class', 'pin-dot');
         pin.append('text').attr('class', 'pin-count');
         pin.append('text').attr('class', 'pin-label').attr('x', 13).attr('y', 4);
+        const stamp = pin.append('g').attr('class', 'pin-stamp').attr('aria-hidden', 'true');
+        stamp.append('circle').attr('r', 5.5);
+        stamp.append('text').text('✓');
         pin.on('click', (event, g) => activate(g))
           .on('keydown', (event, g) => {
             if (event.key === 'Enter' || event.key === ' ') {
@@ -252,6 +282,7 @@
       })
         .attr('transform', (g) => `translate(${g.x},${g.y})`)
         .classed('is-active', (g) => g.ids.includes(selectedId))
+        .classed('is-visited', (g) => g.ids.every((id) => Game.isStamped(id)))
         .attr('aria-label', (g) => g.ids.map((id) => `${byId[id].acronym}: ${byId[id].name}`).join('; '))
         .each(function (g) {
           const many = g.ids.length > 1;
@@ -260,6 +291,7 @@
           pin.select('.pin-dot').attr('r', many ? 11 : 8).attr('fill', color);
           pin.select('.pin-pulse').attr('r', many ? 11 : 8).attr('stroke', color);
           pin.select('.pin-count').text(many ? g.ids.length : '');
+          pin.select('.pin-stamp').attr('transform', many ? 'translate(9,-9)' : 'translate(7,-7)');
           pin.select('.pin-label').text(!many && showLabels ? byId[g.ids[0]].acronym : '');
         });
     }
@@ -542,6 +574,7 @@
     selectedId = id;
     const t = data.types[m.type];
     const linked = linkedScenarios(m);
+    const visit = Game.onMissionExplored(m);
 
     els.panel.classList.add('has-type');
     els.panel.style.setProperty('--type', t.color);
@@ -552,6 +585,7 @@
       <div class="mb-3">${typeBadge(m)}
         <span class="badge ${STATUS[m.status].cls}">${STATUS[m.status].label}</span>
         <span class="badge ${VERIFY[m.verification].cls}" title="${esc(data.meta.verificationLegend[m.verification])}">${VERIFY[m.verification].label}</span>
+        <span class="stamp-chip ms-1${visit.stamped ? ' is-new' : ''}"><i class="bi bi-postage" aria-hidden="true"></i> ${visit.stamped ? 'Passport stamped!' : 'Stamped'}</span>
       </div>
 
       <h3 class="h6"><i class="bi bi-images" aria-hidden="true"></i> Photos</h3>
@@ -581,6 +615,7 @@
         : '<p class="small text-muted-2">No linked scenarios yet.</p>'}`;
     els.panel.scrollTop = 0;
 
+    syncPassport();
     refresh();
     if (globe) globe.focus(m);
     if (window.MissionPhotos) MissionPhotos.render(document.getElementById('mission-photos'), m, () => selectedId === id);
@@ -613,6 +648,7 @@
   els.form.addEventListener('submit', (e) => e.preventDefault());
 
   syncChips();
+  syncPassport();
   refresh();
   const initial = App.param('mission');
   if (initial && byId[initial]) select(initial, true);

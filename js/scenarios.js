@@ -33,7 +33,17 @@
     const allMissions = [...new Set(S.scenarios.flatMap((s) => missionsFor(s).map((m) => m.id)))]
       .map((mid) => missionById[mid]).sort((a, b) => a.acronym.localeCompare(b.acronym));
 
+    const finished = S.scenarios.filter((s) => progress.completed[s.id]);
+    const starCount = finished.reduce((a, s) => a + Game.stars(Game.overall(progress.completed[s.id].scores)), 0);
+    const share = Math.round((finished.length / S.scenarios.length) * 100);
+
     root.innerHTML = `
+      <div class="surface p-3 mb-3 d-flex flex-wrap align-items-center gap-3 lib-progress">
+        <span><strong>${finished.length}</strong> of ${S.scenarios.length} scenarios complete</span>
+        <span><i class="bi bi-star-fill text-warning" aria-hidden="true"></i> <strong>${starCount}</strong> of ${S.scenarios.length * 3} stars</span>
+        <span><i class="bi bi-fire text-danger" aria-hidden="true"></i> Best combo ×${Game.combo().best}</span>
+        <div class="progress flex-grow-1" role="progressbar" aria-label="Scenarios complete" aria-valuenow="${share}" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" style="width:${share}%"></div></div>
+      </div>
       <div class="row g-2 mb-3 no-print">
         <div class="col-md-5">
           <label class="form-label small fw-semibold" for="lib-mission">Mission context</label>
@@ -63,21 +73,25 @@
         (!selBias.value || s.biasFocus.includes(selBias.value)));
       grid.innerHTML = list.length ? list.map((s) => {
         const done = progress.completed[s.id];
-        const overall = done ? Math.round(COMPETENCIES.reduce((a, k) => a + App.pct(done.scores[k]), 0) / COMPETENCIES.length) : null;
+        const overall = done ? Game.overall(done.scores) : null;
         const ctx = selMission.value ? `&amp;mission=${selMission.value}` : '';
         return `
           <div class="col-md-6 col-lg-4">
             <div class="card h-100">
               <div class="card-body d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                   <span class="small text-muted-2"><i class="bi bi-person-badge" aria-hidden="true"></i> ${esc(s.role)} · ${s.minutes} min</span>
-                  ${done ? `<span class="badge text-bg-success">Done · ${overall}%</span>` : ''}
+                  ${done ? `<span class="badge text-bg-success">Done · ${overall}%</span>` : '<span class="badge new-pill">New</span>'}
                 </div>
                 <h2 class="h5">${esc(s.title)}</h2>
+                ${done ? `<div class="mb-2">${Game.starsHtml(Game.stars(overall))}</div>` : ''}
                 <p class="text-muted-2 small">${esc(s.summary)}</p>
                 <div class="mb-3">${s.biasFocus.map((b) => `<span class="scope-chip">${esc(biasById[b].name)}</span>`).join('')}</div>
                 <p class="small text-muted-2 mb-3">Contexts: ${missionsFor(s).map((m) => esc(m.acronym)).join(', ')}</p>
-                <a class="btn btn-primary mt-auto" href="scenarios.html?id=${s.id}${ctx}">${done ? 'Replay' : 'Start'} scenario</a>
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-auto">
+                  <a class="btn btn-primary" href="scenarios.html?id=${s.id}${ctx}">${done ? 'Replay' : 'Start'} scenario</a>
+                  ${done ? '' : `<span class="xp-avail">Up to +${Game.potential(s)} XP</span>`}
+                </div>
               </div>
             </div>
           </div>`;
@@ -91,7 +105,7 @@
   // ================= player =================
   function play(s) {
     const ctxMission = missionById[App.param('mission')];
-    const state = { step: -1, choices: [], earned: {}, max: {}, tags: new Set(), missed: new Set() };
+    const state = { step: -1, choices: [], earned: {}, max: {}, tags: new Set(), missed: new Set(), xp: 0 };
     COMPETENCIES.forEach((k) => { state.earned[k] = 0; state.max[k] = 0; });
     document.title = `${s.title} · Scenarios`;
 
@@ -156,6 +170,7 @@
                 </button>`).join('')}
             </div>
           </fieldset>
+          <p class="kbd-hint mt-2 mb-0">Tip: press <kbd>A</kbd>–<kbd>${KEYS[step.choices.length - 1]}</kbd> to choose, then <kbd>Enter</kbd> to continue.</p>
           <div id="feedback" class="mt-3" tabindex="-1"></div>
         </div>`;
       document.getElementById('choices').addEventListener('click', (e) => {
@@ -175,6 +190,8 @@
       (choice.missed || []).forEach((d) => state.missed.add(d));
       const tested = orderDims(App.stepDimensions(step));
       const missed = orderDims(choice.missed || []);
+      const reward = Game.onDecision(s, state.step, choice);
+      state.xp += reward.gain + reward.bonus;
 
       document.querySelectorAll('.choice-btn').forEach((b, idx) => {
         b.disabled = true;
@@ -186,7 +203,11 @@
       const fb = document.getElementById('feedback');
       fb.innerHTML = `
         <div class="feedback-box rating-${choice.rating} p-3">
-          <div class="mb-2">${App.ratingBadge(choice.rating)}</div>
+          <div class="d-flex flex-wrap align-items-center gap-2 mb-2">${App.ratingBadge(choice.rating)}
+            ${reward.gain ? `<span class="xp-pop">+${reward.gain} XP</span>`
+              : reward.replay ? `<span class="xp-pop is-zero">${reward.best ? 'Full XP already earned for this decision' : 'No new XP: only a stronger choice than last time earns more'}</span>` : ''}
+            ${reward.combo >= 2 ? `<span class="combo-chip"><i class="bi bi-fire" aria-hidden="true"></i> Combo ×${reward.combo}${reward.bonus ? ` · +${reward.bonus} XP` : ''}</span>` : ''}
+          </div>
           <p class="mb-2">${esc(choice.feedback)}</p>
           <div class="d-flex flex-wrap gap-1 mb-2">
             ${COMPETENCIES.map((k) => `<span class="score-chip" title="${esc(S.competencies[k].label)}">${esc(S.competencies[k].short)} <strong>${choice.scores[k]}/3</strong></span>`).join('')}
@@ -226,7 +247,8 @@
       COMPETENCIES.forEach((k) => { scores[k] = { earned: state.earned[k], max: state.max[k] }; });
       App.Progress.record(s.id, { scores, choices: state.choices, biasTags: [...state.tags] });
       const saved = (App.Progress.get().reflections[s.id] || {}).text || '';
-      const overall = Math.round(COMPETENCIES.reduce((a, k) => a + App.pct(scores[k]), 0) / COMPETENCIES.length);
+      const overall = Game.overall(scores);
+      state.xp += Game.onScenarioComplete(s, overall);
       const next = S.scenarios[(S.scenarios.indexOf(s) + 1) % S.scenarios.length];
 
       root.innerHTML = header() + `
@@ -234,7 +256,8 @@
           <div class="col-lg-5">
             <div class="surface p-4 h-100">
               <p class="eyebrow mb-1">Your result</p>
-              <div class="stat mb-3">${overall}%</div>
+              <div class="d-flex flex-wrap align-items-center gap-3 mb-2"><div class="stat">${overall}%</div><span class="result-stars">${Game.starsHtml(Game.stars(overall))}</span></div>
+              <p class="small mb-3">${state.xp ? `<span class="xp-pop">+${state.xp} XP</span> earned this time` : '<span class="xp-pop is-zero">No new XP this time</span> Replays earn XP only when you improve.'}</p>
               ${COMPETENCIES.map((k) => App.meter(S.competencies[k].label, App.pct(scores[k]), 'mb-3')).join('')}
               ${state.tags.size ? `<p class="small mb-0"><strong>Biases that shaped your choices:</strong> ${[...state.tags].map((t) => esc(biasById[t].name)).join(', ')}.
                 <a href="toolkit.html#bias-${[...state.tags][0]}">Review in the toolkit</a>.</p>`
@@ -263,13 +286,45 @@
           <a class="btn btn-outline-primary" href="scenarios.html?id=${next.id}">Next scenario: ${esc(next.title)}</a>
           <a class="btn btn-outline-secondary" href="scenarios.html?id=${s.id}${ctxMission ? '&amp;mission=' + ctxMission.id : ''}">Replay</a>
           <a class="btn btn-outline-secondary" href="progress.html">My progress</a>
-        </div>`;
+        </div>
+        <div class="surface p-3 mt-3 d-flex flex-wrap align-items-center justify-content-between gap-3 no-print" id="result-game"></div>`;
+
+      // Level and next quest; refreshed when quest rewards land.
+      async function drawGame() {
+        const box = document.getElementById('result-game');
+        if (!box) return;
+        const sum = await Game.summary();
+        box.innerHTML = `<div class="flex-grow-1" style="max-width:28rem">${Game.levelHtml(sum)}</div>${Game.nextQuestHtml(sum)}`;
+      }
+      drawGame();
+      document.addEventListener('game:change', drawGame);
 
       document.getElementById('save-ref').addEventListener('click', () => {
-        const ok = App.Progress.saveReflection(s.id, document.getElementById('reflection').value.trim());
-        document.getElementById('save-msg').textContent = ok ? 'Saved.' : 'Could not save. Browser storage is unavailable.';
+        const text = document.getElementById('reflection').value.trim();
+        const ok = App.Progress.saveReflection(s.id, text);
+        const xp = ok ? Game.onReflection(s.id, text) : 0;
+        document.getElementById('save-msg').textContent = !ok ? 'Could not save. Browser storage is unavailable.'
+          : xp ? `Saved. +${xp} XP` : text.length < 20 ? 'Saved. Write a little more (20+ characters) to earn XP.' : 'Saved.';
       });
     }
+
+    // Keyboard play: A–D answer, Enter (or N) moves on. Typing in a field is never intercepted.
+    document.addEventListener('keydown', (e) => {
+      if (e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+      const key = e.key.toUpperCase();
+      const option = KEYS.includes(key) && root.querySelector(`.choice-btn[data-i="${KEYS.indexOf(key)}"]:not(:disabled)`);
+      if (option) {
+        e.preventDefault();
+        option.click();
+        return;
+      }
+      const next = document.getElementById('next');
+      if (next && (key === 'N' || (e.key === 'Enter' && !e.target.closest('button, a')))) {
+        e.preventDefault();
+        next.click();
+      }
+    });
 
     intro();
   }

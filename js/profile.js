@@ -1,4 +1,4 @@
-// Profile page: personal details, photo, learning snapshot, badges and backup.
+// Profile page: personal details, photo, level, learning snapshot, badges and backup.
 (async function () {
   'use strict';
   const { esc, COMPETENCIES, Profile, Progress, Store } = App;
@@ -23,29 +23,6 @@
   let draftPhoto = null;
   let draftCover = null;
 
-  // ---------- badges ----------
-  // Each badge is earned from progress made in this demo session.
-  function badges() {
-    const p = Progress.get();
-    const done = Object.values(p.completed);
-    const totals = Progress.totals();
-    const sessions = Object.keys(Store.read(SESSIONS_KEY, {})).length;
-    const reflections = Object.values(p.reflections).filter((r) => r.text).length;
-    const perfect = done.some((c) => COMPETENCIES.every((k) => App.pct(c.scores[k]) === 100));
-    const strong = (k) => done.length >= 3 && App.pct(totals[k]) >= 75;
-    return [
-      { icon: 'bi-flag', name: 'First steps', how: 'Complete your first scenario', earned: done.length >= 1 },
-      { icon: 'bi-signpost-2', name: 'Halfway there', how: 'Complete 5 scenarios', earned: done.length >= 5 },
-      { icon: 'bi-compass', name: 'Navigator', how: `Complete all ${S.scenarios.length} scenarios`, earned: done.length >= S.scenarios.length },
-      { icon: 'bi-stars', name: 'Clear sight', how: 'Score 100% on every competency in a scenario', earned: perfect },
-      { icon: 'bi-eye', name: 'Bias spotter', how: 'Reach 75% Bias Awareness across 3+ scenarios', earned: strong('bias') },
-      { icon: 'bi-shield-heart', name: 'Do No Harm champion', how: 'Reach 75% Do No Harm across 3+ scenarios', earned: strong('harm') },
-      { icon: 'bi-arrow-repeat', name: 'Growth mindset', how: 'Replay a scenario to improve', earned: done.some((c) => c.attempts > 1) },
-      { icon: 'bi-journal-text', name: 'Reflective practitioner', how: 'Save 3 reflections', earned: reflections >= 3 },
-      { icon: 'bi-people', name: 'Team player', how: 'Start a Team Debrief session', earned: sessions > 0 }
-    ];
-  }
-
   // ---------- dimensions ----------
   // Miss counts per dimension, plus the one the learner overlooks most often.
   function dimensionSummary() {
@@ -58,7 +35,9 @@
   }
 
   // ---------- render ----------
-  function render() {
+  // Badges come from the shared game layer, so they match every other page.
+  async function render() {
+    const sum = await Game.summary();
     const pr = Profile.get();
     const p = Progress.get();
     const done = S.scenarios.filter((s) => p.completed[s.id]);
@@ -66,7 +45,7 @@
     const overall = done.length ? Math.round(COMPETENCIES.reduce((a, k) => a + App.pct(totals[k]), 0) / COMPETENCIES.length) : 0;
     const mission = missionById[pr.mission];
     const langs = String(pr.languages || '').split(',').map((l) => l.trim()).filter(Boolean);
-    const list = badges();
+    const list = sum.badges;
     const dims = dimensionSummary();
     const earned = list.filter((b) => b.earned).length;
     const recent = done.slice().sort((a, b) => p.completed[b.id].at.localeCompare(p.completed[a.id].at)).slice(0, 4);
@@ -102,10 +81,12 @@
               <button class="btn btn-primary btn-sm" data-edit><i class="bi bi-pencil" aria-hidden="true"></i> Edit profile</button>
             </div>
           </div>
-          <div class="row g-2 mt-3 text-center">
-            <div class="col-4"><div class="profile-stat"><div class="stat">${done.length}<span class="fs-6 text-muted-2">/${S.scenarios.length}</span></div><div class="small text-muted-2">Scenarios</div></div></div>
-            <div class="col-4"><div class="profile-stat"><div class="stat">${overall}%</div><div class="small text-muted-2">Overall score</div></div></div>
-            <div class="col-4"><div class="profile-stat"><div class="stat">${earned}</div><div class="small text-muted-2">Badges</div></div></div>
+          <div class="profile-stat text-start p-3 mt-3">${Game.levelHtml(sum)}</div>
+          <div class="row g-2 mt-1 text-center">
+            <div class="col-6 col-md-3"><div class="profile-stat"><div class="stat">${done.length}<span class="fs-6 text-muted-2">/${S.scenarios.length}</span></div><div class="small text-muted-2">Scenarios</div></div></div>
+            <div class="col-6 col-md-3"><div class="profile-stat"><div class="stat">${overall}%</div><div class="small text-muted-2">Overall score</div></div></div>
+            <div class="col-6 col-md-3"><div class="profile-stat"><div class="stat">${earned}</div><div class="small text-muted-2">Badges</div></div></div>
+            <div class="col-6 col-md-3"><div class="profile-stat"><div class="stat">${sum.counts.stamps}<span class="fs-6 text-muted-2">/${sum.counts.totals.missions}</span></div><div class="small text-muted-2">Missions explored</div></div></div>
           </div>
         </div>
       </section>
@@ -129,7 +110,8 @@
                 <div class="col-6 col-md-4">
                   <div class="badge-tile ${b.earned ? 'is-earned' : ''}" title="${esc(b.how)}">
                     <span class="badge-icon"><i class="bi ${b.icon}" aria-hidden="true"></i></span>
-                    <div><div class="fw-bold small">${esc(b.name)}</div><div class="text-muted-2" style="font-size:.75rem">${b.earned ? 'Earned' : esc(b.how)}</div></div>
+                    <div class="flex-grow-1 min-w-0"><div class="fw-bold small">${esc(b.name)}</div><div class="text-muted-2" style="font-size:.75rem">${b.earned ? 'Earned' : esc(b.how)}</div>
+                      ${!b.earned && b.need > 1 ? `<div class="badge-progress" role="img" aria-label="${b.have} of ${b.need}"><div style="width:${Math.round((b.have / b.need) * 100)}%"></div></div>` : ''}</div>
                   </div>
                 </div>`).join('')}
             </div>
@@ -200,6 +182,7 @@
         status.textContent = 'Could not save the banner. Browser storage may be full or blocked.';
         return;
       }
+      Game.onProfile(Profile.get());
       refreshAll();
     });
     document.getElementById('backup').addEventListener('click', backup);
@@ -313,6 +296,7 @@
       return;
     }
     if (modal) modal.hide();
+    Game.onProfile(pr);
     refreshAll();
   });
 
@@ -326,7 +310,8 @@
       exportedAt: new Date().toISOString(),
       profile: pr,
       progress: Progress.get(),
-      sessions: Store.read(SESSIONS_KEY, {})
+      sessions: Store.read(SESSIONS_KEY, {}),
+      game: Game.exportState()
     });
     document.getElementById('backup-msg').textContent = 'Backup downloaded.';
   }
@@ -346,6 +331,7 @@
       Store.write('uncq.progress.v1', data.progress);
       // Keep any local debrief sessions and add the ones from the backup.
       Store.write(SESSIONS_KEY, Object.assign({}, Store.read(SESSIONS_KEY, {}), data.sessions || {}));
+      if (data.game) Game.importState(data.game);
       refreshAll();
       document.getElementById('backup-msg').textContent = 'Backup restored.';
     } catch (err) {
@@ -355,5 +341,6 @@
   }
 
   render();
+  document.addEventListener('game:change', render);
   if (App.param('edit') === '1') openEditor();
 })();

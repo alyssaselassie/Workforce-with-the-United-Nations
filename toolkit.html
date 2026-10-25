@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link href="styles.css?v=20261025b" rel="stylesheet">
+  <link href="styles.css?v=20261025c" rel="stylesheet">
 </head>
 <body data-page="toolkit">
   <header id="site-header"></header>
@@ -23,6 +23,18 @@
     </section>
 
     <div class="container-xl py-4" id="toolkit-root">
+      <section class="surface detective p-4 mb-4" id="detective" aria-labelledby="det-h">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+          <div>
+            <p class="eyebrow mb-1">Mini-game · about 2 minutes</p>
+            <h2 class="h4 mb-1" id="det-h"><i class="bi bi-search" aria-hidden="true"></i> Bias Detective</h2>
+            <p class="small text-muted-2 mb-0">Five quick field cases: name the shortcut at play, then learn how to counter it.</p>
+          </div>
+          <span class="xp-avail" id="det-stats"></span>
+        </div>
+        <div id="detective-root"><p class="text-muted-2 mb-0">Loading…</p></div>
+      </section>
+
       <div class="row g-4">
         <div class="col-lg-6">
           <section class="surface p-4 h-100" aria-labelledby="pause-h">
@@ -52,7 +64,7 @@
         <p class="small text-muted-2 mb-0 mt-3" id="dims-credit">Credit: adapted from <a href="https://reliefmaps.upf.edu" target="_blank" rel="noopener">Relief Maps+</a>, created by Maria Rodó-Zárate and the INTERMAPS team at Universitat Pompeu Fabra (INTERMAPS, 2024), and her article <a href="https://doi.org/10.1080/00330124.2022.2075406" target="_blank" rel="noopener">“Intersectionality and the spatiality of emotions in feminist research,”</a> <cite>The Professional Geographer</cite> 75(4), 676–681 (Rodó-Zárate, 2023). Voice / power is this tool's addition for UN fieldwork.</p>
       </section>
 
-      <section class="mt-5" aria-labelledby="check-h">
+      <section class="mt-5" id="check" aria-labelledby="check-h">
         <h2 id="check-h" class="h4">Assumption check worksheet</h2>
         <p class="text-muted-2">Use this before a real decision. Your answers are kept until you refresh or close the site, so copy or print them to keep a record.</p>
         <form class="surface p-4" id="check-form">
@@ -90,8 +102,10 @@
   <footer id="site-footer"></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-  <script src="data/data-bundle.js?v=20261025b"></script>
-  <script src="script.js?v=20261025b"></script>
-  <script src="js/toolkit.js?v=20261025b"></script>
+  <script src="data/data-bundle.js?v=20261025c"></script>
+  <script src="script.js?v=20261025c"></script>
+  <script src="js/game.js?v=20261025c"></script>
+  <script src="js/toolkit.js?v=20261025c"></script>
+  <script src="js/detective.js?v=20261025c"></script>
 </body>
 </html>
