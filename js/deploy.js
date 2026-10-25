@@ -87,6 +87,7 @@
             <path class="dest-star" d="M0-4.2l1.2 2.5 2.8.4-2 1.9.5 2.7L0 2l-2.5 1.3.5-2.7-2-1.9 2.8-.4z"/>
             <g class="dest-label"><rect y="-30" height="20" rx="10"/><text y="-16" text-anchor="middle"></text></g>
           </g>`).join('')}</g>
+        <g class="dest-label d-callout" aria-hidden="true"><rect y="-30" height="20" rx="10"/><text y="-16" text-anchor="middle"></text></g>
         <g class="d-plane" aria-hidden="true"><ellipse class="d-plane-shadow" cx="4" cy="6" rx="12" ry="6"/><path d="${PLANE}"/></g>
       </svg>`);
     svg = el.querySelector('svg');
@@ -114,6 +115,16 @@
       g.style.display = on ? '' : 'none';
       g.setAttribute('tabindex', on ? '0' : '-1');
     });
+    // The selected pin's label sits in its own layer above the other pins, so neighbors never cover it.
+    const callout = svg.querySelector('.d-callout');
+    const sd = selected && byId[selected];
+    if (sd && visible(sd.lng, sd.lat)) {
+      const [x, y] = projection([sd.lng, sd.lat]);
+      callout.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
+      callout.style.display = 'inline';
+    } else {
+      callout.style.display = 'none';
+    }
     // Parked, the plane sits just beside its location so the pin and medal stay visible.
     const at = plane ? plane.at : [here().lng, here().lat];
     const pg = svg.querySelector('.d-plane');
@@ -123,6 +134,15 @@
     pg.style.display = visible(at[0], at[1]) ? '' : 'none';
   }
 
+  function setLabel(g, d) {
+    const label = `${d.mission.acronym} · ${d.mission.scope[0].split(' (')[0]}`;
+    g.querySelector('text').textContent = label;
+    const w = label.length * 7 + 20;
+    const rect = g.querySelector('rect');
+    rect.setAttribute('x', -w / 2);
+    rect.setAttribute('width', w);
+  }
+
   function decorate() {
     if (!svg) return;
     const marked = questDest();
@@ -130,14 +150,9 @@
       const d = byId[g.dataset.id];
       const medal = sum && sum.medals[d.id];
       g.setAttribute('class', `dest${medal ? ` is-done medal-${medal}` : ''}${selected === d.id ? ' is-selected' : ''}${marked === d.id ? ' is-next' : ''}`);
-      const label = `${d.mission.acronym} · ${d.mission.scope[0].split(' (')[0]}`;
-      const text = g.querySelector('.dest-label text');
-      text.textContent = label;
-      const w = label.length * 7 + 20;
-      const rect = g.querySelector('.dest-label rect');
-      rect.setAttribute('x', -w / 2);
-      rect.setAttribute('width', w);
+      setLabel(g.querySelector('.dest-label'), d);
     });
+    if (selected) setLabel(svg.querySelector('.d-callout'), byId[selected]);
   }
 
   // The exercise the next quest points to gets a soft pulse.
