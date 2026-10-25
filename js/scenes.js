@@ -329,7 +329,7 @@
         ${b.side === 'think' ? '' : `<span class="bubble-who">${esc(b.who)}</span>`}${esc(b.text)}
       </div>`).join('');
     return `
-      <figure class="stage theme-${esc(o.theme || 'village')}${live}" id="stage" data-scene="${esc(JSON.stringify(cfg))}">
+      <figure class="stage theme-${esc(o.theme || 'village')}${o.sky ? ` sky-${esc(o.sky)}` : ''}${live}" id="stage" data-scene="${esc(JSON.stringify(cfg))}">
         <div class="stage-art">
           ${backdrop(o.theme, o.prop, o.sky)}
           <div class="stage-actors" aria-hidden="true">${actors}</div>
