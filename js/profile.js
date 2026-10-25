@@ -78,7 +78,7 @@
               <div>${langs.map((l) => `<span class="scope-chip"><i class="bi bi-translate" aria-hidden="true"></i> ${esc(l)}</span>`).join('')}</div>
             </div>
             <div class="d-flex gap-2 no-print">
-              <button class="btn btn-pop btn-sm" data-agent-open><i class="bi bi-person-gear" aria-hidden="true"></i> Customize avatar</button>
+              <button class="btn btn-accent btn-sm" data-agent-open><i class="bi bi-person-gear" aria-hidden="true"></i> Customize avatar</button>
               <button class="btn btn-primary btn-sm" data-edit><i class="bi bi-pencil" aria-hidden="true"></i> Edit profile</button>
             </div>
           </div>
@@ -103,15 +103,15 @@
 
           <section class="surface p-4 mb-4" aria-labelledby="medals-h">
             <div class="d-flex justify-content-between align-items-baseline">
-              <h2 class="h5" id="medals-h">Island medallions</h2>
-              <span class="small text-muted-2">${sum.counts.medals} of ${S.scenarios.length} islands</span>
+              <h2 class="h5" id="medals-h">Medals</h2>
+              <span class="small text-muted-2">${sum.counts.medals} of ${S.scenarios.length} scenarios</span>
             </div>
             <div class="medal-case">
               ${S.scenarios.map((s) => {
                 const tier = sum.medals[s.id];
-                const name = (s.island || {}).name || s.title;
+                const name = s.title;
                 return `<a class="medal-slot text-decoration-none text-reset${tier ? '' : ' is-empty'}" href="scenarios.html?id=${s.id}">
-                  ${Scenes.medallion(tier || 'gold', 38, tier ? `${tier} medallion, ${name}` : `${name}: not earned yet`)}<div class="mt-1">${esc(name)}</div></a>`;
+                  ${Scenes.medal(tier || 'gold', 38, tier ? `${tier} medal, ${name}` : `${name}: not earned yet`)}<div class="mt-1">${esc(name)}</div></a>`;
               }).join('')}
             </div>
           </section>

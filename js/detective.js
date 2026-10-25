@@ -109,7 +109,7 @@
     fb.innerHTML = `
       <div class="feedback-box rating-${right ? 'strong' : 'weak'} p-3">
         <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
-          <strong>${right ? '<i class="bi bi-check-circle-fill text-success" aria-hidden="true"></i> Spot on!'
+          <strong>${right ? '<i class="bi bi-check-circle-fill text-success" aria-hidden="true"></i> Correct.'
             : `<i class="bi bi-x-circle-fill text-danger" aria-hidden="true"></i> Not quite. This is ${esc(c.bias.name)}.`}</strong>
           ${xp ? `<span class="xp-pop">+${xp} XP · new bias</span>` : ''}
         </div>
@@ -142,7 +142,7 @@
         <p class="eyebrow mb-1">Round complete</p>
         <div class="result-stars mb-1">${Game.starsHtml(score === ROUND ? 3 : score >= 3 ? 2 : 1)}</div>
         <p class="h4 mb-1">You spotted ${score} of ${ROUND}</p>
-        <p class="mb-2">${score === ROUND ? 'A perfect round. Sharp eye!' : score >= 3 ? 'Nice work. Review the ones you missed.' : 'Every miss is a pattern you will now notice in the field.'}</p>
+        <p class="mb-2">${score === ROUND ? 'A perfect round. Well observed.' : score >= 3 ? 'Good work. Review the ones you missed.' : 'Every miss is a pattern you will now notice in the field.'}</p>
         <p class="mb-3">${round.xp ? `<span class="xp-pop">+${round.xp} XP</span>` : '<span class="xp-pop is-zero">No new XP this round</span>'}
           <span class="small text-muted-2 ms-1">${found} of ${biases.length} biases spotted so far</span></p>
         ${missed.length ? `<p class="small mb-3">Review: ${missed.map((b) => `<a href="#bias-${b.id}">${esc(b.name)}</a>`).join(', ')}</p>` : ''}

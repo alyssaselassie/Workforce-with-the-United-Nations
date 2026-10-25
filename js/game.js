@@ -42,7 +42,7 @@
 
   // The deployment path: one quest per step of the learner journey.
   const QUESTS = [
-    { id: 'profile', icon: 'bi-person-plus', title: 'Create your field agent', text: 'Pick your look and name in the avatar creator.', href: 'index.html?agent=1', xp: 25, test: (c) => c.avatar || Boolean(c.profile.name) },
+    { id: 'profile', icon: 'bi-person-plus', title: 'Create your avatar', text: 'Choose your look and name in the avatar creator.', href: 'index.html?agent=1', xp: 25, test: (c) => c.avatar || Boolean(c.profile.name) },
     { id: 'station', icon: 'bi-geo-alt', title: 'Visit a duty station', text: 'Open a mission on the globe and read its mandate.', href: 'map.html', xp: 25, test: (c) => c.stamps >= 1 },
     { id: 'decide', icon: 'bi-signpost-split', title: 'Make your first field decision', text: 'Complete any scenario.', href: 'scenarios.html', xp: 30, test: (c) => c.completed >= 1 },
     { id: 'spot', icon: 'bi-search', title: 'Spot 5 biases', text: 'Name 5 different biases in Bias Detective.', href: 'toolkit.html#detective', xp: 30, test: (c) => c.found >= 5 },
@@ -58,7 +58,7 @@
   function empty() {
     return {
       xp: 0, ledger: {}, log: [], stamps: {}, combo: { current: 0, best: 0 },
-      detective: { found: {}, rounds: 0, perfect: 0, best: 0 }, pause: 0, pauseAll: false, team: {}, seen: [], island: 'base'
+      detective: { found: {}, rounds: 0, perfect: 0, best: 0 }, pause: 0, pauseAll: false, team: {}, seen: [], location: 'hq'
     };
   }
   let cache = null;
@@ -100,7 +100,7 @@
     updateChip(true);
     const after = levelFor(st.xp);
     if (after.number > before) {
-      toast({ icon: after.icon, text: `Level up! You're now Level ${after.number}: ${after.title}`, kind: 'level' });
+      toast({ icon: after.icon, text: `Level ${after.number} reached: ${after.title}`, kind: 'level' });
       confetti();
     }
     queueCheck();
@@ -134,7 +134,7 @@
       totals: { scenarios: S.scenarios.length, missions: M.missions.length, regions: Object.keys(M.regions).length, biases: S.biases.length }
     };
     const quests = QUESTS.map((q) => Object.assign({}, q, { done: q.test(c) }));
-    // One medallion per scenario island, its metal set by the stars earned.
+    // One medal per scenario: gold, silver or bronze, set by the stars earned.
     const medals = {};
     S.scenarios.forEach((sc) => { if (p.completed[sc.id]) medals[sc.id] = medal(stars(overall(p.completed[sc.id].scores))); });
     c.medals = Object.keys(medals).length;
@@ -266,7 +266,7 @@
     if (score === total) st.detective.perfect += 1;
     save();
     let gain = st.detective.rounds <= XP.rounds ? award(`round:${st.detective.rounds}`, XP.round, 'Bias Detective round complete', 'bi-search') : 0;
-    if (score === total) gain += award('round:perfect', XP.perfect, 'Perfect round!', 'bi-bullseye');
+    if (score === total) gain += award('round:perfect', XP.perfect, 'Perfect round', 'bi-bullseye');
     queueCheck();
     return gain;
   }
@@ -281,7 +281,7 @@
   }
 
   function onAvatar(pr) {
-    award('avatar', XP.avatar, 'Field agent created', 'bi-person-badge');
+    award('avatar', XP.avatar, 'Avatar created', 'bi-person-badge');
     onProfile(pr);
   }
 
@@ -362,8 +362,8 @@
     const h = canvas.height = window.innerHeight;
     document.body.appendChild(canvas);
     const ctx = canvas.getContext('2d');
-    const colors = ['#38b6e8', '#2f6fd0', '#ffb86b', '#ffd54f', '#8b5cf6', '#2fae7a', '#f43f5e'];
-    const bits = Array.from({ length: 130 }, () => ({
+    const colors = ['#38b6e8', '#2f6fd0', '#12406f', '#d99a17', '#8c97a8'];
+    const bits = Array.from({ length: 90 }, () => ({
       x: w / 2 + (Math.random() - 0.5) * w * 0.35, y: h * 0.3,
       vx: (Math.random() - 0.5) * 13, vy: -Math.random() * 12 - 4,
       size: 5 + Math.random() * 6, rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3,
@@ -490,8 +490,9 @@
     onProfile,
     onAvatar,
     onTeamGoals,
-    island: () => state().island,
-    setIsland: (id) => { state().island = id; save(); },
+    // Where the learner's aircraft is parked on the home globe.
+    location: () => state().location,
+    setLocation: (id) => { state().location = id; save(); },
     chipHtml,
     levelHtml,
     questsHtml,

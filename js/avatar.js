@@ -1,4 +1,4 @@
-// Field agents: original cartoon avatars for the learner and the story characters,
+// Avatars: original illustrated characters for the learner and the story characters,
 // plus the avatar creator. Pure SVG, so they scale anywhere and need no image files.
 (function () {
   'use strict';
@@ -27,7 +27,7 @@
     short: 'Short hair', curly: 'Curly hair', long: 'Long hair', bun: 'Bun', braids: 'Braids', ponytail: 'Ponytail', buzz: 'Buzz cut',
     hijab: 'Hijab', turban: 'Turban', cap: 'Cap', beanie: 'Beanie', sunhat: 'Sun hat', headphones: 'Headphones',
     mustache: 'Mustache', beard: 'Beard', round: 'Round glasses', square: 'Square glasses', field: 'Field vest',
-    lanyard: 'ID lanyard', backpack: 'Backpack', camera: 'Camera', radio: 'Radio', binoculars: 'Binoculars', medal: 'Medal'
+    lanyard: 'ID lanyard', backpack: 'Backpack', camera: 'Camera', radio: 'Radio', binoculars: 'Binoculars', medal: 'Award pin'
   };
   // Fun extras unlock with levels. Identity options (skin, hair, head coverings) are never locked.
   const UNLOCK = { headwear: { sunhat: 3, headphones: 5 }, gear: { backpack: 2, camera: 3, radio: 4, binoculars: 6, medal: 8 }, hairColor: { teal: 4, purple: 4 } };
@@ -274,7 +274,7 @@
 
   function draw() {
     const el = document.getElementById('agent-modal');
-    el.querySelector('#agent-preview').innerHTML = svg(draft, { title: 'Your field agent', mood: 'grin' });
+    el.querySelector('#agent-preview').innerHTML = svg(draft, { title: 'Your avatar', mood: 'grin' });
     el.querySelector('#agent-rows').innerHTML = ROWS.map(rowHtml).join('');
   }
 
@@ -284,14 +284,14 @@
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
           <div class="modal-content agent-modal">
             <div class="modal-header">
-              <h2 class="modal-title h4" id="agent-title"><i class="bi bi-stars" aria-hidden="true"></i> Create your field agent</h2>
+              <h2 class="modal-title h4" id="agent-title"><i class="bi bi-person-badge" aria-hidden="true"></i> Create your avatar</h2>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <div class="row g-4">
                 <div class="col-md-4">
                   <div class="agent-stage"><div class="agent-preview" id="agent-preview"></div></div>
-                  <label class="form-label fw-semibold mt-3" for="agent-name">Agent name</label>
+                  <label class="form-label fw-semibold mt-3" for="agent-name">Name</label>
                   <input class="form-control" id="agent-name" maxlength="40" placeholder="Your first name">
                   <div class="d-flex flex-wrap gap-2 mt-3">
                     <button type="button" class="btn btn-outline-primary btn-sm" id="agent-random"><i class="bi bi-shuffle" aria-hidden="true"></i> Surprise me</button>
@@ -303,7 +303,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-pop" id="agent-save"><i class="bi bi-check-lg" aria-hidden="true"></i> Save my agent</button>
+              <button type="button" class="btn btn-accent" id="agent-save"><i class="bi bi-check-lg" aria-hidden="true"></i> Save avatar</button>
             </div>
           </div>
         </div>

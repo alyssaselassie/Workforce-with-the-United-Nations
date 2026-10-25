@@ -585,7 +585,7 @@
       <div class="mb-3">${typeBadge(m)}
         <span class="badge ${STATUS[m.status].cls}">${STATUS[m.status].label}</span>
         <span class="badge ${VERIFY[m.verification].cls}" title="${esc(data.meta.verificationLegend[m.verification])}">${VERIFY[m.verification].label}</span>
-        <span class="stamp-chip ms-1${visit.stamped ? ' is-new' : ''}"><i class="bi bi-postage" aria-hidden="true"></i> ${visit.stamped ? 'Passport stamped!' : 'Stamped'}</span>
+        <span class="stamp-chip ms-1${visit.stamped ? ' is-new' : ''}"><i class="bi bi-postage" aria-hidden="true"></i> ${visit.stamped ? 'Stamp added' : 'Stamped'}</span>
       </div>
 
       <h3 class="h6"><i class="bi bi-images" aria-hidden="true"></i> Photos</h3>

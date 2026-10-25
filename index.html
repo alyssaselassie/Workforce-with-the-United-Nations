@@ -9,8 +9,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link href="styles.css?v=20261025d" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="styles.css?v=20261025e" rel="stylesheet">
 </head>
 <body data-page="home">
   <header id="site-header"></header>
@@ -25,14 +25,17 @@
           <div style="max-width:44rem">
             <p class="eyebrow text-white-50 mb-1">Pre-deployment &amp; in-mission learning</p>
             <h1 class="hero-title fw-bold mb-2" id="hero-h">UN Cultural Intelligence &amp; Bias Navigator</h1>
-            <p class="lead mb-0">Create your field agent, fly your blimp to an island and help its people through a field dilemma to win the island's medallion.</p>
+            <p class="lead mb-0">Choose an exercise on the globe, fly to its mission context and work through a field decision to earn a medal.</p>
           </div>
           <div class="agent-card" id="agent-card"></div>
         </div>
-        <div class="isle-map">
-          <p class="isle-swipe small text-center fw-semibold mb-0 py-1 bg-white text-dark"><i class="bi bi-arrows" aria-hidden="true"></i> Swipe sideways to explore the whole map</p>
-          <div class="isle-scroll"><svg id="isle-svg" viewBox="0 0 1200 640" role="group" aria-label="Island map. Choose an island to see what is there."></svg></div>
-          <div class="isle-dock" id="isle-dock" aria-live="polite"></div>
+        <div class="deploy-frame">
+          <div class="deploy-bar no-print">
+            <label class="small fw-semibold text-white" for="deploy-pick"><i class="bi bi-list-ul" aria-hidden="true"></i> Exercises</label>
+            <select class="form-select form-select-sm" id="deploy-pick"></select>
+          </div>
+          <div class="globe deploy-globe" id="deploy-globe"></div>
+          <div class="deploy-dock" id="deploy-dock" aria-live="polite"></div>
         </div>
         <div class="d-flex flex-wrap gap-2 mt-3">
           <a class="btn btn-light" href="map.html"><i class="bi bi-globe-americas" aria-hidden="true"></i> Explore the mission globe</a>
@@ -157,12 +160,14 @@
   <footer id="site-footer"></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-  <script src="data/data-bundle.js?v=20261025d"></script>
-  <script src="script.js?v=20261025d"></script>
-  <script src="js/game.js?v=20261025d"></script>
-  <script src="js/avatar.js?v=20261025d"></script>
-  <script src="js/scenes.js?v=20261025d"></script>
-  <script src="js/home.js?v=20261025d"></script>
-  <script src="js/islands.js?v=20261025d"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+  <script src="data/data-bundle.js?v=20261025e"></script>
+  <script src="script.js?v=20261025e"></script>
+  <script src="js/game.js?v=20261025e"></script>
+  <script src="js/avatar.js?v=20261025e"></script>
+  <script src="js/scenes.js?v=20261025e"></script>
+  <script src="js/home.js?v=20261025e"></script>
+  <script src="js/deploy.js?v=20261025e"></script>
 </body>
 </html>
