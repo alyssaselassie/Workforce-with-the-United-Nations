@@ -1411,6 +1411,16 @@ window.APP_DATA = {
     "role": "Civil Affairs Officer",
     "setting": "Kalero, a fictional town near a site sheltering displaced families.",
     "minutes": 6,
+    "island": {
+     "name": "Kalero Springs",
+     "theme": "village",
+     "prop": "pump",
+     "landmark": "pump",
+     "npc": {
+      "name": "Team leader",
+      "look": "lead"
+     }
+    },
     "biasFocus": [
      "gender",
      "affinity",
@@ -1577,6 +1587,15 @@ window.APP_DATA = {
     "role": "Political Affairs Officer",
     "setting": "Drehan, a fictional district where two villages are in a land dispute.",
     "minutes": 5,
+    "island": {
+     "name": "Drehan Crossing",
+     "theme": "village",
+     "landmark": "hut",
+     "npc": {
+      "name": "Samir, interpreter",
+      "look": "samir"
+     }
+    },
     "biasFocus": [
      "confirmation",
      "language",
@@ -1723,6 +1742,15 @@ window.APP_DATA = {
     "role": "Program Manager",
     "setting": "A fictional mission planning cell preparing a community dialogue initiative.",
     "minutes": 5,
+    "island": {
+     "name": "Planning Point",
+     "theme": "office",
+     "landmark": "office",
+     "npc": {
+      "name": "Amani, national officer",
+      "look": "amani"
+     }
+    },
     "biasFocus": [
      "authority",
      "language",
@@ -1871,6 +1899,15 @@ window.APP_DATA = {
     "role": "Humanitarian Liaison Officer",
     "setting": "A fictional region with an accessible urban center and rural areas that are hard to reach.",
     "minutes": 5,
+    "island": {
+     "name": "Data Delta",
+     "theme": "camp",
+     "landmark": "tent",
+     "npc": {
+      "name": "Community representative",
+      "look": "rep"
+     }
+    },
     "biasFocus": [
      "availability",
      "deficit",
@@ -1998,6 +2035,15 @@ window.APP_DATA = {
     "role": "Public Information Officer",
     "setting": "Benza, a fictional city where a rumor claims peacekeepers are protecting an armed group.",
     "minutes": 5,
+    "island": {
+     "name": "Benza Bay",
+     "theme": "market",
+     "landmark": "radio",
+     "npc": {
+      "name": "Colleague",
+      "look": "colleague"
+     }
+    },
     "biasFocus": [
      "attribution",
      "stereotyping",
@@ -2125,6 +2171,17 @@ window.APP_DATA = {
     "role": "Regional Liaison Officer",
     "setting": "A fictional capital where you are meeting a regional organization's delegation for the first time.",
     "minutes": 4,
+    "island": {
+     "name": "Welcome Harbor",
+     "theme": "town",
+     "prop": "lanterns",
+     "sky": "golden",
+     "landmark": "lantern",
+     "npc": {
+      "name": "Your counterpart",
+      "look": "host"
+     }
+    },
     "biasFocus": [
      "ethnocentrism",
      "stereotyping"
@@ -2207,8 +2264,17 @@ window.APP_DATA = {
      "unsoh"
     ],
     "role": "Community Engagement Officer",
-    "setting": "A fictional neighbourhood whose residents remember past harms linked to international actors.",
+    "setting": "A fictional neighborhood whose residents remember past harms linked to international actors.",
     "minutes": 5,
+    "island": {
+     "name": "Memory Hill",
+     "theme": "town",
+     "landmark": "hall",
+     "npc": {
+      "name": "Resident",
+      "look": "resident"
+     }
+    },
     "biasFocus": [
      "saviour",
      "attribution",
@@ -2333,6 +2399,15 @@ window.APP_DATA = {
     "role": "Verification Officer",
     "setting": "A fictional rural municipality with former combatants, host farmers and Indigenous and Afro-descendant communities.",
     "minutes": 5,
+    "island": {
+     "name": "Common Ground",
+     "theme": "fields",
+     "landmark": "farm",
+     "npc": {
+      "name": "Municipal official",
+      "look": "official"
+     }
+    },
     "biasFocus": [
      "stereotyping",
      "deficit",
@@ -2466,6 +2541,16 @@ window.APP_DATA = {
     "role": "Reporting Officer",
     "setting": "A fictional area where communities use different names for the same towns.",
     "minutes": 4,
+    "island": {
+     "name": "Signpost Isle",
+     "theme": "town",
+     "prop": "signpost",
+     "landmark": "signpost",
+     "npc": {
+      "name": "Colleague",
+      "look": "colleague2"
+     }
+    },
     "biasFocus": [
      "affinity",
      "language",
@@ -2551,6 +2636,16 @@ window.APP_DATA = {
     "role": "Patrol Leader / Civil-Military Liaison",
     "setting": "Farmland near a fictional village during the harvest season.",
     "minutes": 4,
+    "island": {
+     "name": "Harvest Trail",
+     "theme": "fields",
+     "prop": "track",
+     "landmark": "tree",
+     "npc": {
+      "name": "Farmer",
+      "look": "farmer"
+     }
+    },
     "biasFocus": [
      "threat",
      "stereotyping",
@@ -2675,6 +2770,15 @@ window.APP_DATA = {
     "role": "Team Leader",
     "setting": "A coordination meeting at a field office in Sarel, a fictional city. Maya is a fictional colleague; her preference for raising concerns privately is personal, not a cultural label for any group.",
     "minutes": 4,
+    "island": {
+     "name": "Sarel Point",
+     "theme": "office",
+     "landmark": "office",
+     "npc": {
+      "name": "Maya, national staff",
+      "look": "maya"
+     }
+    },
     "biasFocus": [
      "attribution",
      "stereotyping",

@@ -8,13 +8,13 @@ An interactive educational web application that helps United Nations personnel b
 
 | Page | What it does |
 | --- | --- |
-| `index.html` | Landing page: your level, the 8-quest deployment path with the next quest one click away, live stats, competency framework, learning path |
+| `index.html` | Island map: every module and scenario is an island. Pick one and your agent's blimp flies there. Also your agent card, level, the 8-quest deployment path with the next quest one click away, live stats and the competency framework |
 | `map.html` | Spinning 3D globe of UN field missions (D3). Selecting a mission, region or table row flies the globe to that area and highlights the countries in the mandate. Includes filters, a table view, mandate scope, source links, verification status, photos of each area, pre-deployment reflection prompts and a field passport that stamps each mission you open |
-| `scenarios.html` | Scenario library and branching player (11 scenarios). Each choice gets feedback and XP, is scored on four competencies and shows which dimensions it overlooks. Strong decisions in a row build combos. Results show 1–3 stars, the XP earned and the next quest. Keyboard play: A–D to answer, Enter to continue |
+| `scenarios.html` | Scenario library and branching player (11 scenarios). Each scenario plays as a cartoon island scene with your agent, a story character and Mentor Rio in speech bubbles. Each choice gets feedback and XP, is scored on four competencies and shows which dimensions it overlooks. Strong decisions in a row build combos. Results show 1–3 stars, the XP earned and the next quest. Keyboard play: A–D to answer, Enter to continue |
 | `toolkit.html` | Bias Detective mini-game, dimensions framework, bias library (14 biases), the PAUSE protocol, CQ capabilities, humanitarian principles and an assumption-check worksheet |
 | `collaboration.html` | Team Debrief: four cooperative team goals (every voice heard, every dimension discussed, decide together, agree on actions), facilitated sessions with a perspective wall, a "who's missing" prompt, contributions tagged by dimension, a dimension check before voting, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
 | `progress.html` | Game hub (level, recent XP, quests and the full XP rules), then the competency profile, completed scenarios with stars, recurring biases, reflections, export and reset |
-| `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus level, competencies, missions explored, the dimensions the learner most often misses, 18 badges with progress, recent activity and backup/restore of profile, progress and XP |
+| `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus your cartoon agent (shown when there is no photo), island medallions, level, competencies, missions explored, the dimensions the learner most often misses, 18 badges with progress, recent activity and backup/restore of profile, progress and XP |
 
 ### Scoring
 
@@ -50,6 +50,16 @@ The Navigator is built around light, practical gamification: every reward points
 - **Team goals** in Team Debrief are cooperative and describe the session, never an individual.
 - **18 badges** with progress bars, toasts for XP, badges and quests, and a transparent XP table on the progress page.
 
+### Island adventure
+
+The look and feel is inspired by island-adventure games such as Poptropica. All characters and art are original inline SVG, with no images or third-party game assets.
+
+- **Field agents** (`js/avatar.js`): a cartoon avatar creator with 8 skin tones, hair styles and colors, head coverings (hijab, turban), facial hair, glasses, shirts and a field vest. Fun gear (backpack, camera, radio, binoculars, medal, sun hat, headphones, dyed hair) unlocks with levels. Skin tones, hair and head coverings are never locked. The agent appears in the nav, on the profile when there is no photo, in the blimp and in every scene. Open the creator from Base Camp, the profile, or any page with `?agent=1`.
+- **Island map** (`js/islands.js`): 16 islands, 5 modules and 11 scenarios, each with a landmark. The island for your next quest glows. Choose an island to see what is there, then fly; the blimp remembers where you last went. On phones the map scrolls sideways.
+- **Story scenes** (`js/scenes.js`): six backdrops (village, office, camp, market, town, fields) with props. Each scenario's `island` field sets its name, backdrop and story character. Your choice appears in your speech bubble, Mentor Rio reacts, and the full feedback stays below the scene.
+- **Medallions:** finishing an island earns its medallion, bronze, silver or gold by stars. Medallions show on the map and in the profile's medallion case.
+- **Mentor tips:** Mentor Rio gives a short, practical tip at the top of each module page (`data-tip` attributes).
+
 Design principles: XP rewards learning actions (exploring a context, deciding, reflecting, hearing every voice) and never speed. Each action pays once; replaying earns XP only for doing better. There are no leaderboards, so learners are only compared with their past selves, and XP is not a measure of anyone's bias. `js/game.js` holds the rules (`XP`, `LEVELS`, `QUESTS`, badges); a ledger stores the best award per action key.
 
 ## Project structure
@@ -58,7 +68,10 @@ Design principles: XP rewards learning actions (exploring a context, deciding, r
 index.html  map.html  scenarios.html  toolkit.html  collaboration.html  progress.html
 styles.css             shared styles (Bootstrap 5.3 + design tokens)
 script.js              shared core: data loading, progress storage, header/footer, helpers
-js/game.js             gamification layer: XP ledger, levels, quests, badges, toasts, level chip
+js/game.js             gamification layer: XP ledger, levels, quests, badges, medallions, toasts, level chip
+js/avatar.js           cartoon field agents, story characters and the avatar creator
+js/scenes.js           story scene backdrops, speech bubbles, medallions and mentor tips
+js/islands.js          home page island map and blimp travel
 js/detective.js        Bias Detective mini-game on the toolkit page
 js/                    one module per page (home, map, scenarios, toolkit, collaboration, progress, profile)
 data/missions.json     mission locations, scope, status, sources, verification flags
@@ -138,7 +151,7 @@ Before demonstrating to faculty or UN personnel, open the live directory, reconc
 
 ### Adding a scenario
 
-Add an object to `scenarios` in `data/scenarios.json` with `id`, `title`, `summary`, `missionIds`, `role`, `setting`, `minutes`, `biasFocus` (ids from `biases`), `dimensions` (at least three of `position`, `place`, `emotion`, `voice`), `steps` and `debrief`. Each step has a `prompt`, an optional `context` and `choices`. Each choice has `text`, `scores` (`cq`, `bias`, `evidence`, `harm`, each 0–3), `rating` (`strong | partial | weak`), `biasTags`, `missed` (dimensions the choice overlooks; empty for strong choices) and `feedback`. Link scenarios to missions from either file.
+Add an object to `scenarios` in `data/scenarios.json` with `id`, `title`, `summary`, `missionIds`, `role`, `setting`, `minutes`, `biasFocus` (ids from `biases`), `dimensions` (at least three of `position`, `place`, `emotion`, `voice`), `steps` and `debrief`. Each step has a `prompt`, an optional `context` and `choices`. Each choice has `text`, `scores` (`cq`, `bias`, `evidence`, `harm`, each 0–3), `rating` (`strong | partial | weak`), `biasTags`, `missed` (dimensions the choice overlooks; empty for strong choices) and `feedback`. Link scenarios to missions from either file. Give it an `island` for the adventure layer: `name`, `theme` (`village`, `office`, `camp`, `market`, `town` or `fields`), optional `prop` (`pump`, `signpost`, `track`, `lanterns`) and `sky` (`golden`), a `landmark` for the island map, and an `npc` with a `name` and a `look` from `Avatar.NPC` in `js/avatar.js`. Add a map position for it in `SPOTS` in `js/islands.js`.
 
 ## Data, privacy and collaboration
 
@@ -158,7 +171,7 @@ Semantic landmarks, a skip link, keyboard-operable map rows and markers, ARIA li
 
 Dimensions framework: adapted from Relief Maps+, created by Maria Rodó-Zárate and the INTERMAPS team at Universitat Pompeu Fabra. Voice / power is this project's addition.
 
-Map data: Natural Earth (public domain), via world-atlas (ISC). D3 (ISC). topojson-client (ISC). Bootstrap (MIT). Mission photos: Wikimedia Commons, credited individually under each file's own license. Boundaries and names on the map do not imply official endorsement or acceptance by the United Nations.
+Fonts: Fredoka and Nunito (SIL Open Font License), via Google Fonts. Map data: Natural Earth (public domain), via world-atlas (ISC). D3 (ISC). topojson-client (ISC). Bootstrap (MIT). Mission photos: Wikimedia Commons, credited individually under each file's own license. Boundaries and names on the map do not imply official endorsement or acceptance by the United Nations.
 
 ## References
 

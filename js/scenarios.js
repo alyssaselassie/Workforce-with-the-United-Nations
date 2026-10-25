@@ -38,6 +38,7 @@
     const share = Math.round((finished.length / S.scenarios.length) * 100);
 
     root.innerHTML = `
+      <div class="mb-3 no-print">${Scenes.mentorTip('Every scenario is an island. Finish one to win its medallion: bronze, silver or gold.')}</div>
       <div class="surface p-3 mb-3 d-flex flex-wrap align-items-center gap-3 lib-progress">
         <span><strong>${finished.length}</strong> of ${S.scenarios.length} scenarios complete</span>
         <span><i class="bi bi-star-fill text-warning" aria-hidden="true"></i> <strong>${starCount}</strong> of ${S.scenarios.length * 3} stars</span>
@@ -108,6 +109,24 @@
     const state = { step: -1, choices: [], earned: {}, max: {}, tags: new Set(), missed: new Set(), xp: 0 };
     COMPETENCIES.forEach((k) => { state.earned[k] = 0; state.max[k] = 0; });
     document.title = `${s.title} · Scenarios`;
+    document.body.classList.add('is-playing');
+    const isle = s.island || { name: s.title, theme: 'village', npc: { name: 'Colleague', look: 'colleague' } };
+    const npcSpec = Avatar.NPC[isle.npc.look] || Avatar.NPC.colleague;
+    const me = () => String(App.Profile.get().name || '').trim().split(/\s+/)[0] || 'You';
+
+    // The island scene: your agent on the left, the story character and the mentor on the right.
+    function scene(o) {
+      return Scenes.stage({
+        theme: isle.theme, prop: isle.prop, sky: isle.sky, banner: o.banner, bubbles: o.bubbles || [],
+        caption: `${isle.name}: your agent, ${isle.npc.name} and ${Scenes.MENTOR.name}.`,
+        actors: [
+          { id: 'you', name: me(), spec: Avatar.get(), x: 13, look: 'right', mood: o.you, anim: o.youAnim },
+          { id: 'npc', name: isle.npc.name, spec: npcSpec, x: 63, look: 'left', mood: o.npc, anim: o.npcAnim },
+          { id: 'mentor', name: Scenes.MENTOR.name, spec: Avatar.NPC.mentor, x: 86, look: 'left', mood: o.mentor, anim: o.mentorAnim }
+        ]
+      });
+    }
+    const mentorSays = (text) => ({ side: 'right', who: Scenes.MENTOR.name, text });
 
     function header() {
       const dots = s.steps.map((_, i) => `<span class="${i < state.step ? 'done' : i === state.step ? 'current' : ''}"></span>`).join('');
@@ -117,6 +136,7 @@
           <li class="breadcrumb-item active" aria-current="page">${esc(s.title)}</li></ol></nav>
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
           <div>
+            <span class="island-tag mb-1"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i> ${esc(isle.name)}</span>
             <h2 class="h3 mb-1">${esc(s.title)}</h2>
             <p class="small text-muted-2 mb-0"><i class="bi bi-person-badge" aria-hidden="true"></i> You are a <strong>${esc(s.role)}</strong>
             ${ctxMission ? ` · Context: <a href="map.html?mission=${ctxMission.id}">${esc(ctxMission.acronym)}</a>` : ''}</p>
@@ -128,7 +148,7 @@
 
     // --- intro ---
     function intro() {
-      root.innerHTML = header() + `
+      root.innerHTML = header() + scene({ youAnim: 'walk', bubbles: [mentorSays(`Welcome to ${isle.name}! You're the ${s.role} here. Ready to help?`)] }) + `
         <div class="row g-3">
           <div class="col-lg-7">
             <div class="surface p-4 h-100">
@@ -139,7 +159,7 @@
               <p class="eyebrow mb-1">Dimensions in play</p>
               <div class="mb-1">${orderDims(s.dimensions).map((d) => App.dimChip(S, d)).join(' ')}</div>
               <p class="small text-muted-2 mb-3">A person cannot be defined by a single dimension. <a href="toolkit.html#dimensions">About the dimensions</a></p>
-              <button class="btn btn-primary btn-lg" id="begin">Begin scenario <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+              <button class="btn btn-pop btn-lg" id="begin">Begin scenario <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
             </div>
           </div>
           <div class="col-lg-5">
@@ -157,9 +177,12 @@
     // --- one decision ---
     function renderStep() {
       const step = s.steps[state.step];
-      root.innerHTML = header() + `
+      root.innerHTML = header() + scene({
+        npc: 'think',
+        bubbles: [{ side: 'think', text: '?', x: 63 }, mentorSays(state.step === 0 ? 'What will you do? Take a breath first.' : 'Next challenge. What now?')]
+      }) + `
         <div class="surface p-4">
-          <p class="lead mb-3">${esc(step.prompt)}</p>
+          <div class="story-box mb-3"><p class="lead mb-0">${esc(step.prompt)}</p></div>
           ${step.context ? `<div class="context-note p-3 small mb-3"><i class="bi bi-info-circle" aria-hidden="true"></i> <strong>Context:</strong> ${esc(step.context)}</div>` : ''}
           <fieldset>
             <legend class="small fw-semibold text-muted-2">Choose your response</legend>
@@ -192,6 +215,12 @@
       const missed = orderDims(choice.missed || []);
       const reward = Game.onDecision(s, state.step, choice);
       state.xp += reward.gain + reward.bonus;
+      const react = { strong: ['grin', 'jump'], partial: ['think', 'tilt'], weak: ['oops', 'shake'] }[choice.rating] || ['think', ''];
+      document.getElementById('stage').outerHTML = scene({
+        you: react[0], youAnim: react[1], npc: choice.rating === 'strong' ? 'grin' : 'think',
+        mentor: react[0], mentorAnim: choice.rating === 'strong' ? 'jump' : '',
+        bubbles: [{ side: 'left', who: me(), text: choice.text }, mentorSays(Scenes.reaction(choice.rating, state.step))]
+      });
 
       document.querySelectorAll('.choice-btn').forEach((b, idx) => {
         b.disabled = true;
@@ -249,9 +278,14 @@
       const saved = (App.Progress.get().reflections[s.id] || {}).text || '';
       const overall = Game.overall(scores);
       state.xp += Game.onScenarioComplete(s, overall);
+      const tier = Game.medal(Game.stars(overall));
       const next = S.scenarios[(S.scenarios.indexOf(s) + 1) % S.scenarios.length];
 
-      root.innerHTML = header() + `
+      root.innerHTML = header() + scene({
+        you: 'grin', youAnim: 'jump', npc: 'grin', mentor: 'grin', mentorAnim: 'jump',
+        banner: `${Scenes.medallion(tier, 40, `${tier} medallion`)}<span>Island complete!</span>`,
+        bubbles: [mentorSays(`You earned the ${tier} medallion of ${isle.name}!`)]
+      }) + `
         <div class="row g-3">
           <div class="col-lg-5">
             <div class="surface p-4 h-100">

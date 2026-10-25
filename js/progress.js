@@ -27,6 +27,7 @@
       ['bi-search', 'Bias Detective', `${X.bias} per new bias · ${X.round} per round (first ${X.rounds}) · ${X.perfect} for a perfect round`],
       ['bi-pause-circle', 'Assumption check (PAUSE)', `${X.pause.some}, or ${X.pause.all} with all five steps answered`],
       ['bi-people', 'Team Debrief goals', `${X.team.start} to start · ${X.team.voices} every voice · ${X.team.dimensions} every dimension · ${X.team.decided} decide together · ${X.team.actions} actions`],
+      ['bi-person-badge', 'Create your field agent (avatar)', X.avatar],
       ['bi-person-check', 'Profile details', `up to ${Object.values(X.profile).reduce((a, n) => a + n, 0)}`],
       ['bi-flag-fill', 'Quest on the deployment path', `${Math.min(...quests)}–${Math.max(...quests)} each`]
     ];
