@@ -310,7 +310,7 @@
     if (!card) return;
     const name = String(App.Profile.get().name || '').trim();
     card.innerHTML = `
-      <span class="agent-mini">${Avatar.portraitHtml('Your avatar')}</span>
+      <span class="agent-mini">${Avatar.svg(Avatar.get(), { view: 'head', title: 'Your avatar' })}</span>
       <div class="me-1">
         <div class="fw-bold">${esc(name || 'Your avatar')}</div>
         <div class="small text-muted-2">${sum ? `Level ${sum.level.number} · ${esc(sum.level.title)} · ${sum.counts.medals} of ${S.scenarios.length} medals` : ''}</div>
