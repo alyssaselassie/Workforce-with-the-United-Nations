@@ -146,5 +146,9 @@
       </div>`;
   }
 
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-tip]').forEach((el) => { el.innerHTML = mentorTip(el.dataset.tip); });
+  });
+
   window.Scenes = { stage, backdrop, medallion, reaction, mentorTip, MENTOR };
 })();

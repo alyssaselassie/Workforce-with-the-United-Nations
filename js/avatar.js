@@ -261,8 +261,10 @@
             const locked = need > lvl;
             const on = draft[row.key] === v;
             const label = optionLabel(row, v) + (locked ? ` (unlocks at level ${need})` : '');
+            // Hair previews leave out headwear, so each style is visible even under a hijab or hat.
+            const look = Object.assign({}, draft, { [row.key]: v }, row.key === 'hair' ? { headwear: 'none' } : {});
             const inner = row.kind === 'swatch' ? `<span class="agent-swatch" style="background:${row.color(v)}"></span>`
-              : svg(Object.assign({}, draft, { [row.key]: v }), { view: row.kind === 'head' ? 'head' : 'full' });
+              : svg(look, { view: row.kind === 'head' ? 'head' : 'full' });
             return `<button type="button" class="agent-opt agent-opt-${row.kind}${on ? ' is-on' : ''}${locked ? ' is-locked' : ''}" data-key="${row.key}" data-value="${v}"
               aria-pressed="${on}" aria-label="${esc(label)}" title="${esc(label)}"${locked ? ' disabled' : ''}>${inner}${locked ? `<span class="agent-lock"><i class="bi bi-lock-fill" aria-hidden="true"></i> Lv ${need}</span>` : ''}</button>`;
           }).join('')}

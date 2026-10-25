@@ -78,6 +78,7 @@
               <div>${langs.map((l) => `<span class="scope-chip"><i class="bi bi-translate" aria-hidden="true"></i> ${esc(l)}</span>`).join('')}</div>
             </div>
             <div class="d-flex gap-2 no-print">
+              <button class="btn btn-pop btn-sm" data-agent-open><i class="bi bi-person-gear" aria-hidden="true"></i> Customize avatar</button>
               <button class="btn btn-primary btn-sm" data-edit><i class="bi bi-pencil" aria-hidden="true"></i> Edit profile</button>
             </div>
           </div>
@@ -98,6 +99,21 @@
             <p class="mb-3">${pr.about ? esc(pr.about).replace(/\n/g, '<br>') : '<span class="text-muted-2">Tell others about your background and field experience.</span>'}</p>
             <h3 class="h6 mb-1"><i class="bi bi-bullseye" aria-hidden="true"></i> Learning goal</h3>
             <p class="mb-0">${pr.goal ? esc(pr.goal) : '<span class="text-muted-2">Set a goal to focus your practice.</span>'}</p>
+          </section>
+
+          <section class="surface p-4 mb-4" aria-labelledby="medals-h">
+            <div class="d-flex justify-content-between align-items-baseline">
+              <h2 class="h5" id="medals-h">Island medallions</h2>
+              <span class="small text-muted-2">${sum.counts.medals} of ${S.scenarios.length} islands</span>
+            </div>
+            <div class="medal-case">
+              ${S.scenarios.map((s) => {
+                const tier = sum.medals[s.id];
+                const name = (s.island || {}).name || s.title;
+                return `<a class="medal-slot text-decoration-none text-reset${tier ? '' : ' is-empty'}" href="scenarios.html?id=${s.id}">
+                  ${Scenes.medallion(tier || 'gold', 38, tier ? `${tier} medallion, ${name}` : `${name}: not earned yet`)}<div class="mt-1">${esc(name)}</div></a>`;
+              }).join('')}
+            </div>
           </section>
 
           <section class="surface p-4 mb-4" aria-labelledby="badges-h">
@@ -342,5 +358,6 @@
 
   render();
   document.addEventListener('game:change', render);
+  document.addEventListener('avatar:change', render);
   if (App.param('edit') === '1') openEditor();
 })();

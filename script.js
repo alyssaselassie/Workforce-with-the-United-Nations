@@ -175,10 +175,11 @@
     }
   };
 
-  // Round avatar: the uploaded photo, else initials, else a person icon.
+  // Round avatar: the uploaded photo, else the learner's cartoon agent, else initials, else a person icon.
   function avatar(profile, size) {
     const style = `width:${size}px;height:${size}px;font-size:${Math.round(size * 0.4)}px`;
     if (profile.photo) return `<img class="avatar" src="${esc(profile.photo)}" alt="" style="${style}">`;
+    if (window.Avatar && Avatar.isSet()) return Avatar.headHtml(size);
     const ini = Profile.initials(profile);
     return `<span class="avatar avatar-empty" style="${style}" aria-hidden="true">${ini ? esc(ini) : '<i class="bi bi-person"></i>'}</span>`;
   }
