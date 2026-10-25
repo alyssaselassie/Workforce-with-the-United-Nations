@@ -107,8 +107,10 @@
       case 'bun': return `<circle cx="50" cy="9.4" r="5.6" fill="${fill}" ${edge(c)}/>${pulled}${line('M45.8 13.4c2.8-1 5.6-1 8.4 0', shade(c, 0.6), 1.2)}${SHEEN()}`;
       case 'ponytail': return `${pulled}${line('M59.6 15.2c.9.5 1.6 1.2 2.1 2', shade(c, 0.55), 1.6)}${SHEEN()}`;
       case 'braids': return `<path d="M37.4 29c-1.2-10.2 4.6-16.6 12.6-16.6s13.8 6.4 12.6 16.6c-1.4-4.8-4.4-7.8-8.6-8.8-1.6-.4-3-1.4-4-2.8-1 1.4-2.4 2.4-4 2.8-4.2 1-7.2 4-8.6 8.8z" fill="${fill}" ${edge(c)}/>${SHEEN(0.16)}`;
-      case 'curly': return [[41, 20.6, 3.6], [45.4, 18.6, 3.8], [50, 18, 3.9], [54.6, 18.6, 3.8], [59, 20.6, 3.6], [38.4, 24.8, 3], [61.6, 24.8, 3]]
-        .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" ${edge(c, 0.5)}/>`).join('');
+      // A cap over the crown, then curls on top, so no scalp shows between the back and front curls.
+      case 'curly': return `<path d="M37.6 24.4c-1-8 4.6-13.4 12.4-13.4s13.4 5.4 12.4 13.4c-2.2-2.6-6.4-4.4-12.4-4.4s-10.2 1.8-12.4 4.4z" fill="${fill}"/>`
+        + [[44, 14.6, 3.6], [50, 13.2, 3.8], [56, 14.6, 3.6], [41, 20.6, 3.6], [45.4, 18.6, 3.8], [50, 18, 3.9], [54.6, 18.6, 3.8], [59, 20.6, 3.6], [38.4, 24.8, 3], [61.6, 24.8, 3]]
+          .map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" ${edge(c, 0.5)}/>`).join('');
       case 'buzz': return `<path d="M37.6 27.2c-.2-8.4 4.9-13.4 12.4-13.4s12.6 5 12.4 13.4c-1.9-4.2-6.2-7-12.4-7s-10.5 2.8-12.4 7z" fill="${fill}" opacity=".9"/>`;
       default: return '<ellipse cx="45" cy="18.4" rx="4.2" ry="2.2" fill="#fff" opacity=".16"/>';
     }
