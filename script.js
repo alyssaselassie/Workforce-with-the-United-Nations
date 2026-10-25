@@ -272,8 +272,9 @@
           <div class="container-xl">
             <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
               <span class="brand-mark" aria-hidden="true"><i class="bi bi-compass"></i></span>
-              <span><span class="fw-semibold">CQ &amp; Bias Navigator</span><span class="brand-sub d-none d-sm-block">CQ = Cultural Quotient · UN fieldwork learning prototype</span></span>
+              <span><span class="fw-semibold">CQ &amp; Bias Navigator</span><span class="brand-sub d-none d-sm-block d-xl-none d-xxl-block">CQ = Cultural Quotient · UN fieldwork learning prototype</span></span>
             </a>
+            ${window.Game ? Game.chipHtml() : ''}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain" aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>

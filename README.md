@@ -8,13 +8,13 @@ An interactive educational web application that helps United Nations personnel b
 
 | Page | What it does |
 | --- | --- |
-| `index.html` | Landing page: overview, live stats, competency framework, learning path |
-| `map.html` | Spinning 3D globe of UN field missions (D3). Selecting a mission, region or table row flies the globe to that area and highlights the countries in the mandate. Includes filters, a table view, mandate scope, source links, verification status, photos of each area and pre-deployment reflection prompts |
-| `scenarios.html` | Scenario library and branching player (11 scenarios). Each choice gets feedback, is scored on four competencies and shows which dimensions it overlooks. A results screen and saved reflection follow each scenario |
-| `toolkit.html` | Dimensions framework, bias library (14 biases), the PAUSE protocol, CQ capabilities, humanitarian principles and an assumption-check worksheet |
-| `collaboration.html` | Team Debrief: facilitated sessions with a perspective wall, a "who's missing" prompt, contributions tagged by dimension, a dimension check before voting, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
-| `progress.html` | Competency profile, completed scenarios, recurring biases, reflections, export and reset |
-| `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus competencies, the dimensions the learner most often misses, badges, recent activity and backup/restore of profile and progress |
+| `index.html` | Landing page: your level, the 8-quest deployment path with the next quest one click away, live stats, competency framework, learning path |
+| `map.html` | Spinning 3D globe of UN field missions (D3). Selecting a mission, region or table row flies the globe to that area and highlights the countries in the mandate. Includes filters, a table view, mandate scope, source links, verification status, photos of each area, pre-deployment reflection prompts and a field passport that stamps each mission you open |
+| `scenarios.html` | Scenario library and branching player (11 scenarios). Each choice gets feedback and XP, is scored on four competencies and shows which dimensions it overlooks. Strong decisions in a row build combos. Results show 1–3 stars, the XP earned and the next quest. Keyboard play: A–D to answer, Enter to continue |
+| `toolkit.html` | Bias Detective mini-game, dimensions framework, bias library (14 biases), the PAUSE protocol, CQ capabilities, humanitarian principles and an assumption-check worksheet |
+| `collaboration.html` | Team Debrief: four cooperative team goals (every voice heard, every dimension discussed, decide together, agree on actions), facilitated sessions with a perspective wall, a "who's missing" prompt, contributions tagged by dimension, a dimension check before voting, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
+| `progress.html` | Game hub (level, recent XP, quests and the full XP rules), then the competency profile, completed scenarios with stars, recurring biases, reflections, export and reset |
+| `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus level, competencies, missions explored, the dimensions the learner most often misses, 18 badges with progress, recent activity and backup/restore of profile, progress and XP |
 
 ### Scoring
 
@@ -38,13 +38,29 @@ A person cannot be defined by a single dimension. Building on the approach to li
 
 Each scenario is tagged with the dimensions its stem names (at least three), and each response choice records the dimensions it overlooks (`missed`). A decision *tests* a dimension when at least one of its choices overlooks it. The profile shows how often the learner's choices missed each tested dimension. The dimensions describe the situation; the competencies score the response.
 
+### Gamification
+
+The Navigator is built around light, practical gamification: every reward points the learner to a useful next step.
+
+- **XP and 8 levels**, from New Arrival to CQ Champion. The level chip in the nav fills toward the next level, and level-ups are celebrated (with confetti, unless the visitor prefers reduced motion).
+- **Deployment path:** 8 quests that follow the learner journey: create a profile, visit a duty station, make a first decision, spot 5 biases, PAUSE before acting, explore 3 regions, hear every voice and reach Proficient three times. Each quest links straight to where it is done.
+- **Field passport:** opening a mission stamps it. Region chips and globe markers show what has been explored.
+- **Scenario rewards:** XP for every decision (5 even for a weak one, as a learning moment), combos for strong decisions in a row, stars per scenario (1 under 50%, 2 for 50–74%, 3 for 75%+), XP for a reflection.
+- **Bias Detective:** five-card rounds. Each card shows a field example; the learner names the bias from three options, then reads its definition and counter-strategy. Rounds favor biases not yet spotted, and options never pair two biases whose examples are nearly identical.
+- **Team goals** in Team Debrief are cooperative and describe the session, never an individual.
+- **18 badges** with progress bars, toasts for XP, badges and quests, and a transparent XP table on the progress page.
+
+Design principles: XP rewards learning actions (exploring a context, deciding, reflecting, hearing every voice) and never speed. Each action pays once; replaying earns XP only for doing better. There are no leaderboards, so learners are only compared with their past selves, and XP is not a measure of anyone's bias. `js/game.js` holds the rules (`XP`, `LEVELS`, `QUESTS`, badges); a ledger stores the best award per action key.
+
 ## Project structure
 
 ```
 index.html  map.html  scenarios.html  toolkit.html  collaboration.html  progress.html
 styles.css             shared styles (Bootstrap 5.3 + design tokens)
 script.js              shared core: data loading, progress storage, header/footer, helpers
-js/                    one module per page (home, map, scenarios, toolkit, collaboration, progress)
+js/game.js             gamification layer: XP ledger, levels, quests, badges, toasts, level chip
+js/detective.js        Bias Detective mini-game on the toolkit page
+js/                    one module per page (home, map, scenarios, toolkit, collaboration, progress, profile)
 data/missions.json     mission locations, scope, status, sources, verification flags
 data/scenarios.json    competencies, bias library, frameworks, scenarios, choices, feedback, scores
 data/data-bundle.js    generated copy of the JSON so the site also works from file://

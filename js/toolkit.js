@@ -61,7 +61,7 @@
   }
   document.getElementById('bias-search').addEventListener('input', (e) => drawBiases(e.target.value.trim().toLowerCase()));
   drawBiases('');
-  if (location.hash) {
+  if (location.hash.startsWith('#bias-')) {
     const target = document.querySelector(location.hash);
     if (target) {
       target.classList.add('border-primary');
@@ -90,10 +90,11 @@
     e.preventDefault();
     const [decision, ...answers] = fields.map((f) => f.value.trim());
     const blanks = F.pause.filter((_, i) => !answers[i]).map((p) => p.name);
+    const xp = Game.onPauseCheck(F.pause.length - blanks.length, F.pause.length);
     const text = [`Decision: ${decision}`, ...F.pause.map((p, i) => `${p.letter}: ${p.name}: ${answers[i] || '(not answered)'}`)].join('\n');
     document.getElementById('ck-output').innerHTML = `
       <div class="surface p-4">
-        <h3 class="h6">Assumption check summary</h3>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2"><h3 class="h6 mb-0">Assumption check summary</h3>${xp ? `<span class="xp-pop">+${xp} XP</span>` : ''}</div>
         ${blanks.length ? `<div class="alert alert-warning small py-2">Steps not yet answered: ${blanks.map(esc).join(', ')}. Gaps here are often where bias hides.</div>` : '<div class="alert alert-success small py-2">All five PAUSE steps answered.</div>'}
         <pre class="small bg-light p-3 rounded mb-2" style="white-space:pre-wrap">${esc(text)}</pre>
         <div class="d-flex gap-2 no-print">

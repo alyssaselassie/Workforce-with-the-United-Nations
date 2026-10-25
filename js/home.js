@@ -1,8 +1,8 @@
-// Home page: headline stats and competency overview.
+// Home page: level, deployment path quests, headline stats and competency overview.
 (async function () {
   'use strict';
   const { esc } = App;
-  const ICONS = { cq: 'bi-globe2', bias: 'bi-eye', evidence: 'bi-clipboard-data', harm: 'bi-shield-heart' };
+  const ICONS = { cq: 'bi-globe2', bias: 'bi-eye', evidence: 'bi-clipboard-data', harm: 'bi-shield-check' };
 
   // Returning learners see their name instead of the sign-up prompt.
   const firstName = String(App.Profile.get().name || '').trim().split(/\s+/)[0];
@@ -11,6 +11,25 @@
     btn.href = 'profile.html';
     btn.innerHTML = `<i class="bi bi-person-circle" aria-hidden="true"></i> Welcome back, ${esc(firstName)}`;
   }
+
+  // Level, quick stats, next quest and the quest path. Redrawn when XP changes.
+  async function drawGame() {
+    const sum = await Game.summary();
+    const c = sum.counts;
+    const stat = (value, label) => `<div class="col-6"><div class="game-stat"><strong>${value}</strong><span class="small text-muted-2">${label}</span></div></div>`;
+    document.getElementById('home-level').innerHTML = Game.levelHtml(sum);
+    document.getElementById('home-game-stats').innerHTML = [
+      stat(`${sum.badges.filter((b) => b.earned).length}/${sum.badges.length}`, 'Badges'),
+      stat(`${c.stamps}/${c.totals.missions}`, 'Missions explored'),
+      stat(`${c.found}/${c.totals.biases}`, 'Biases spotted'),
+      stat(`×${c.bestCombo}`, 'Best combo')
+    ].join('');
+    document.getElementById('home-next').innerHTML = Game.nextQuestHtml(sum, 'w-100');
+    document.getElementById('home-quests').innerHTML = Game.questsHtml(sum);
+    document.getElementById('path-count').textContent = `${sum.quests.filter((q) => q.done).length} of ${sum.quests.length} quests complete`;
+  }
+  drawGame().catch((err) => App.showError(document.getElementById('home-quests'), err));
+  document.addEventListener('game:change', () => drawGame().catch(() => {}));
 
   try {
     const [missions, scenarios] = await Promise.all([App.loadMissions(), App.loadScenarios()]);

@@ -137,6 +137,7 @@
     if (!s) return;
     const sc = scenarioById[s.scenarioId];
     const tabs = [['discuss', 'Discuss', 'bi-chat-dots'], ['vote', 'Group vote', 'bi-hand-index'], ['actions', 'Action plan', 'bi-list-check'], ['summary', 'Summary', 'bi-file-text']];
+    const goals = teamGoals(s, sc);
 
     ws.innerHTML = `
       <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
@@ -150,6 +151,7 @@
           <button class="btn btn-outline-danger btn-sm" id="delete"><i class="bi bi-trash" aria-hidden="true"></i> Delete</button>
         </div>
       </div>
+      ${goalsPanel(goals)}
       <ul class="nav nav-tabs mb-3 no-print" role="tablist">
         ${tabs.map(([k, label, icon]) => `<li class="nav-item" role="presentation">
           <button class="nav-link${tab === k ? ' active' : ''}" role="tab" aria-selected="${tab === k}" data-tab="${k}"><i class="bi ${icon}" aria-hidden="true"></i> ${label}</button></li>`).join('')}
@@ -172,6 +174,49 @@
 
     const body = document.getElementById('tab-body');
     ({ discuss, vote, actions, summary })[tab](body, s, sc);
+    Game.onTeamGoals(Object.assign({ start: true }, Object.fromEntries(goals.map((g) => [g.id, g.have >= g.need]))));
+  }
+
+  // Cooperative goals for the whole team. They describe the session, never a person.
+  function teamGoals(s, sc) {
+    const dims = inPlay(sc);
+    return [
+      { id: 'voices', icon: 'bi-megaphone', label: 'Every voice heard', hint: 'National, international, uniformed and community voices',
+        have: PERSPECTIVES.slice(0, 4).filter((p) => s.contributions.some((c) => c.perspective === p)).length, need: 4 },
+      { id: 'dimensions', icon: 'bi-layers', label: 'Every dimension discussed', hint: 'Tag each comment with the dimension it raises',
+        have: dims.filter((d) => s.contributions.some((c) => c.dimension === d)).length, need: dims.length },
+      { id: 'decided', icon: 'bi-hand-index', label: 'Decide together', hint: 'Vote on each decision, then reveal the guidance',
+        have: sc.steps.filter((_, si) => s.revealed[si] && Object.values(s.votes[si] || {}).some((n) => n > 0)).length, need: sc.steps.length },
+      { id: 'actions', icon: 'bi-list-check', label: 'Agree on actions', hint: 'Add at least one action point',
+        have: Math.min(s.actions.length, 1), need: 1 }
+    ];
+  }
+
+  function goalsPanel(goals) {
+    const done = goals.filter((g) => g.have >= g.need).length;
+    return `
+      <div class="surface p-3 mb-3" id="team-goals">
+        <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-2 mb-2">
+          <p class="eyebrow mb-0"><i class="bi bi-trophy" aria-hidden="true"></i> Team goals</p>
+          <span class="small text-muted-2">${done} of ${goals.length} complete · shared by the whole team, no individual scores</span>
+        </div>
+        <div class="row g-2">
+          ${goals.map((g) => {
+            const met = g.have >= g.need;
+            return `
+              <div class="col-sm-6">
+                <div class="team-goal${met ? ' is-done' : ''}">
+                  <span class="tg-icon" aria-hidden="true"><i class="bi ${met ? 'bi-check-lg' : g.icon}"></i></span>
+                  <div class="flex-grow-1 min-w-0">
+                    <div class="d-flex justify-content-between gap-2 small"><strong>${esc(g.label)}</strong><span class="text-muted-2">${g.have}/${g.need}</span></div>
+                    <div class="tg-bar" aria-hidden="true"><div style="width:${Math.round((g.have / g.need) * 100)}%"></div></div>
+                    <div class="text-muted-2 mt-1" style="font-size:.72rem">${esc(g.hint)}</div>
+                  </div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`;
   }
 
   // --- Discuss ---
