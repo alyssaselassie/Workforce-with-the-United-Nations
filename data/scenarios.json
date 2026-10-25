@@ -32,7 +32,7 @@
     { "id": "threat", "name": "Threat bias", "definition": "Seeing ambiguous behavior as hostile, especially in insecure settings.", "fieldExample": "Treating a farmer approaching a patrol as a threat by default.", "counter": "Combine force-protection procedures with de-escalation and local liaison." }
   ],
   "frameworks": {
-    "dimensionsIntro": "A person cannot be defined by a single dimension. Building on the ReliefMaps+ approach to lived experience (social positions, places and emotions), this tool adds Voice / power for UN fieldwork. Every scenario is tagged with the dimensions it involves, and every response choice records which dimensions it overlooks.",
+    "dimensionsIntro": "A person cannot be defined by a single dimension. Building on the Relief Maps+ approach to lived experience (social positions, places and emotions), this tool adds Voice / power for UN fieldwork. Every scenario is tagged with the dimensions it involves, and every response choice records which dimensions it overlooks.",
     "dimensionsRule": "Each scenario names at least three dimensions in its stem. A dimension is only included when it changes the decision. The dimensions describe the situation; the four competencies score the response.",
     "cqCapabilities": [
       { "name": "CQ Drive", "question": "Am I motivated and confident enough to engage across cultures, even when it is uncomfortable?" },

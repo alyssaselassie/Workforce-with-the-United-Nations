@@ -29,7 +29,7 @@ A scenario score is points earned divided by the best points available at each s
 
 ### Dimensions framework
 
-A person cannot be defined by a single dimension. Building on the ReliefMaps+ approach to lived experience (social positions, places and emotions), the Navigator adds a fourth dimension for UN fieldwork:
+A person cannot be defined by a single dimension. Building on the approach to lived experience (social positions, places and emotions) of [Relief Maps+](https://reliefmaps.upf.edu), created by Maria Rodó-Zárate and the INTERMAPS team at Universitat Pompeu Fabra (INTERMAPS, 2024; Rodó-Zárate, 2023), the Navigator adds a fourth dimension for UN fieldwork:
 
 - **Social position**: role, gender, and national, international or uniformed status.
 - **Place**: where the decision happens (meeting room, private conversation, water point, patrol route, virtual meeting).
@@ -140,4 +140,11 @@ Semantic landmarks, a skip link, keyboard-operable map rows and markers, ARIA li
 
 ## License and attribution
 
+Dimensions framework: adapted from Relief Maps+, created by Maria Rodó-Zárate and the INTERMAPS team at Universitat Pompeu Fabra. Voice / power is this project's addition.
+
 Map data: Natural Earth (public domain), via world-atlas (ISC). D3 (ISC). topojson-client (ISC). Bootstrap (MIT). Mission photos: Wikimedia Commons, credited individually under each file's own license. Boundaries and names on the map do not imply official endorsement or acceptance by the United Nations.
+
+## References
+
+- INTERMAPS. (2024). *Relief Maps+* [Web application]. Universitat Pompeu Fabra. https://reliefmaps.upf.edu
+- Rodó-Zárate, M. (2023). Intersectionality and the spatiality of emotions in feminist research. *The Professional Geographer, 75*(4), 676–681. https://doi.org/10.1080/00330124.2022.2075406
