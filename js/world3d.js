@@ -1,5 +1,6 @@
-// 3D characters and story scenes with Three.js (WebGL): modeled, lit, shadowed and animated like the globe.
-// Three.js loads only when a 3D view is needed. Without WebGL, the SVG art in avatar.js and scenes.js stays.
+// 3D characters in the group's glossy "clay toy" style, built with Three.js (WebGL): big round heads,
+// shiny bead eyes, rosy cheeks, chunky glossy hair, pastel hoodies and mitten hands, in soft studio light.
+// Three.js loads only when a 3D view is needed. Without WebGL, the drawn SVG art in avatar.js and scenes.js stays.
 (function () {
   'use strict';
   const LIB = 'https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js';
@@ -41,30 +42,40 @@
     return loading;
   }
 
-  // ---------- shared helpers ----------
-  const geos = new Map();
-  const mats = new Map();
+  // ---------- helpers ----------
+  const cache = new Map();
   const G = (key, make) => {
-    if (!geos.has(key)) geos.set(key, make());
-    return geos.get(key);
+    if (!cache.has(key)) cache.set(key, make());
+    return cache.get(key);
   };
-  function M(color, o) {
-    const opts = Object.assign({ roughness: 0.78, metalness: 0 }, o || {});
-    const key = color + JSON.stringify(opts);
-    if (!mats.has(key)) mats.set(key, new T.MeshStandardMaterial(Object.assign({ color }, opts)));
-    return mats.get(key);
-  }
   function shade(hex, f) {
     const n = parseInt(hex.slice(1), 16);
     const c = (v) => Math.max(0, Math.min(255, Math.round(v * f))).toString(16).padStart(2, '0');
     return `#${c(n >> 16)}${c((n >> 8) & 255)}${c(n & 255)}`;
   }
+  const lerp = (a, b, t) => a + (b - a) * t;
   function mix(a, b, t) {
     const pa = parseInt(a.slice(1), 16);
     const pb = parseInt(b.slice(1), 16);
     const c = (sh) => Math.round(lerp((pa >> sh) & 255, (pb >> sh) & 255, t)).toString(16).padStart(2, '0');
     return `#${c(16)}${c(8)}${c(0)}`;
   }
+  // Richer color for the clay look, from the same palette the drawn avatars use.
+  function vivid(hex, ks, kl) {
+    const c = new T.Color(hex);
+    const h = {};
+    c.getHSL(h);
+    c.setHSL(h.h, Math.min(1, h.s * ks), Math.min(0.97, h.l * (kl || 1)));
+    return `#${c.getHexString()}`;
+  }
+  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  // Overshoots a little and settles, for pops.
+  const back = (t) => 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2);
+  const damp = (cur, target, rate, dt) => cur + (target - cur) * (1 - Math.exp(-rate * dt));
+  const smooth = (e0, e1, x) => {
+    const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
+    return t * t * (3 - 2 * t);
+  };
   function place(o, at) {
     if (!at) return o;
     if (at.p) o.position.set(at.p[0], at.p[1], at.p[2]);
@@ -75,9 +86,9 @@
     }
     return o;
   }
-  function mesh(geo, mat, at, noShadow) {
+  function mesh(geo, mat, at, cast) {
     const m = new T.Mesh(geo, mat);
-    m.castShadow = !noShadow;
+    m.castShadow = Boolean(cast);
     m.receiveShadow = true;
     return place(m, at);
   }
@@ -86,18 +97,9 @@
     (kids || []).forEach((k) => k && g.add(k));
     return place(g, at);
   }
-  const V3 = (x, y, z) => new T.Vector3(x, y, z);
-  const lerp = (a, b, t) => a + (b - a) * t;
-  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  const smooth = (e0, e1, x) => {
-    const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0)));
-    return t * t * (3 - 2 * t);
-  };
-  // Shell scale for a coverage of 0 (tucked under the skin) to 1 (full thickness): edges blend smoothly.
-  const cover = (c, thick) => lerp(0.9, thick, c);
-  const damp = (cur, target, rate, dt) => cur + (target - cur) * (1 - Math.exp(-rate * dt));
-
-  // Narrows a geometry toward one end (y from -h/2 to +h/2), for tapered limbs.
+  const V3 = (x, y, z) => new T.Vector3(x || 0, y || 0, z || 0);
+  const ball = () => G('ball', () => new T.SphereGeometry(1, 32, 24));
+  const dot = () => G('dot', () => new T.SphereGeometry(1, 16, 12));
   function taper(g, bottom, top) {
     g.computeBoundingBox();
     const { min, max } = g.boundingBox;
@@ -110,206 +112,252 @@
     g.computeVertexNormals();
     return g;
   }
-  const capsule = (r, len, bottom, top) => taper(new T.CapsuleGeometry(r, len, 8, 20), bottom == null ? 1 : bottom, top == null ? 1 : top);
-
-  function tube(points, r, segs) {
-    const curve = new T.CatmullRomCurve3(points.map(([x, y, z]) => V3(x, y, z)));
-    return new T.TubeGeometry(curve, segs || 24, r, 8, false);
+  const capsule = (r, len, bottom, top) => taper(new T.CapsuleGeometry(r, len, 12, 28), bottom == null ? 1 : bottom, top == null ? 1 : top);
+  const tubeGeo = (pts, r, segs) => new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(([x, y, z]) => V3(x, y, z))), segs || 24, r, 10, false);
+  function roundRect(sh, w, h, r) {
+    sh.moveTo(-w / 2 + r, -h / 2);
+    sh.lineTo(w / 2 - r, -h / 2);
+    sh.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r);
+    sh.lineTo(w / 2, h / 2 - r);
+    sh.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2);
+    sh.lineTo(-w / 2 + r, h / 2);
+    sh.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r);
+    sh.lineTo(-w / 2, -h / 2 + r);
+    sh.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
+    return sh;
   }
-
-  // A rounded box (for shoes, bags and props) from an extruded rounded rectangle.
   function roundBox(w, h, d, r) {
-    const s = new T.Shape();
-    const x = -w / 2 + r;
-    const y = -h / 2 + r;
-    const iw = w - 2 * r;
-    const ih = h - 2 * r;
-    s.moveTo(x, y - r);
-    s.lineTo(x + iw, y - r);
-    s.quadraticCurveTo(x + iw + r, y - r, x + iw + r, y);
-    s.lineTo(x + iw + r, y + ih);
-    s.quadraticCurveTo(x + iw + r, y + ih + r, x + iw, y + ih + r);
-    s.lineTo(x, y + ih + r);
-    s.quadraticCurveTo(x - r, y + ih + r, x - r, y + ih);
-    s.lineTo(x - r, y);
-    s.quadraticCurveTo(x - r, y - r, x, y - r);
-    const g = new T.ExtrudeGeometry(s, { depth: d - 2 * r, bevelEnabled: true, bevelThickness: r, bevelSize: r * 0.98, bevelSegments: 3, curveSegments: 6 });
-    g.translate(0, 0, -(d - 2 * r) / 2);
+    const depth = Math.max(0.001, d - 2 * r);
+    const ir = Math.min(r, (w - 2 * r) / 2, (h - 2 * r) / 2) * 0.9;
+    const g = new T.ExtrudeGeometry(roundRect(new T.Shape(), w - 2 * r, h - 2 * r, ir), { depth, bevelEnabled: true, bevelThickness: r, bevelSize: r * 0.98, bevelSegments: 5, curveSegments: 6 });
+    g.translate(0, 0, -depth / 2);
     return g;
   }
+  function canvasTex(key, w, h, draw) {
+    return G(`tex:${key}`, () => {
+      const c = document.createElement('canvas');
+      c.width = w;
+      c.height = h;
+      draw(c.getContext('2d'), w, h);
+      const t = new T.CanvasTexture(c);
+      t.colorSpace = T.SRGBColorSpace;
+      return t;
+    });
+  }
+
+  // ---------- clay materials ----------
+  // Soft plastic: satin skin and cloth, and a glossy coat on hair, eyes and shoes.
+  function clay(color, kind) {
+    return G(`mat:${kind || 'cloth'}:${color}`, () => {
+      const o = { color, envMapIntensity: 0.45 };
+      if (kind === 'hair') return new T.MeshPhysicalMaterial(Object.assign(o, { roughness: 0.38, clearcoat: 0.6, clearcoatRoughness: 0.22 }));
+      if (kind === 'gloss') return new T.MeshPhysicalMaterial(Object.assign(o, { roughness: 0.14, clearcoat: 1, clearcoatRoughness: 0.05 }));
+      if (kind === 'metal') Object.assign(o, { roughness: 0.25, metalness: 0.85 });
+      else Object.assign(o, { roughness: kind === 'skin' ? 0.46 : 0.7 });
+      return new T.MeshStandardMaterial(o);
+    });
+  }
+  const flat = (color) => G(`mat:flat:${color}`, () => new T.MeshBasicMaterial({ color }));
+
+  // A soft studio, reflected in the glossy coats.
+  const envs = new WeakMap();
+  function studio(renderer) {
+    if (!envs.has(renderer)) {
+      const pm = new T.PMREMGenerator(renderer);
+      const env = new T.Scene();
+      env.background = new T.Color('#e9ecf5');
+      const panel = (w, h, color, x, y, z) => {
+        const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color, side: T.DoubleSide }));
+        m.position.set(x, y, z);
+        m.lookAt(0, 0, 0);
+        env.add(m);
+      };
+      panel(7, 5, '#ffffff', -4, 5, 5);
+      panel(5, 4, '#fff0f6', 6, 2, 3);
+      panel(7, 3, '#e4ecff', 0, 4, -6);
+      panel(24, 24, '#f4effc', 0, -7, 0);
+      envs.set(renderer, pm.fromScene(env, 0.04).texture);
+      pm.dispose();
+    }
+    return envs.get(renderer);
+  }
+
+  // ---------- the body ----------
+  // The hoodie's profile as [radius, height] from hem to collar; front to back it is flattened to 0.82.
+  const BODY = [[0.0, -0.03], [0.17, -0.025], [0.214, 0.02], [0.232, 0.11], [0.236, 0.21], [0.224, 0.29], [0.193, 0.355], [0.135, 0.392], [0.07, 0.408], [0.0, 0.412]];
+  function bodyR(y) {
+    for (let i = 1; i < BODY.length; i += 1) {
+      if (y <= BODY[i][1]) return lerp(BODY[i - 1][0], BODY[i][0], Math.max(0, (y - BODY[i - 1][1]) / (BODY[i][1] - BODY[i - 1][1])));
+    }
+    return 0;
+  }
+  const frontZ = (x, y, k) => 0.82 * Math.sqrt(Math.max(0, Math.pow(bodyR(y) * (k || 1), 2) - x * x));
+  const UPPER = 0.17;
+  const FORE = 0.205;
 
   // ---------- the head ----------
-  // An egg-shaped head: the jaw narrows toward the chin and the back of the skull is fuller.
-  const HEAD = { a: 0.095, b: 0.125, c: 0.108 };
-  const HIP = 0.87;
-  function jaw(uy) {
-    const t = Math.max(0, (-uy - 0.2) / 0.8);
-    return [1 - 0.3 * Math.pow(t, 1.2), 1 - 0.1 * t];
-  }
+  const HEAD = { a: 0.3, b: 0.285, c: 0.29 };
+  // Round, with slightly full cheeks and a soft chin.
+  const chinK = (uy) => (uy < -0.3 ? 1 - 0.13 * Math.pow((-uy - 0.3) / 0.7, 1.4) : 1);
+  const cheekK = (uy) => 1 + 0.045 * Math.exp(-Math.pow((uy + 0.28) / 0.24, 2));
   function headPoint(ux, uy, uz, k) {
-    const [kx, kz] = jaw(uy);
-    return [ux * kx * HEAD.a * k, uy * HEAD.b * k, uz * (uz > 0 ? kz : 1.06) * HEAD.c * k];
+    const ch = chinK(uy);
+    return [ux * HEAD.a * ch * cheekK(uy) * k, uy * HEAD.b * k, uz * HEAD.c * ch * k];
   }
-  // The front of the face at (x, y), to seat the features on the skin.
   function surface(x, y) {
     const uy = y / HEAD.b;
-    const [kx, kz] = jaw(uy);
-    const ux = x / (HEAD.a * kx);
-    return HEAD.c * kz * Math.sqrt(Math.max(0, 1 - ux * ux - uy * uy));
+    const ch = chinK(uy);
+    const ux = x / (HEAD.a * ch * cheekK(uy));
+    return HEAD.c * ch * Math.sqrt(Math.max(0, 1 - ux * ux - uy * uy));
   }
-  // A shell around the head (hair, head coverings, beards). keep() returns the shell's scale at a point;
-  // parts at 0.9 or less sit under the skin.
-  function shell(key, keep, segs) {
+  // A group on the face at (x, y), turned to follow the curve of the head.
+  function onFace(x, y, lift, kids) {
+    const z = surface(x, y);
+    const g = group({ p: [x, y, z + (lift || 0)] }, kids);
+    g.rotation.order = 'YXZ';
+    g.rotation.y = Math.atan2(x, z) * 0.85;
+    g.rotation.x = -Math.atan2(y, Math.hypot(x, z)) * 0.85;
+    return g;
+  }
+  const headGeo = () => G('head', () => {
+    const g = new T.SphereGeometry(1, 56, 42);
+    const p = g.attributes.position;
+    for (let i = 0; i < p.count; i += 1) {
+      const [x, y, z] = headPoint(p.getX(i), p.getY(i), p.getZ(i), 1);
+      p.setXYZ(i, x, y, z);
+    }
+    g.computeVertexNormals();
+    return g;
+  });
+  // A shell around the head (hair, head coverings, beards): keep() gives the scale at each point;
+  // 0.9 or less tucks that part under the skin, so edges blend smoothly.
+  function shell(key, keep, fine) {
     return G(key, () => {
-      const n = segs || 96;
-      const g = new T.SphereGeometry(1, n, Math.round(n * 0.75));
+      const g = fine ? new T.SphereGeometry(1, 96, 72) : new T.SphereGeometry(1, 72, 54);
       const p = g.attributes.position;
       for (let i = 0; i < p.count; i += 1) {
-        const ux = p.getX(i);
-        const uy = p.getY(i);
-        const uz = p.getZ(i);
-        const k = keep(ux, uy, uz);
-        const [x, y, z] = headPoint(ux, uy, uz, k);
+        const [x, y, z] = headPoint(p.getX(i), p.getY(i), p.getZ(i), keep(p.getX(i), p.getY(i), p.getZ(i)));
         p.setXYZ(i, x, y, z);
       }
       g.computeVertexNormals();
       return g;
     });
   }
-  // Height of the hairline on the unit head: high at the forehead, low at the nape.
-  const hairline = (uz, lift) => 0.15 + 0.6 * uz - 0.05 * uz * uz + (lift || 0);
-  const onFace = (x, y, lift) => V3(x, y, surface(x, y) + (lift || 0));
-  // A feature that lies on the skin, from a flat outline.
-  function skinShape(shape, lift) {
-    const g = new T.ShapeGeometry(shape, 12);
+  const cover = (c, thick) => lerp(0.9, thick, c);
+  const hairline = (uz, lift) => 0.5 * uz - 0.05 * uz * uz + (lift || 0);
+  // Curly hair as one soft cloud: rounded lobes spread over the scalp that merge without gaps.
+  const LOBES = (() => {
+    const list = [];
+    for (let i = 0; i < 44; i += 1) {
+      const uy = 1 - (2 * (i + 0.5)) / 44;
+      const r = Math.sqrt(1 - uy * uy);
+      const a = i * 2.39996 + 0.4;
+      const uz = Math.sin(a) * r;
+      if (uy > hairline(uz, -0.06) - 0.1) list.push([Math.cos(a) * r, uy, uz]);
+    }
+    return list;
+  })();
+  function lobed(ux, uy, uz) {
+    let acc = 0;
+    LOBES.forEach(([x, y, z]) => {
+      acc += Math.exp((-4 * (1 - (ux * x + uy * y + uz * z))) / 0.03);
+    });
+    return Math.pow(acc, 0.25);
+  }
+  // Bends a flat shape onto the curve of the head (radius about 0.3).
+  function bend(g, lift) {
     const p = g.attributes.position;
-    for (let i = 0; i < p.count; i += 1) p.setZ(i, surface(p.getX(i), p.getY(i)) + lift);
+    for (let i = 0; i < p.count; i += 1) {
+      const x = p.getX(i);
+      const y = p.getY(i);
+      p.setZ(i, p.getZ(i) - (x * x + y * y) / 0.6 + lift);
+    }
     g.computeVertexNormals();
     return g;
   }
-  const faceTube = (pts, r, lift) => {
-    const curve = new T.CatmullRomCurve3(pts.map(([x, y]) => onFace(x, y, lift)));
-    return new T.TubeGeometry(curve, 20, r, 6, false);
-  };
+  const faceTube = (pts, r) => tubeGeo(pts.map(([x, y]) => [x, y, -(x * x + y * y) / 0.6 + 0.004]), r, 20);
 
   // ---------- figures ----------
-  // A person about 1.75 m tall, built from smooth parts and rigged at the hips, spine, neck, shoulders,
-  // elbows, hips and knees. spec uses the same options as the avatar creator.
+  // A chibi figure about 1.35 units tall (the head is nearly half of it), rigged at the hips, chest,
+  // neck, shoulders and elbows. spec uses the same options as the avatar creator.
   function figure(spec, opts) {
     const o = opts || {};
     const A = window.Avatar;
     const P = A.PALETTE;
     const s = Object.assign({}, A.DEFAULT, spec);
-    const skinHex = P.SKIN[s.skin] || P.SKIN[3];
-    const hairHex = P.HAIR_COLORS[s.hairColor] || P.HAIR_COLORS.black;
-    const shirtHex = P.COLORS[s.shirt] || P.COLORS.sky;
-    const hwHex = P.COLORS[s.hwColor] || P.COLORS.teal;
-    const pantsHex = /^#[0-9a-f]{6}$/i.test(s.pants || '') ? s.pants : P.TROUSERS;
-    const skin = M(skinHex, { roughness: 0.6, emissive: skinHex, emissiveIntensity: 0.07 });
-    const skinDark = M(shade(skinHex, 0.86), { roughness: 0.65 });
-    const lipHex = mix(P.LIPS[s.skin] || P.LIPS[3], skinHex, 0.35);
-    const lips = M(lipHex, { roughness: 0.5 });
-    const hairM = G('mat:hair' + hairHex, () => new T.MeshStandardMaterial({ color: hairHex, roughness: 0.46, metalness: 0.04, bumpMap: strands(), bumpScale: 0.5 }));
-    const browM = M(shade(hairHex, ['blonde', 'gray'].includes(s.hairColor) ? 0.62 : 0.9), { roughness: 0.6 });
-    const shirt = M(shirtHex, { roughness: 0.86 });
-    const shirtDark = M(shade(shirtHex, 0.82), { roughness: 0.86 });
-    const pants = M(pantsHex, { roughness: 0.88 });
-    const shoe = M(P.SHOE, { roughness: 0.42 });
-    const hw = M(hwHex, { roughness: 0.84 });
-    const ink = M('#1e1a1a', { roughness: 0.3 });
-    const white = M('#f6f3ee', { roughness: 0.25 });
+    const skinHex = vivid(P.SKIN[s.skin] || P.SKIN[3], 1.12);
+    const hairHex = vivid(P.HAIR_COLORS[s.hairColor] || P.HAIR_COLORS.black, 1.35);
+    const shirtHex = vivid(mix(P.COLORS[s.shirt] || P.COLORS.sky, '#ffffff', 0.16), 1.12);
+    const hwHex = vivid(P.COLORS[s.hwColor] || P.COLORS.teal, 1.1);
+    const pantsHex = mix(/^#[0-9a-f]{6}$/i.test(s.pants || '') ? s.pants : '#3f4f7a', '#ffffff', 0.12);
+    const skin = clay(skinHex, 'skin');
+    const skinDeep = clay(shade(skinHex, 0.88), 'skin');
+    const hair = clay(hairHex, 'hair');
+    const hood = clay(shirtHex);
+    const hoodDeep = clay(shade(shirtHex, 0.9));
+    const hw = clay(hwHex);
+    const hwDeep = clay(shade(hwHex, 0.86));
+    const ink = clay('#1d1412', 'gloss');
     const hijab = s.headwear === 'hijab';
     const covered = ['hijab', 'turban', 'cap', 'beanie', 'sunhat'].includes(s.headwear);
     const hairHidden = hijab || s.headwear === 'turban';
+    const vestOn = s.vest === 'field';
 
     const root = new T.Group();
-    const hips = group({ p: [0, HIP, 0] });
+    const hips = group({ p: [0, 0.3, 0] });
     root.add(hips);
 
-    // Trousers: pelvis and legs.
-    hips.add(mesh(G('pelvis', () => new T.LatheGeometry([[0.0, -0.095], [0.08, -0.098], [0.135, -0.075], [0.156, -0.02], [0.158, 0.035], [0.155, 0.05]].map(([r, y]) => new T.Vector2(r, y)), 48)), pants, { s: [1, 1, 0.68] }));
-    hips.add(mesh(G('belt', () => new T.CylinderGeometry(0.161, 0.161, 0.026, 48, 1, true)), M('#3a2c25', { roughness: 0.45 }), { p: [0, 0.03, 0], s: [1, 1, 0.68] }));
-    hips.add(mesh(G('buckle', () => roundBox(0.034, 0.026, 0.008, 0.003)), M('#b9b2a2', { roughness: 0.25, metalness: 0.8 }), { p: [0, 0.03, 0.109] }));
-    const legs = [];
-    const knees = [];
+    // Short legs and glossy sneakers.
+    const pants = clay(pantsHex);
     [-1, 1].forEach((side) => {
-      const leg = group({ p: [side * 0.084, -0.02, 0] });
-      leg.add(mesh(G('thigh', () => capsule(0.073, 0.33, 0.8, 1.02)), pants, { p: [0, -0.205, 0] }));
-      const knee = group({ p: [0, -0.41, 0] });
-      knee.add(mesh(G('shin', () => capsule(0.058, 0.28, 0.86, 1)), pants, { p: [0, -0.17, 0] }));
-      knee.add(mesh(G('shoe', () => roundBox(0.084, 0.056, 0.235, 0.026)), shoe, { p: [0, -0.412, 0.038] }));
-      leg.add(knee);
-      hips.add(leg);
-      legs.push(leg);
-      knees.push(knee);
+      hips.add(group({ p: [side * 0.095, 0.02, 0] }, [mesh(G('leg', () => capsule(0.08, 0.12, 0.9, 1)), pants, { p: [0, -0.13, 0] }, true),
+        mesh(G('shoe', () => roundBox(0.14, 0.09, 0.22, 0.044)), clay('#f6f7fa', 'gloss'), { p: [0, -0.266, 0.035] }, true),
+        mesh(G('sole', () => roundBox(0.146, 0.032, 0.226, 0.015)), clay('#cbd2e0'), { p: [0, -0.302, 0.035] })]));
     });
 
-    // Upper body: the spine twists, breathes and bends from here.
-    const spine = group({ p: [0, 0.0, 0] });
-    hips.add(spine);
-    const TORSO = [[0.149, -0.03], [0.155, 0.06], [0.148, 0.15], [0.153, 0.24], [0.166, 0.33], [0.173, 0.4], [0.18, 0.445], [0.166, 0.49], [0.12, 0.53], [0.07, 0.556], [0.05, 0.566]];
-    const torsoR = (y) => {
-      for (let i = 1; i < TORSO.length; i += 1) {
-        if (y <= TORSO[i][1]) {
-          const [r0, y0] = TORSO[i - 1];
-          const [r1, y1] = TORSO[i];
-          return lerp(r0, r1, (y - y0) / (y1 - y0));
-        }
-      }
-      return TORSO[TORSO.length - 1][0];
-    };
-    const torsoZ = (x, y, k) => 0.66 * Math.sqrt(Math.max(0, Math.pow(torsoR(y) * (k || 1), 2) - x * x));
+    // The hoodie: a soft bell with a hood rim, drawstrings and a small badge.
     const chest = group();
-    spine.add(chest);
-    chest.add(mesh(G('torso', () => new T.LatheGeometry(TORSO.map(([r, y]) => new T.Vector2(r, y)), 48)), shirt, { s: [1, 1, 0.66] }));
-    // Collar, placket and buttons.
-    chest.add(mesh(G('collarStand', () => new T.CylinderGeometry(0.06, 0.066, 0.036, 40, 1, true, 0.42, Math.PI * 2 - 0.84)), G('mat:collar' + shirtHex, () => new T.MeshStandardMaterial({ color: shade(shirtHex, 0.9), roughness: 0.86, side: T.DoubleSide })), { p: [0, 0.56, 0.004] }));
-    const point = new T.Shape();
-    point.moveTo(0, 0);
-    point.lineTo(0.05, 0.004);
-    point.lineTo(0.012, -0.05);
-    point.lineTo(0, 0);
-    [-1, 1].forEach((side) => chest.add(mesh(G('collarPoint', () => new T.ExtrudeGeometry(point, { depth: 0.004, bevelEnabled: false })), shirtDark, { p: [side * 0.006, 0.556, 0.06], r: [-0.62, side > 0 ? 0 : Math.PI, side > 0 ? -0.42 : Math.PI + 0.42], s: [1, 1, 1] })));
-    chest.add(mesh(G('placket', () => new T.BoxGeometry(0.012, 0.42, 0.004)), shirtDark, { p: [0, 0.3, torsoZ(0, 0.3) + 0.001] }, true));
-    [0.46, 0.37, 0.28, 0.19, 0.1].forEach((y) => chest.add(mesh(G('button', () => new T.CylinderGeometry(0.0045, 0.0045, 0.003, 10)), M('#f3f1ec', { roughness: 0.3 }), { p: [0, y, torsoZ(0, y) + 0.004], r: [Math.PI / 2, 0, 0] }, true)));
+    hips.add(chest);
+    chest.add(mesh(G('body', () => new T.LatheGeometry(BODY.map(([r, y]) => new T.Vector2(r, y)), 64)), hood, { s: [1, 1, 0.82] }, true));
+    chest.add(mesh(G('hem', () => new T.TorusGeometry(0.192, 0.026, 14, 56)), hoodDeep, { p: [0, -0.006, 0], r: [Math.PI / 2, 0, 0], s: [1, 0.82, 1] }, true));
+    if (!hijab) {
+      chest.add(mesh(G('hoodRim', () => new T.TorusGeometry(0.125, 0.046, 20, 48)), hood, { p: [0, 0.39, -0.012], r: [Math.PI / 2 + 0.12, 0, 0], s: [1, 0.86, 1] }, true));
+      chest.add(mesh(ball(), hoodDeep, { p: [0, 0.4, -0.13], s: [0.17, 0.09, 0.1] }, true));
+      [-1, 1].forEach((side) => chest.add(mesh(G('string', () => capsule(0.01, 0.07)), clay('#ffffff'), { p: [side * 0.045, 0.31, frontZ(side * 0.045, 0.31) + 0.012], r: [0.14, 0, 0] })));
+    }
+    if (!vestOn && s.gear !== 'medal') {
+      chest.add(group({ p: [-0.1, 0.24, frontZ(-0.1, 0.24) - 0.001], r: [0, -0.48, 0] }, [mesh(G('badge', () => new T.CylinderGeometry(0.03, 0.03, 0.008, 32).rotateX(Math.PI / 2)), clay('#ffffff', 'gloss')),
+        mesh(G('badgeDot', () => new T.CylinderGeometry(0.016, 0.016, 0.01, 24).rotateX(Math.PI / 2)), clay('#2fb3a3', 'gloss'), { p: [0, 0, 0.002] })]));
+    }
 
-    // Field vest: open at the front, with pockets and a reflective band.
-    const front = s.vest === 'field' ? 1.07 : 1;
-    if (s.vest === 'field') {
-      const vestM = M(P.VEST, { roughness: 0.72 });
-      const cut = (g) => {
+    // Field vest: open at the front, with a reflective band and pockets.
+    if (vestOn) {
+      const open = (g) => {
         const p = g.attributes.position;
         for (let i = 0; i < p.count; i += 1) {
-          if (Math.abs(Math.atan2(p.getX(i), p.getZ(i))) < 0.2) p.setXYZ(i, p.getX(i) * 0.8, p.getY(i), p.getZ(i) * 0.8);
+          if (Math.abs(Math.atan2(p.getX(i), p.getZ(i))) < 0.3) p.setXYZ(i, p.getX(i) * 0.85, p.getY(i), p.getZ(i) * 0.85);
         }
         g.computeVertexNormals();
         return g;
       };
-      const VEST = TORSO.slice(0, 9).map(([r, y]) => [r * 1.07, y]).concat([[0.1, 0.535]]);
-      chest.add(mesh(G('vest', () => cut(new T.LatheGeometry(VEST.map(([r, y]) => new T.Vector2(r, y)), 64))), vestM, { s: [1, 1, 0.66] }));
-      chest.add(mesh(G('vestBand', () => cut(new T.LatheGeometry([[torsoR(0.2) * 1.085, 0.2], [torsoR(0.228) * 1.085, 0.228]].map(([r, y]) => new T.Vector2(r, y)), 64))), M('#dfe5ee', { roughness: 0.35, emissive: '#dfe5ee', emissiveIntensity: 0.12 }), { s: [1, 1, 0.66] }, true));
-      [[-0.075, 0.37, 0.07, 0.06], [0.075, 0.37, 0.07, 0.06], [-0.08, 0.11, 0.085, 0.08], [0.08, 0.11, 0.085, 0.08]].forEach(([x, y, w, h]) => {
-        const z = torsoZ(x, y, 1.07) + 0.004;
-        const turn = Math.atan2(x, z) * 0.9;
-        chest.add(mesh(G(`pocket${w}`, () => roundBox(w, h, 0.012, 0.004)), M(shade(P.VEST, 0.88), { roughness: 0.72 }), { p: [x, y, z], r: [0, turn, 0] }));
-        chest.add(mesh(G(`flap${w}`, () => roundBox(w + 0.004, 0.018, 0.016, 0.004)), M(shade(P.VEST, 0.76), { roughness: 0.72 }), { p: [x, y + h / 2 - 0.006, z + 0.002], r: [0, turn, 0] }));
-      });
+      const VEST = BODY.slice(1, 7).map(([r, y]) => [r * 1.07, y]).concat([[0.16, 0.37]]);
+      chest.add(mesh(G('vest', () => open(new T.LatheGeometry(VEST.map(([r, y]) => new T.Vector2(r, y)), 72))), clay('#3b74c4'), { s: [1, 1, 0.82] }, true));
+      chest.add(mesh(G('band', () => open(new T.LatheGeometry([[bodyR(0.15) * 1.085, 0.15], [bodyR(0.19) * 1.085, 0.19]].map(([r, y]) => new T.Vector2(r, y)), 72))), clay('#f2f5fa', 'gloss'), { s: [1, 1, 0.82] }));
+      [-1, 1].forEach((side) => chest.add(mesh(G('vestPocket', () => roundBox(0.08, 0.07, 0.022, 0.009)), clay('#346ab4'), { p: [side * 0.1, 0.24, frontZ(side * 0.1, 0.24, 1.07)], r: [0, Math.atan2(side * 0.1, 0.2) * 0.8, 0] })));
     }
 
-    // Arms: shoulder, elbow and hand, in shirt sleeves with cuffs.
+    // Arms with mitten hands. The thumb points forward at rest, so a forearm raised forward makes a thumbs-up.
     const shoulders = [];
     const elbows = [];
     const hands = [];
     [-1, 1].forEach((side) => {
-      const sh = group({ p: [side * 0.186, 0.455, -0.005], r: [0, 0, side * 0.08] });
-      sh.add(mesh(G('shoulderCap', () => new T.SphereGeometry(0.047, 24, 16)), shirt, { s: [1, 0.85, 0.9] }));
-      sh.add(mesh(G('upperArm', () => capsule(0.047, 0.19, 0.84, 1)), shirt, { p: [0, -0.125, 0] }));
-      const el = group({ p: [0, -0.255, 0], r: [-0.16, 0, 0] });
-      el.add(mesh(G('forearm', () => capsule(0.041, 0.17, 0.78, 1)), shirt, { p: [0, -0.115, 0] }));
-      el.add(mesh(G('cuff', () => new T.CylinderGeometry(0.034, 0.035, 0.03, 20)), shirtDark, { p: [0, -0.215, 0] }));
-      const hand = group({ p: [0, -0.235, 0] });
-      hand.add(mesh(G('palm', () => new T.SphereGeometry(0.05, 24, 18)), skin, { p: [0, -0.068, 0.004], s: [0.34, 1.55, 0.84] }));
-      hand.add(mesh(G('thumb', () => capsule(0.012, 0.034, 0.85, 1)), skin, { p: [-side * 0.006, -0.045, 0.036], r: [0.55, 0, -side * 0.25] }));
+      const sh = group({ p: [side * 0.205, 0.32, 0], r: [0, 0, side * 0.32] });
+      sh.add(mesh(G('upperArm', () => capsule(0.07, 0.08, 0.9, 1)), hood, { p: [0, -0.085, 0] }, true));
+      const el = group({ p: [0, -UPPER, 0], r: [-0.25, 0, 0] });
+      el.add(mesh(G('forearm', () => capsule(0.065, 0.07, 0.88, 1)), hood, { p: [0, -0.07, 0] }, true));
+      el.add(mesh(G('cuff', () => new T.TorusGeometry(0.052, 0.017, 12, 28)), hoodDeep, { p: [0, -0.14, 0], r: [Math.PI / 2, 0, 0] }));
+      const hand = group({ p: [0, -0.17, 0] }, [mesh(ball(), skin, { p: [0, -0.035, 0], s: [0.062, 0.07, 0.056] }, true),
+        mesh(G('thumb', () => capsule(0.026, 0.05)), skin, { p: [-side * 0.032, -0.03, 0.05], r: [1.3, 0, -side * 0.2] }, true)]);
       el.add(hand);
       sh.add(el);
       chest.add(sh);
@@ -319,1268 +367,532 @@
     });
 
     // Neck and head.
-    chest.add(mesh(G('neck', () => new T.CylinderGeometry(0.047, 0.054, 0.12, 24)), skin, { p: [0, 0.575, 0.002] }));
-    const neck = group({ p: [0, 0.625, 0.004] });
+    chest.add(mesh(G('neck', () => new T.CylinderGeometry(0.07, 0.075, 0.1, 24)), skin, { p: [0, 0.43, 0] }));
+    const neck = group({ p: [0, 0.44, 0.005] });
     chest.add(neck);
-    const head = group({ p: [0, 0.1, 0.006], s: 1.15 });
+    const head = group({ p: [0, 0.26, 0] });
     neck.add(head);
-    head.add(mesh(headGeo(), skin));
-
-    // Ears.
+    head.add(mesh(headGeo(), skin, null, true));
     if (!hijab) {
       [-1, 1].forEach((side) => {
-        head.add(mesh(G('ear', () => new T.SphereGeometry(1, 16, 12)), skin, { p: [side * 0.093, -0.004, -0.006], s: [0.014, 0.03, 0.011], r: [0, side * 0.25, 0] }));
-        head.add(mesh(G('earIn', () => new T.SphereGeometry(1, 12, 10)), skinDark, { p: [side * 0.1, -0.004, -0.004], s: [0.006, 0.018, 0.006] }, true));
+        head.add(mesh(ball(), skin, { p: [side * 0.29, -0.03, 0], s: [0.044, 0.07, 0.054] }, true));
+        head.add(mesh(dot(), skinDeep, { p: [side * 0.305, -0.03, 0.008], s: [0.016, 0.042, 0.028] }));
       });
     }
 
-    // Eyes with lids that blink, irises that look, and catchlights.
-    const eyes = [];
-    const iris = M('#3a2a20', { roughness: 0.25 });
-    const glint = G('mat:glint', () => new T.MeshBasicMaterial({ color: '#ffffff' }));
-    [-1, 1].forEach((side) => {
-      const x = side * 0.0355;
-      const y = 0.006;
-      const eye = group({ p: [x, y, surface(x, y) - 0.0095] });
-      eye.add(mesh(G('eyeball', () => new T.SphereGeometry(0.0165, 20, 16)), white, null, true));
-      const look = group();
-      look.add(mesh(G('iris', () => new T.SphereGeometry(0.0086, 16, 12)), iris, { p: [0, 0, 0.0094] }, true));
-      look.add(mesh(G('pupil', () => new T.SphereGeometry(0.0044, 12, 10)), ink, { p: [0, 0, 0.0145] }, true));
-      look.add(mesh(G('glint', () => new T.SphereGeometry(0.0017, 8, 6)), glint, { p: [-0.0035, 0.0042, 0.0158] }, true));
-      eye.add(look);
-      const lid = group();
-      lid.add(mesh(G('lid', () => new T.SphereGeometry(0.0176, 20, 12, 0, Math.PI * 2, 0, Math.PI * 0.5)), skin, null, true));
-      lid.add(mesh(G('lash', () => new T.TorusGeometry(0.0176, 0.0011, 6, 24, Math.PI)), ink, { r: [Math.PI / 2, 0, 0] }, true));
-      eye.add(lid);
-      const low = group();
-      low.add(mesh(G('lowLid', () => new T.SphereGeometry(0.0172, 20, 10, 0, Math.PI * 2, Math.PI * 0.62, Math.PI * 0.38)), skin, null, true));
-      eye.add(low);
+    // Eyes: glossy beads with two catchlights, closed arcs for laughing, and brows.
+    const browMat = clay(shade(hairHex, ['blonde', 'gray'].includes(s.hairColor) ? 0.62 : 0.85), 'hair');
+    const eyes = [-1, 1].map((side) => {
+      const x = side * 0.105;
+      const open = group(null, [mesh(ball(), ink, { s: [0.046, 0.064, 0.028] }),
+        mesh(dot(), flat('#ffffff'), { p: [-0.015, 0.025, 0.022], s: [0.014, 0.016, 0.007] }),
+        mesh(dot(), flat('#ffffff'), { p: [0.015, -0.022, 0.021], s: [0.0065, 0.0065, 0.004] })]);
+      const shut = mesh(G('shut', () => tubeGeo([[-0.038, -0.014, 0.008], [-0.019, 0.013, 0.016], [0, 0.021, 0.018], [0.019, 0.013, 0.016], [0.038, -0.014, 0.008]], 0.0105)), ink);
+      const eye = onFace(x, -0.014, -0.013, [open, shut]);
       head.add(eye);
-      eyes.push({ eye, look, lid, low });
+      const brow = onFace(x, 0.094, 0.002, [mesh(G('brow', () => tubeGeo([[-0.036, -0.006, 0], [0, 0.007, 0.004], [0.036, -0.003, 0]], 0.0085)), browMat)]);
+      head.add(brow);
+      return { eye, open, shut, brow, side };
     });
 
-    // Brows, nose and the mouth shapes for each mood.
-    const brows = [-1, 1].map((side) => {
-      const b = group({ p: [side * 0.036, 0.037, 0] });
-      const pts = [-0.019, 0, 0.019].map((dx, i) => {
-        const x = side * 0.036 + dx * side;
-        return [dx * side, [0, 0.0045, -0.001][i] + (i === 2 ? -0.002 : 0), surface(x, 0.037 + (i === 1 ? 0.0045 : 0)) + 0.003];
-      });
-      b.add(mesh(G(`brow${side}`, () => new T.TubeGeometry(new T.CatmullRomCurve3(pts.map(([x, yy, z]) => V3(x, yy, z))), 12, 0.0037, 6, false)), browM, null, true));
-      head.add(b);
-      return b;
+    // Nose, cheeks and mouths.
+    head.add(mesh(ball(), clay(mix(skinHex, '#ff9a8a', 0.12), 'skin'), { p: [0, -0.062, surface(0, -0.062) - 0.006], s: [0.03, 0.024, 0.024] }, true));
+    const blushTex = canvasTex('blush', 64, 64, (g) => {
+      const rg = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      rg.addColorStop(0, 'rgba(255,255,255,1)');
+      rg.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = rg;
+      g.fillRect(0, 0, 64, 64);
     });
-    head.add(mesh(G('noseBridge', () => capsule(0.0072, 0.026)), skin, { p: [0, -0.013, surface(0, -0.013) - 0.0012], r: [-0.42, 0, 0] }, true));
-    head.add(mesh(G('noseTip', () => new T.SphereGeometry(0.0108, 16, 12)), skin, { p: [0, -0.034, surface(0, -0.034) + 0.0022], s: [1.25, 0.85, 0.9] }, true));
-    [-1, 1].forEach((side) => head.add(mesh(G('nostril', () => new T.SphereGeometry(0.006, 10, 8)), skinDark, { p: [side * 0.0095, -0.04, surface(side * 0.0095, -0.04) + 0.002], s: [1, 0.7, 0.8] }, true)));
-
-    const mouth = {};
-    const darkMouth = M('#4a1c1a', { roughness: 0.6 });
-    mouth.happy = group(null, [mesh(G('smile', () => faceTube([[-0.022, -0.0645], [0, -0.0712], [0.022, -0.0645]], 0.0027, 0.0012)), lips, null, true),
-      mesh(G('lipLow', () => faceTube([[-0.012, -0.0752], [0, -0.0772], [0.012, -0.0752]], 0.0032, 0.0008)), M(shade(lipHex, 1.1), { roughness: 0.5 }), null, true)]);
-    mouth.think = group(null, [mesh(G('smirk', () => faceTube([[-0.019, -0.0688], [0.002, -0.0695], [0.021, -0.0638]], 0.0027, 0.0012)), lips, null, true)]);
-    const open = new T.Shape();
-    open.moveTo(-0.025, -0.062);
-    open.lineTo(0.025, -0.062);
-    open.quadraticCurveTo(0.023, -0.088, 0, -0.089);
-    open.quadraticCurveTo(-0.023, -0.088, -0.025, -0.062);
+    const blushMat = G(`mat:blush:${s.skin}`, () => new T.MeshBasicMaterial({ map: blushTex, color: s.skin >= 5 ? '#ff6f7d' : '#ff8a96', transparent: true, opacity: s.skin >= 5 ? 0.42 : 0.5, depthWrite: false }));
+    [-1, 1].forEach((side) => head.add(onFace(side * 0.17, -0.085, 0.003, [mesh(G('blushPlane', () => bend(new T.PlaneGeometry(0.13, 0.085, 8, 6), 0)), blushMat)])));
+    const lipInk = clay('#4a1a1c', 'gloss');
+    const mouthIn = clay('#6c1e28', 'gloss');
+    const mouth = onFace(0, -0.142, 0);
+    head.add(mouth);
+    const D = (w, h) => {
+      const sh = new T.Shape();
+      sh.moveTo(-w, 0.02);
+      sh.lineTo(w, 0.02);
+      sh.quadraticCurveTo(w * 0.94, 0.02 - h * 1.0, 0, 0.02 - h);
+      sh.quadraticCurveTo(-w * 0.94, 0.02 - h * 1.0, -w, 0.02);
+      return sh;
+    };
+    const ellipse = (x, y, rx, ry) => {
+      const sh = new T.Shape();
+      sh.absellipse(x, y, rx, ry, 0, Math.PI * 2, false, 0);
+      return sh;
+    };
     const teeth = new T.Shape();
-    teeth.moveTo(-0.0215, -0.0632);
-    teeth.lineTo(0.0215, -0.0632);
-    teeth.lineTo(0.019, -0.0705);
-    teeth.quadraticCurveTo(0, -0.0728, -0.019, -0.0705);
-    teeth.lineTo(-0.0215, -0.0632);
-    mouth.grin = group(null, [mesh(G('grinOpen', () => skinShape(open, 0.0011)), darkMouth, null, true), mesh(G('grinTeeth', () => skinShape(teeth, 0.0017)), white, null, true),
-      mesh(G('grinLip', () => faceTube([[-0.026, -0.0615], [0, -0.0606], [0.026, -0.0615]], 0.0024, 0.0015)), lips, null, true)]);
-    const oh = new T.Shape();
-    oh.absellipse(0, -0.071, 0.0072, 0.0092, 0, Math.PI * 2, false, 0);
-    mouth.oops = group(null, [mesh(G('ohOpen', () => skinShape(oh, 0.0012)), darkMouth, null, true),
-      mesh(G('ohLip', () => new T.TorusGeometry(0.0082, 0.0026, 8, 24)), lips, { p: [0, -0.071, surface(0, -0.071) + 0.0012], s: [1, 1.22, 0.6] }, true)]);
-    Object.values(mouth).forEach((m) => head.add(m));
+    teeth.moveTo(-0.058, 0.016);
+    teeth.lineTo(0.058, 0.016);
+    teeth.lineTo(0.052, -0.002);
+    teeth.quadraticCurveTo(0, -0.01, -0.052, -0.002);
+    teeth.lineTo(-0.058, 0.016);
+    const moods = {
+      happy: group(null, [mesh(G('smile', () => faceTube([[-0.05, 0.012], [-0.025, -0.012], [0, -0.02], [0.025, -0.012], [0.05, 0.012]], 0.0085)), lipInk)]),
+      grin: group(null, [mesh(G('grinOpen', () => bend(new T.ShapeGeometry(D(0.068, 0.092), 16), 0.003)), mouthIn),
+        mesh(G('grinTongue', () => bend(new T.ShapeGeometry(ellipse(0, -0.046, 0.038, 0.02), 16), 0.005)), clay('#ff7f93', 'gloss')),
+        mesh(G('grinTeeth', () => bend(new T.ShapeGeometry(teeth, 12), 0.005)), clay('#ffffff', 'gloss'))]),
+      think: group(null, [mesh(G('smirk', () => faceTube([[-0.035, -0.008], [0, -0.014], [0.026, -0.006], [0.042, 0.008]], 0.0085)), lipInk)]),
+      oops: group(null, [mesh(G('ohOpen', () => bend(new T.ShapeGeometry(ellipse(0, -0.012, 0.024, 0.03), 16), 0.004)), mouthIn)]),
+      talk: group(null, [mesh(G('talkOpen', () => bend(new T.ShapeGeometry(D(0.04, 0.05), 12), 0.003)), mouthIn),
+        mesh(G('talkTongue', () => bend(new T.ShapeGeometry(ellipse(0, -0.016, 0.022, 0.011), 12), 0.005)), clay('#ff7f93', 'gloss'))])
+    };
+    moods.talk.position.y = 0.006;
+    Object.values(moods).forEach((m) => mouth.add(m));
 
     // Facial hair.
     if (s.facial === 'beard') {
-      head.add(mesh(shell('beard', (ux, uy, uz) => cover(smooth(-0.04, 0.08, -0.2 - 0.2 * Math.max(0, uz) - uy) * smooth(-0.4, -0.1, uz) * smooth(0.9, 1.12, Math.hypot(ux / 0.33, (uy + 0.56) / 0.13)), 1.06)), hairM));
+      head.add(mesh(shell('beard', (ux, uy, uz) => cover(smooth(-0.04, 0.1, -0.3 - 0.15 * Math.max(0, uz) - uy) * smooth(-0.35, -0.1, uz) * smooth(0.95, 1.15, Math.hypot(ux / 0.3, (uy + 0.5) / 0.15)), 1.08)), hair, null, true));
     }
     if (s.facial === 'mustache' || s.facial === 'beard') {
-      head.add(mesh(G('mustache', () => faceTube([[-0.027, -0.0545], [-0.012, -0.0482], [0, -0.0505], [0.012, -0.0482], [0.027, -0.0545]], 0.0058, 0.004)), hairM, null, true));
+      [-1, 1].forEach((side) => head.add(onFace(side * 0.034, -0.104, 0.006, [mesh(dot(), hair, { s: [0.044, 0.02, 0.022], r: [0, 0, side * -0.25] })])));
     }
 
-    // Hair.
+    // Hair, in chunky glossy shapes. Under a cap, beanie or sun hat only the hair below the band shows.
     if (!hairHidden && s.hair !== 'none') {
-      const front = !covered;
       const style = s.hair;
-      const lift = { short: 0, buzz: 0.02, curly: -0.06, long: -0.12, bun: 0.02, braids: 0, ponytail: 0.02 }[style] || 0;
-      const thick = { short: 1.06, buzz: 1.018, curly: 1.09, long: 1.055, bun: 1.045, braids: 1.04, ponytail: 1.045 }[style] || 1.05;
-      if (front || style === 'long' || style === 'ponytail' || style === 'braids') {
-        // Under a hat only the hair below the brim shows.
-        head.add(mesh(shell(`hair-${style}-${front}`, (ux, uy, uz) => {
-          const temples = style === 'curly' ? 0 : 0.1 * Math.max(0, uz) * smooth(0.2, 0.6, Math.abs(ux));
-          const c = smooth(-0.05, 0.05, uy - hairline(uz, lift + temples)) * (front ? 1 : smooth(0.16, 0.04, uy));
-          return cover(c, thick + (style === 'short' ? Math.max(0, uy) * (0.05 + 0.03 * ux) : 0) + (style === 'curly' ? Math.max(0, uy) * 0.08 : 0));
-        }), hairM));
-      }
-      if (style === 'curly' && front) {
-        const curls = G('curls', () => {
-          const pts = [];
-          for (let i = 0; i < 340; i += 1) {
-            const u = (i + 0.5) / 340;
-            const phi = i * 2.39996;
-            const uy = 1 - u * 1.35;
-            const r = Math.sqrt(Math.max(0, 1 - uy * uy));
-            const ux = Math.cos(phi) * r;
-            const uz = Math.sin(phi) * r;
-            if (uy > hairline(uz, -0.02)) pts.push(headPoint(ux, uy, uz, 1.12 + 0.07 * Math.max(0, uy) + ((i * 53) % 7) / 220));
-          }
-          return pts;
-        });
-        const ball = G('curl', () => new T.IcosahedronGeometry(0.017, 2));
-        const inst = new T.InstancedMesh(ball, hairM, curls.length);
-        const m4 = new T.Matrix4();
-        curls.forEach(([x, y, z], i) => {
-          const k = 0.8 + ((i * 37) % 10) / 22;
-          m4.compose(V3(x, y, z), new T.Quaternion(), V3(k, k, k));
-          inst.setMatrixAt(i, m4);
-        });
-        inst.castShadow = true;
-        head.add(inst);
-      }
+      const front = !covered;
+      const top = { cap: 0.3, beanie: 0.4, sunhat: 0.56 }[s.headwear] || 1;
+      const lift = { short: -0.04, buzz: 0.06, curly: -0.06, long: -0.08, bun: 0.02, braids: 0.02, ponytail: 0.02 }[style] || 0;
+      const thick = front ? { buzz: 1.03, curly: 1.0, short: 1.1 }[style] || 1.085 : style === 'curly' ? 1.0 : 1.04;
+      const extra = (ux, uy, uz) => {
+        if (style === 'curly') return front ? 0.1 + Math.max(0, uy) * 0.06 + lobed(ux, uy, uz) * 0.24 : 0.04 + lobed(ux, uy, uz) * 0.1;
+        return style === 'short' && front ? Math.max(0, uy) * 0.08 : 0;
+      };
+      head.add(mesh(shell(`hair-${style}-${front ? 'open' : s.headwear}`, (ux, uy, uz) => cover(smooth(-0.05, 0.06, uy - hairline(uz, lift)) * (front ? 1 : smooth(top + 0.04, top - 0.08, uy)),
+        thick + extra(ux, uy, uz)), style === 'curly'), hair, null, true));
+      // Sculpted locks along the hairline.
+      const locks = (list) => list.forEach(([yaw, uy, sx, sy, roll]) => {
+        const r = Math.sqrt(1 - uy * uy);
+        const [x, y, z] = headPoint(Math.sin(yaw) * r, uy, Math.cos(yaw) * r, 1.07);
+        const t = group({ p: [x, y, z] }, [mesh(ball(), hair, { s: [sx, sy, 0.065], r: [0, 0, roll] }, true)]);
+        t.rotation.order = 'YXZ';
+        t.rotation.y = yaw;
+        t.rotation.x = -Math.asin(uy) * 0.9;
+        head.add(t);
+      });
+      if (front && style === 'short') locks([[-0.62, 0.44, 0.1, 0.065, 0.6], [-0.2, 0.5, 0.13, 0.07, 0.3], [0.25, 0.5, 0.12, 0.068, -0.25], [0.68, 0.42, 0.09, 0.06, -0.6]]);
+      if (front && style === 'long') locks([[-0.32, 0.43, 0.16, 0.07, 0.42], [0.22, 0.46, 0.15, 0.066, -0.3]]);
+      if (front && ['bun', 'ponytail', 'braids'].includes(style)) locks([[-0.32, 0.52, 0.12, 0.05, 0.3], [0.32, 0.52, 0.12, 0.05, -0.3]]);
       if (style === 'long') {
-        head.add(mesh(G('longBack', () => new T.LatheGeometry([[0.1, 0.02], [0.112, -0.08], [0.122, -0.2], [0.125, -0.3], [0.112, -0.34]].map(([r, y]) => new T.Vector2(r, y)), 40, Math.PI * 0.62, Math.PI * 1.76)), G('mat:hairBack' + hairHex, () => new T.MeshStandardMaterial({ color: hairHex, roughness: 0.46, metalness: 0.04, bumpMap: strands(), bumpScale: 0.5, side: T.DoubleSide })), { p: [0, 0, -0.01], s: [1, 1, 0.78] }));
-        [-1, 1].forEach((side) => head.add(mesh(G('lock', () => capsule(0.03, 0.17, 0.7, 1)), hairM, { p: [side * 0.086, -0.115, 0.028], r: [0.1, 0, side * -0.08], s: [0.62, 1, 0.5] })));
+        [-1, 1].forEach((side) => head.add(mesh(G('curtain', () => capsule(0.08, 0.3, 0.8, 1)), hair, { p: [side * 0.275, -0.2, -0.01], r: [0, 0, side * -0.12], s: [1, 1, 0.82] }, true)));
+        head.add(mesh(ball(), hair, { p: [0, -0.1, -0.13], s: [0.3, 0.37, 0.21] }, true));
       }
-      if (style === 'bun' && front) head.add(mesh(G('bun', () => new T.SphereGeometry(0.052, 24, 18)), hairM, { p: [0, 0.122, -0.045] }));
+      if (style === 'bun' && front) {
+        head.add(mesh(ball(), hair, { p: [0, 0.33, -0.06], s: 0.115 }, true));
+        head.add(mesh(G('tie', () => new T.TorusGeometry(0.062, 0.017, 10, 24)), clay(shade(hairHex, 0.6)), { p: [0, 0.27, -0.045], r: [Math.PI / 2 + 0.3, 0, 0] }));
+      }
       if (style === 'ponytail') {
-        head.add(mesh(G('tie', () => new T.TorusGeometry(0.02, 0.006, 8, 16)), M(shade(hairHex, 0.55)), { p: [0, 0.04, -0.118], r: [0.3, 0, 0] }));
-        head.add(mesh(G('tail', () => capsule(0.026, 0.2, 0.45, 1)), hairM, { p: [0, -0.07, -0.142], r: [-0.16, 0, 0] }));
+        head.add(mesh(G('ptie', () => new T.TorusGeometry(0.046, 0.015, 10, 24)), clay('#ff8fa3'), { p: [0, 0.17, -0.28], r: [0.5, 0, 0] }));
+        [[0.1, -0.34, 0.082], [-0.04, -0.36, 0.076], [-0.17, -0.34, 0.064], [-0.27, -0.3, 0.05]].forEach(([y, z, r]) => head.add(mesh(ball(), hair, { p: [0, y, z], s: r }, true)));
       }
       if (style === 'braids') {
         [-1, 1].forEach((side) => {
-          for (let i = 0; i < 8; i += 1) {
-            head.add(mesh(G('braid', () => new T.SphereGeometry(0.019, 14, 10)), hairM, { p: [side * (0.086 + i * 0.002), -0.03 - i * 0.034, 0.012 + i * 0.012], s: [1, 1.25, 1] }));
-          }
-          head.add(mesh(G('bead', () => new T.SphereGeometry(0.009, 10, 8)), M('#d9a441', { roughness: 0.3, metalness: 0.6 }), { p: [side * 0.101, -0.31, 0.11] }));
+          for (let i = 0; i < 6; i += 1) head.add(mesh(dot(), hair, { p: [side * (0.255 + i * 0.006), -0.1 - i * 0.07, 0.04 + i * 0.024], s: [0.05, 0.058, 0.05] }, true));
+          head.add(mesh(dot(), clay('#ffd25a', 'gloss'), { p: [side * 0.29, -0.53, 0.18], s: 0.028 }));
         });
       }
     }
 
     // Head coverings.
-    const hwDark = M(shade(hwHex, 0.8), { roughness: 0.84 });
     if (hijab) {
-      head.add(mesh(shell('hijab', (ux, uy, uz) => cover(uz < 0 ? 1 : smooth(0.9, 1.1, Math.hypot(ux / 0.64, (uy + 0.16) / 0.68)), 1.15 + Math.max(0, uy) * 0.04)), hw));
-      chest.add(mesh(G('drape', () => new T.LatheGeometry([[0.07, 0.6], [0.085, 0.56], [0.12, 0.53], [0.19, 0.49], [0.23, 0.45], [0.235, 0.43]].map(([r, y]) => new T.Vector2(r, y)), 48)), hw, { s: [1, 1, 0.72] }));
+      head.add(mesh(shell('hijab', (ux, uy, uz) => cover(uz < 0 ? 1 : smooth(0.92, 1.1, Math.hypot(ux / 0.64, (uy + 0.1) / 0.7)), 1.14 + Math.max(0, uy) * 0.05)), hw, null, true));
+      chest.add(mesh(G('drape', () => new T.LatheGeometry([[0.12, 0.5], [0.165, 0.45], [0.218, 0.41], [0.25, 0.37], [0.256, 0.35]].map(([r, y]) => new T.Vector2(r, y)), 56)), hw, { s: [1, 1, 0.84] }, true));
     }
     if (s.headwear === 'turban') {
-      const wrapM = G('mat:turban' + hwHex, () => new T.MeshStandardMaterial({ color: hwHex, roughness: 0.82, bumpMap: wraps(), bumpScale: 2.5 }));
-      head.add(mesh(shell('turban', (ux, uy, uz) => cover(smooth(-0.06, 0.06, uy - (0.12 + 0.42 * uz)), 1.12 + 0.3 * Math.pow(Math.max(0, uy), 1.6) + 0.06 * Math.max(0, uz) * Math.max(0, uy))), wrapM));
+      // A wrapped dome: two raised folds cross above the forehead.
+      const fold = (ux, uy, uz, sx) => Math.exp(-Math.pow((sx * 0.407 * ux + 0.717 * uy - 0.566 * uz) / 0.085, 2));
+      head.add(mesh(shell('turban', (ux, uy, uz) => cover(smooth(-0.06, 0.06, uy - (0.16 + 0.32 * uz)),
+        1.12 + 0.26 * Math.pow(Math.max(0, uy), 1.5) + 0.09 * Math.max(fold(ux, uy, uz, 1), fold(ux, uy, uz, -1)))), hw, null, true));
     }
     if (s.headwear === 'cap') {
-      head.add(mesh(G('capCrown', () => new T.SphereGeometry(1, 40, 20, 0, Math.PI * 2, 0, Math.PI * 0.5)), hw, { p: [0, 0.03, -0.004], s: [0.104, 0.112, 0.114], r: [-0.12, 0, 0] }));
+      head.add(mesh(G('capCrown', () => new T.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, Math.PI * 0.52)), hw, { p: [0, 0.1, -0.005], s: [0.316, 0.29, 0.31], r: [-0.1, 0, 0] }, true));
       const brim = new T.Shape();
-      brim.absellipse(0, 0, 0.098, 0.075, 0, Math.PI, false, 0);
-      head.add(mesh(G('capBrim', () => new T.ExtrudeGeometry(brim, { depth: 0.006, bevelEnabled: false, curveSegments: 20 })), hwDark, { p: [0, 0.048, 0.07], r: [Math.PI / 2 - 0.12, 0, 0] }));
-      head.add(mesh(G('capButton', () => new T.SphereGeometry(0.008, 10, 8)), hwDark, { p: [0, 0.141, -0.012] }));
+      brim.absellipse(0, 0, 0.22, 0.25, 0, Math.PI, false, 0);
+      head.add(mesh(G('capBrim', () => new T.ExtrudeGeometry(brim, { depth: 0.012, bevelEnabled: true, bevelThickness: 0.008, bevelSize: 0.008, bevelSegments: 3, curveSegments: 24 })), hwDeep, { p: [0, 0.14, 0.16], r: [Math.PI / 2 + 0.32, 0, 0] }, true));
+      head.add(mesh(dot(), hwDeep, { p: [0, 0.39, -0.03], s: 0.024 }));
     }
     if (s.headwear === 'beanie') {
-      head.add(mesh(G('beanie', () => new T.SphereGeometry(1, 40, 20, 0, Math.PI * 2, 0, Math.PI * 0.52)), hw, { p: [0, 0.035, -0.006], s: [0.106, 0.124, 0.116], r: [-0.12, 0, 0] }));
-      head.add(mesh(G('cuffRing', () => new T.TorusGeometry(0.104, 0.017, 12, 40)), hwDark, { p: [0, 0.042, -0.004], r: [Math.PI / 2 - 0.12, 0, 0], s: [1, 1.1, 1] }));
-      head.add(mesh(G('pompom', () => new T.IcosahedronGeometry(0.032, 2)), M(shade(hwHex, 1.1), { roughness: 0.95 }), { p: [0, 0.165, -0.03] }));
+      head.add(mesh(G('beanieCrown', () => new T.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, Math.PI * 0.55)), hw, { p: [0, 0.1, -0.008], s: [0.322, 0.32, 0.318], r: [-0.1, 0, 0] }, true));
+      head.add(mesh(G('beanieCuff', () => new T.TorusGeometry(0.3, 0.05, 16, 56)), hwDeep, { p: [0, 0.13, -0.004], r: [Math.PI / 2 - 0.1, 0, 0] }, true));
+      head.add(mesh(ball(), clay(mix(hwHex, '#ffffff', 0.25)), { p: [0, 0.44, -0.05], s: 0.07 }, true));
     }
     if (s.headwear === 'sunhat') {
-      const straw = M('#d6b471', { roughness: 0.92 });
-      head.add(mesh(G('hatBrim', () => new T.LatheGeometry([[0.096, 0.07], [0.16, 0.062], [0.215, 0.046], [0.232, 0.034]].map(([r, y]) => new T.Vector2(r, y)), 56)), G('mat:brim', () => new T.MeshStandardMaterial({ color: '#d6b471', roughness: 0.92, side: T.DoubleSide })), { s: [1, 1, 1.05] }));
-      head.add(mesh(G('hatCrown', () => new T.CylinderGeometry(0.078, 0.098, 0.085, 40)), straw, { p: [0, 0.11, -0.004] }));
-      head.add(mesh(G('hatTop', () => new T.SphereGeometry(1, 32, 12, 0, Math.PI * 2, 0, Math.PI * 0.5)), straw, { p: [0, 0.152, -0.004], s: [0.078, 0.025, 0.078] }));
-      head.add(mesh(G('hatBand', () => new T.CylinderGeometry(0.094, 0.0975, 0.022, 40, 1, true)), M('#7a5a35', { roughness: 0.7 }), { p: [0, 0.083, -0.004] }));
+      const straw = clay('#ecc983');
+      head.add(mesh(G('hatCrown', () => new T.CylinderGeometry(0.22, 0.275, 0.18, 48)), straw, { p: [0, 0.25, -0.01] }, true));
+      head.add(mesh(G('hatTop', () => new T.SphereGeometry(1, 40, 12, 0, Math.PI * 2, 0, Math.PI * 0.5)), straw, { p: [0, 0.34, -0.01], s: [0.22, 0.06, 0.22] }, true));
+      head.add(mesh(G('hatBand', () => new T.CylinderGeometry(0.266, 0.274, 0.05, 48, 1, true)), clay('#ff8a70'), { p: [0, 0.19, -0.01] }));
+      head.add(mesh(G('hatBrim', () => new T.CylinderGeometry(0.5, 0.52, 0.026, 64)), straw, { p: [0, 0.165, -0.01], r: [-0.08, 0, 0] }, true));
     }
     if (s.headwear === 'headphones') {
-      const dark = M('#3a4150', { roughness: 0.4, metalness: 0.3 });
-      head.add(mesh(G('band', () => new T.TorusGeometry(0.114, 0.0075, 8, 40, Math.PI)), dark, { p: [0, 0.012, -0.004] }));
-      [-1, 1].forEach((side) => head.add(mesh(G('cup', () => new T.CylinderGeometry(0.034, 0.034, 0.028, 24)), hw, { p: [side * 0.108, 0.004, -0.004], r: [0, 0, Math.PI / 2] })));
-      head.add(mesh(G('boom', () => tube([[-0.11, -0.018, 0.012], [-0.09, -0.06, 0.07], [-0.045, -0.074, 0.097]], 0.0035)), dark));
-      head.add(mesh(G('mic', () => new T.SphereGeometry(0.008, 10, 8)), dark, { p: [-0.043, -0.075, 0.098] }));
+      const dark = clay('#3a4150', 'gloss');
+      head.add(mesh(G('band', () => new T.TorusGeometry(0.335, 0.024, 12, 56, Math.PI)), dark, { p: [0, 0.02, 0] }, true));
+      [-1, 1].forEach((side) => head.add(mesh(G('cup', () => new T.CylinderGeometry(0.088, 0.088, 0.07, 32)), hw, { p: [side * 0.33, -0.02, 0], r: [0, 0, Math.PI / 2] }, true)));
+      head.add(mesh(G('boom', () => tubeGeo([[-0.34, -0.07, 0.05], [-0.28, -0.17, 0.19], [-0.12, -0.18, 0.27]], 0.011)), dark));
+      head.add(mesh(dot(), dark, { p: [-0.11, -0.18, 0.272], s: 0.022 }));
     }
 
     // Glasses.
     if (s.glasses !== 'none') {
-      const frame = M('#2e3446', { roughness: 0.35, metalness: 0.35 });
-      const lens = G('mat:lens', () => new T.MeshStandardMaterial({ color: '#ffffff', transparent: true, opacity: 0.14, roughness: 0.05, metalness: 0.1 }));
+      const frame = clay('#2e3446', 'gloss');
+      const lens = G('mat:lens', () => new T.MeshPhysicalMaterial({ color: '#ffffff', transparent: true, opacity: 0.16, roughness: 0.04, clearcoat: 1 }));
       [-1, 1].forEach((side) => {
-        const x = side * 0.0355;
-        const z = surface(x, 0.006) + 0.011;
+        const parts = [];
         if (s.glasses === 'round') {
-          head.add(mesh(G('rimRound', () => new T.TorusGeometry(0.0215, 0.0023, 8, 32)), frame, { p: [x, 0.006, z] }, true));
-          head.add(mesh(G('lensRound', () => new T.CircleGeometry(0.021, 28)), lens, { p: [x, 0.006, z] }, true));
+          parts.push(mesh(G('rimRound', () => new T.TorusGeometry(0.062, 0.0095, 12, 40)), frame), mesh(G('lensRound', () => new T.CircleGeometry(0.06, 36)), lens));
         } else {
-          const outer = new T.Shape();
-          const rr = (sh, w, h, r) => {
-            sh.moveTo(-w / 2 + r, -h / 2);
-            sh.lineTo(w / 2 - r, -h / 2);
-            sh.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r);
-            sh.lineTo(w / 2, h / 2 - r);
-            sh.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2);
-            sh.lineTo(-w / 2 + r, h / 2);
-            sh.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r);
-            sh.lineTo(-w / 2, -h / 2 + r);
-            sh.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2);
-            return sh;
-          };
-          rr(outer, 0.05, 0.036, 0.009);
-          outer.holes.push(rr(new T.Path(), 0.043, 0.029, 0.007));
-          head.add(mesh(G('rimSquare', () => new T.ExtrudeGeometry(outer, { depth: 0.004, bevelEnabled: false, curveSegments: 6 })), frame, { p: [x, 0.006, z - 0.002] }, true));
-          head.add(mesh(G('lensSquare', () => new T.ShapeGeometry(rr(new T.Shape(), 0.044, 0.03, 0.007))), lens, { p: [x, 0.006, z] }, true));
+          const ring = roundRect(new T.Shape(), 0.136, 0.106, 0.03);
+          ring.holes.push(roundRect(new T.Path(), 0.112, 0.082, 0.022));
+          parts.push(mesh(G('rimSquare', () => new T.ExtrudeGeometry(ring, { depth: 0.012, bevelEnabled: false, curveSegments: 8 })), frame), mesh(G('lensSquare', () => new T.ShapeGeometry(roundRect(new T.Shape(), 0.114, 0.084, 0.022))), lens));
         }
-        head.add(mesh(G('temple', () => new T.BoxGeometry(0.003, 0.003, 0.1)), frame, { p: [side * 0.077, 0.009, 0.052], r: [0, -side * 0.344, 0] }, true));
+        head.add(onFace(side * 0.105, -0.014, 0.034, parts));
+        head.add(mesh(G('temple', () => tubeGeo([[0.165, 0.004, surface(0.165, 0) + 0.018], [0.25, 0.01, 0.17], [0.3, 0.0, 0.04]], 0.007)), frame, { s: [side, 1, 1] }));
       });
-      head.add(mesh(G('bridge', () => tube([[-0.013, 0.009, 0], [0, 0.014, 0.002], [0.013, 0.009, 0]], 0.0018, 10)), frame, { p: [0, 0, surface(0, 0.01) + 0.005] }, true));
+      head.add(mesh(G('bridge', () => tubeGeo([[-0.044, 0.008, 0], [0, 0.024, 0.006], [0.044, 0.008, 0]], 0.008)), frame, { p: [0, 0, surface(0, 0.01) + 0.024] }));
     }
 
     // Gear.
-    const chestZ = (x, y) => torsoZ(x, y, front) + 0.004;
+    const z = (x, y) => frontZ(x, y, vestOn ? 1.07 : 1) + 0.006;
     if (s.gear === 'lanyard') {
-      const blue = M('#2f6fd0', { roughness: 0.6 });
-      [-1, 1].forEach((side) => chest.add(mesh(G(`strap${front}`, () => tube([[0.03, 0.57, -0.04], [0.058, 0.552, 0.03], [0.04, 0.47, chestZ(0.04, 0.47)], [0.004, 0.405, chestZ(0, 0.405)]], 0.0045)), blue, { s: [side, 1, 1] })));
-      const card = group({ p: [0, 0.37, chestZ(0, 0.37) + 0.006] }, [mesh(G('card', () => roundBox(0.05, 0.068, 0.004, 0.0018)), M('#ffffff', { roughness: 0.4 })),
-        mesh(G('cardBand', () => new T.BoxGeometry(0.05, 0.014, 0.005)), blue, { p: [0, 0.026, 0] }),
-        mesh(G('cardPhoto', () => new T.BoxGeometry(0.015, 0.018, 0.005)), M('#c9d3e2'), { p: [-0.012, 0.0, 0] }, true)]);
-      chest.add(card);
+      const blue = clay('#2f6fd0');
+      [-1, 1].forEach((side) => chest.add(mesh(G(`strap${vestOn}`, () => tubeGeo([[0.05, 0.405, -0.03], [0.1, 0.39, 0.06], [0.065, 0.32, z(0.065, 0.32)], [0.012, 0.25, z(0.012, 0.25)]], 0.009)), blue, { s: [side, 1, 1] })));
+      chest.add(group({ p: [0, 0.21, z(0, 0.21) + 0.01] }, [mesh(G('card', () => roundBox(0.078, 0.098, 0.012, 0.005)), clay('#ffffff', 'gloss')),
+        mesh(G('cardBand', () => new T.BoxGeometry(0.078, 0.022, 0.013)), blue, { p: [0, 0.036, 0] }), mesh(G('cardPhoto', () => new T.BoxGeometry(0.024, 0.028, 0.013)), clay('#c9d3e2'), { p: [-0.018, -0.004, 0] })]));
     }
     if (s.gear === 'backpack') {
-      const pack = M('#b5643a', { roughness: 0.8 });
-      chest.add(mesh(G('pack', () => roundBox(0.3, 0.36, 0.13, 0.03)), pack, { p: [0, 0.29, -0.17] }));
-      [-1, 1].forEach((side) => chest.add(mesh(G(`packStrap${front}`, () => tube([[0.09, 0.47, -0.12], [0.105, 0.552, -0.01], [0.1, 0.45, chestZ(0.1, 0.45)], [0.105, 0.2, chestZ(0.105, 0.2)]], 0.011)), M('#7c3f22', { roughness: 0.7 }), { s: [side, 1, 1] })));
+      chest.add(mesh(G('pack', () => roundBox(0.34, 0.36, 0.16, 0.06)), clay('#ffa36f'), { p: [0, 0.2, -0.24] }, true));
+      [-1, 1].forEach((side) => chest.add(mesh(G(`packStrap${vestOn}`, () => tubeGeo([[0.11, 0.33, -0.17], [0.13, 0.39, -0.03], [0.13, 0.32, z(0.13, 0.32)], [0.14, 0.12, z(0.14, 0.12)]], 0.018)), clay('#e8804f'), { s: [side, 1, 1] })));
     }
     if (s.gear === 'camera') {
-      chest.add(mesh(G(`camStrap${front}`, () => tube([[-0.1, 0.55, 0.02], [-0.04, 0.42, chestZ(-0.04, 0.42)], [0.08, 0.22, chestZ(0.08, 0.22)], [0.13, 0.12, chestZ(0.13, 0.12)]], 0.005)), M('#2b2f3a', { roughness: 0.6 })));
-      chest.add(group({ p: [0.13, 0.1, chestZ(0.13, 0.1) + 0.03] }, [mesh(G('camBody', () => roundBox(0.095, 0.062, 0.045, 0.008)), M('#2f3443', { roughness: 0.35, metalness: 0.3 })),
-        mesh(G('lensBarrel', () => new T.CylinderGeometry(0.022, 0.024, 0.035, 24)), M('#1d2029', { roughness: 0.3, metalness: 0.4 }), { p: [0, 0, 0.035], r: [Math.PI / 2, 0, 0] }),
-        mesh(G('lensGlass', () => new T.CircleGeometry(0.018, 24)), M('#4e6c9e', { roughness: 0.05, metalness: 0.6 }), { p: [0, 0, 0.0531] }, true)]));
+      chest.add(mesh(G(`camStrap${vestOn}`, () => tubeGeo([[-0.13, 0.38, 0.0], [-0.06, 0.3, z(-0.06, 0.3)], [0.08, 0.15, z(0.08, 0.15)], [0.15, 0.08, z(0.15, 0.08)]], 0.008)), clay('#2b2f3a')));
+      chest.add(group({ p: [0.14, 0.07, z(0.14, 0.07) + 0.035] }, [mesh(G('camBody', () => roundBox(0.12, 0.08, 0.06, 0.018)), clay('#3a4150', 'gloss')),
+        mesh(G('lens', () => new T.CylinderGeometry(0.03, 0.032, 0.04, 24)), clay('#20242e', 'gloss'), { p: [0, 0, 0.045], r: [Math.PI / 2, 0, 0] })]));
     }
     if (s.gear === 'binoculars') {
-      [-1, 1].forEach((side) => chest.add(mesh(G(`binoStrap${front}`, () => tube([[-0.035, 0.57, -0.03], [-0.05, 0.52, 0.06], [-0.025, 0.42, chestZ(-0.025, 0.42)]], 0.0035)), M('#2b2f3a'), { s: [side, 1, 1] }, true)));
-      chest.add(group({ p: [0, 0.37, chestZ(0, 0.37) + 0.025] }, [-1, 1].map((side) => mesh(G('barrel', () => new T.CylinderGeometry(0.019, 0.021, 0.075, 20)), M('#2f3443', { roughness: 0.4, metalness: 0.3 }), { p: [side * 0.024, 0, 0] }))
-        .concat([mesh(G('binoBridge', () => new T.BoxGeometry(0.03, 0.018, 0.016)), M('#2f3443', { roughness: 0.4, metalness: 0.3 }), { p: [0, 0.02, 0] })])));
+      chest.add(group({ p: [0, 0.2, z(0, 0.2) + 0.035] }, [-1, 1].map((side) => mesh(G('barrel', () => new T.CylinderGeometry(0.028, 0.03, 0.09, 20)), clay('#3a4150', 'gloss'), { p: [side * 0.035, 0, 0] }))));
     }
     if (s.gear === 'medal') {
-      chest.add(mesh(G('ribbon', () => new T.BoxGeometry(0.022, 0.03, 0.003)), M('#2f6fd0', { roughness: 0.6 }), { p: [0.085, 0.43, chestZ(0.085, 0.43)], r: [0, 0.5, 0] }));
-      chest.add(mesh(G('medalDisc', () => new T.CylinderGeometry(0.017, 0.017, 0.004, 24)), M('#e2a92b', { roughness: 0.25, metalness: 0.8 }), { p: [0.085, 0.402, chestZ(0.085, 0.402) + 0.002], r: [Math.PI / 2, 0, 0.5] }));
+      chest.add(mesh(G('ribbon', () => new T.BoxGeometry(0.03, 0.045, 0.006)), clay('#2f6fd0'), { p: [0.11, 0.275, z(0.11, 0.275)] }));
+      chest.add(mesh(G('medalDisc', () => new T.CylinderGeometry(0.028, 0.028, 0.008, 28)), clay('#f2b632', 'metal'), { p: [0.11, 0.238, z(0.11, 0.238) + 0.004], r: [Math.PI / 2, 0, 0] }));
     }
     if (s.gear === 'radio') {
-      hands[1].add(group({ p: [0.0, -0.06, 0.03], r: [0.2, 0, 0] }, [mesh(G('radio', () => roundBox(0.036, 0.095, 0.024, 0.005)), M('#2f3443', { roughness: 0.4, metalness: 0.2 })),
-        mesh(G('antenna', () => new T.CylinderGeometry(0.003, 0.004, 0.07, 8)), M('#2f3443', { roughness: 0.4 }), { p: [0.01, 0.08, 0] }),
-        mesh(G('led', () => new T.SphereGeometry(0.003, 8, 6)), G('mat:led', () => new T.MeshBasicMaterial({ color: '#ff6b5b' })), { p: [-0.01, 0.04, 0.013] }, true)]));
+      hands[1].add(group({ p: [0.0, -0.05, 0.045], r: [0.3, 0, 0] }, [mesh(G('radio', () => roundBox(0.05, 0.11, 0.035, 0.012)), clay('#3a4150', 'gloss')),
+        mesh(G('antenna', () => new T.CylinderGeometry(0.006, 0.007, 0.07, 8)), clay('#3a4150'), { p: [0.012, 0.085, 0] })]));
     }
 
-    const fig = { root, hips, spine, chest, neck, head, legs, knees, shoulders, elbows, hands, eyes, brows, mouth, mood: '', action: null, look: 0, lookTarget: 0, blinkAt: 1 + Math.random() * 3, phase: Math.random() * 10, talkUntil: 0, base: {} };
-    fig.base.shoulders = shoulders.map((x) => x.rotation.clone());
-    fig.base.elbows = elbows.map((x) => x.rotation.clone());
+    // Little action lines that pop around the head when a character reacts.
+    const sparks = [-1, 1].map((side) => group(null, [10, 40, 70].map((deg) => {
+      const a = (deg * Math.PI) / 180;
+      return mesh(G('spark', () => capsule(0.013, 0.05)), flat('#ffc93c'), { p: [side * Math.cos(a) * 0.43, Math.sin(a) * 0.43, 0.08], r: [0, 0, side * (a - Math.PI / 2)] });
+    })));
+    sparks.forEach((g) => {
+      g.visible = false;
+      head.add(g);
+    });
+
+    const fig = { root, hips, chest, neck, head, shoulders, elbows, hands, eyes, moods, sparks, mood: '', action: null, look: 0, lookTarget: 0, blinkAt: 1 + Math.random() * 3, phase: Math.random() * 10, talkUntil: 0 };
+    fig.rest = { sh: shoulders.map((x) => x.rotation.clone()), el: elbows.map((x) => x.rotation.clone()) };
     setMood(fig, o.mood || 'happy', true);
     return fig;
   }
 
-  // Fine strands for hair, as a bump map running from the crown down.
-  let strandTex = null;
-  function strands() {
-    if (!strandTex) {
-      const c = document.createElement('canvas');
-      c.width = 512;
-      c.height = 64;
-      const g = c.getContext('2d');
-      g.fillStyle = '#808080';
-      g.fillRect(0, 0, 512, 64);
-      for (let i = 0; i < 900; i += 1) {
-        const x = (i * 97.3) % 512;
-        g.strokeStyle = `rgba(${i % 2 ? 255 : 0},${i % 2 ? 255 : 0},${i % 2 ? 255 : 0},${0.04 + (i % 7) / 70})`;
-        g.lineWidth = 1 + (i % 3) * 0.5;
-        g.beginPath();
-        g.moveTo(x, 0);
-        g.lineTo(x + ((i % 5) - 2) * 2, 64);
-        g.stroke();
-      }
-      strandTex = new T.CanvasTexture(c);
-      strandTex.wrapS = T.RepeatWrapping;
-      strandTex.wrapT = T.RepeatWrapping;
-    }
-    return strandTex;
-  }
-
-  // Diagonal folds for a wrapped turban, as a bump map.
-  let wrapTex = null;
-  function wraps() {
-    if (!wrapTex) {
-      const c = document.createElement('canvas');
-      c.width = 512;
-      c.height = 256;
-      const g = c.getContext('2d');
-      g.fillStyle = '#808080';
-      g.fillRect(0, 0, 512, 256);
-      for (let i = -8; i < 16; i += 1) {
-        const x = i * 46;
-        const lg = g.createLinearGradient(x, 0, x + 34, 0);
-        lg.addColorStop(0, 'rgba(0,0,0,0.55)');
-        lg.addColorStop(0.35, 'rgba(255,255,255,0.5)');
-        lg.addColorStop(1, 'rgba(0,0,0,0)');
-        g.save();
-        g.translate(x, 0);
-        g.transform(1, 0, 0.9, 1, 0, 0);
-        g.fillStyle = lg;
-        g.translate(-x, 0);
-        g.fillRect(x, 0, 40, 256);
-        g.restore();
-      }
-      wrapTex = new T.CanvasTexture(c);
-      wrapTex.wrapS = T.RepeatWrapping;
-    }
-    return wrapTex;
-  }
-
-  function headGeo() {
-    return G('head', () => {
-      const g = new T.SphereGeometry(1, 56, 40);
-      const p = g.attributes.position;
-      for (let i = 0; i < p.count; i += 1) {
-        const [x, y, z] = headPoint(p.getX(i), p.getY(i), p.getZ(i), 1);
-        p.setXYZ(i, x, y, z);
-      }
-      g.computeVertexNormals();
-      return g;
-    });
-  }
-
   // ---------- expressions and motion ----------
-  const MOODS = {
-    happy: { brow: [0, 0], tilt: [0, 0], lid: -0.58, low: 0.1, look: [0, 0] },
-    grin: { brow: [0.003, 0.003], tilt: [0.05, 0.05], lid: -0.45, low: -0.22, look: [0, 0] },
-    think: { brow: [0.006, -0.001], tilt: [-0.12, 0.08], lid: -0.52, low: 0.1, look: [0.0045, 0.0035] },
-    oops: { brow: [0.004, 0.004], tilt: [0.28, 0.28], lid: -0.8, low: 0.16, look: [0, -0.001] }
+  const FACES = {
+    happy: { brow: [0, 0], tilt: [0, 0], closed: false },
+    grin: { brow: [0.012, 0.012], tilt: [0.08, 0.08], closed: true },
+    think: { brow: [0.02, -0.004], tilt: [-0.12, 0.14], closed: false },
+    oops: { brow: [0.012, 0.012], tilt: [0.34, 0.34], closed: false }
   };
   function setMood(f, mood, now) {
-    const m = MOODS[mood] ? mood : 'happy';
+    const m = FACES[mood] ? mood : 'happy';
     f.mood = m;
-    Object.keys(f.mouth).forEach((k) => { f.mouth[k].visible = k === m; });
-    f.face = MOODS[m];
-    if (now) f.faceNow = Object.assign({}, f.face, { brow: f.face.brow.slice(), tilt: f.face.tilt.slice(), look: f.face.look.slice() });
+    f.face = FACES[m];
+    Object.keys(f.moods).forEach((k) => { f.moods[k].visible = k === m; });
+    f.eyes.forEach((e) => {
+      e.open.visible = !f.face.closed;
+      e.shut.visible = f.face.closed;
+    });
+    if (now) f.faceNow = { brow: f.face.brow.slice(), tilt: f.face.tilt.slice() };
   }
-
-  const ACTIONS = { jump: 'cheer', tilt: 'ponder', shake: 'doubt', walk: 'walk' };
+  // The scenario's reactions, in this style: thumbs-up and a laugh, a hand on the chin, hands on the cheeks.
+  const ACTIONS = { jump: 'cheer', tilt: 'ponder', shake: 'doubt', walk: 'enter' };
   function play(f, name, t, extra) {
     f.action = Object.assign({ name: ACTIONS[name] || name, t0: t }, extra || {});
-    if (f.action.name === 'walk') {
-      f.root.position.x = f.action.from;
-      f.root.rotation.y = Math.PI / 2;
-    }
   }
-
-  // Frees what a figure owns; shared geometry and materials stay cached for the next one.
   function dispose(f) {
-    f.root.traverse((o) => { if (o.isInstancedMesh) o.dispose(); });
     if (f.root.parent) f.root.parent.remove(f.root);
   }
 
-  // One frame of life: breathing, weight shift, blinking, looking and any action in progress.
-  function animate(f, t, dt) {
-    const ph = t + f.phase;
-    const breath = Math.sin(ph * 1.65);
-    f.chest.scale.set(1 + breath * 0.004, 1 + breath * 0.004, 1 + breath * 0.012);
-    f.hips.rotation.z = Math.sin(ph * 0.42) * 0.012;
-    f.hips.position.x = Math.sin(ph * 0.42) * 0.006;
-    f.hips.position.y = HIP;
-    f.spine.rotation.set(0, 0, -f.hips.rotation.z * 0.6);
-    f.legs.forEach((l, i) => { l.rotation.set(0, 0, (i ? -1 : 1) * f.hips.rotation.z * 0.5); });
-    f.knees.forEach((k) => k.rotation.set(0, 0, 0));
-    f.shoulders.forEach((sh, i) => sh.rotation.copy(f.base.shoulders[i]));
-    f.elbows.forEach((el, i) => el.rotation.copy(f.base.elbows[i]));
-    f.shoulders.forEach((sh, i) => { sh.rotation.x += Math.sin(ph * 0.9 + i) * 0.015; });
-
-    // Look toward the target, with small natural movements.
-    f.look = damp(f.look, f.lookTarget, 4, dt);
-    f.neck.rotation.set(Math.sin(ph * 0.7) * 0.02 + 0.03, f.look * 0.7 + Math.sin(ph * 0.31) * 0.04, Math.sin(ph * 0.5) * 0.015);
-    f.spine.rotation.y = f.look * 0.25;
-
-    // Expressions ease into place.
-    const cur = f.faceNow;
-    const goal = f.face;
-    [0, 1].forEach((i) => {
-      cur.brow[i] = damp(cur.brow[i], goal.brow[i], 10, dt);
-      cur.tilt[i] = damp(cur.tilt[i], goal.tilt[i], 10, dt);
-      cur.look[i] = damp(cur.look[i], goal.look[i], 6, dt);
+  // Two-bone reach for an arm: puts the hand at a point in chest space, with the elbow bending toward pole.
+  function reach(f, i, target, pole, k) {
+    if (k <= 0) return;
+    const sh = f.shoulders[i];
+    const d = V3(target[0], target[1], target[2]).sub(sh.position);
+    const dist = Math.min(UPPER + FORE - 0.002, Math.max(0.06, d.length()));
+    d.normalize();
+    const cosA = (UPPER * UPPER + dist * dist - FORE * FORE) / (2 * UPPER * dist);
+    const sinA = Math.sqrt(Math.max(0, 1 - cosA * cosA));
+    const u = V3(pole[0], pole[1], pole[2]);
+    u.sub(d.clone().multiplyScalar(u.dot(d))).normalize();
+    const a = d.clone().multiplyScalar(cosA).add(u.clone().multiplyScalar(sinA));
+    const b = d.clone().multiplyScalar(dist).sub(a.clone().multiplyScalar(UPPER)).normalize();
+    // The bone's local -y runs down the upper arm and its local +z is the way the forearm bends.
+    const y = a.clone().negate();
+    const zz = b.clone().sub(a.clone().multiplyScalar(b.dot(a)));
+    if (zz.lengthSq() < 1e-6) zz.copy(u).negate();
+    zz.normalize();
+    const q = new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(V3().crossVectors(y, zz), y, zz));
+    sh.quaternion.slerp(q, k);
+    const bend = Math.acos(Math.max(-1, Math.min(1, a.dot(b))));
+    f.elbows[i].quaternion.slerp(new T.Quaternion().setFromEuler(new T.Euler(-bend, 0, 0)), k);
+  }
+  // Hand targets in chest space for each pose, per arm side (-1 is the figure's right arm), with an elbow pole.
+  const POSES = {
+    thumbs: (s) => [[s * 0.2, 0.3, 0.24], [s * 0.5, -1, -0.3]],
+    chin: (s) => (s > 0 ? [[0.035, 0.39, 0.25], [0.8, -1, 0]] : null),
+    cheeks: (s) => [[s * 0.17, 0.54, 0.255], [s, -0.6, -0.1]],
+    present: (s) => (s > 0 ? [[0.36, 0.2, 0.2], [0.3, -1, -0.4]] : null),
+    wave: (s, k) => (s > 0 ? [[0.4 + Math.sin(k * 9) * 0.045, 0.63, 0.08], [1, -0.6, 0]] : null)
+  };
+  function pose(f, name, k, time) {
+    [-1, 1].forEach((side, i) => {
+      const p = POSES[name](side, time);
+      if (p) reach(f, i, p[0], p[1], k);
     });
-    cur.lid = damp(cur.lid, goal.lid, 10, dt);
-    cur.low = damp(cur.low, goal.low, 10, dt);
-    f.brows.forEach((b, i) => {
-      b.position.y = 0.037 + cur.brow[i];
-      b.rotation.z = (i ? -1 : 1) * cur.tilt[i];
+  }
+  const SPARK = { cheer: '#ffc93c', ponder: '#36c2b4', doubt: '#ff7a59' };
+  function sparks(f, color, u) {
+    f.sparks.forEach((g) => {
+      g.visible = u > 0.01;
+      g.scale.setScalar(Math.max(0.001, u));
+      g.children.forEach((m) => { m.material = flat(color); });
     });
-
-    // Blink every few seconds.
-    let lid = cur.lid;
-    if (!reduceMotion) {
-      if (t > f.blinkAt + 0.18) f.blinkAt = t + 2 + Math.random() * 4;
-      const b = t - f.blinkAt;
-      if (b > 0 && b < 0.18) lid = lerp(lid, 0.95, Math.sin((b / 0.18) * Math.PI));
-    }
-    f.eyes.forEach((e) => {
-      e.lid.rotation.x = lid;
-      e.low.rotation.x = cur.low;
-      e.look.position.set(cur.look[0], cur.look[1], 0);
-    });
-
-    // Talking: the mouth opens and closes softly while a speech bubble is fresh.
-    const talking = t < f.talkUntil && !reduceMotion;
-    if (talking) {
-      const open = Math.sin(t * 13) > 0.15;
-      f.mouth.grin.visible = open && f.mood !== 'oops';
-      f.mouth[f.mood].visible = !open || f.mood === 'oops';
-      if (f.mood === 'grin') f.mouth.grin.visible = true;
-    } else if (f.wasTalking) {
-      Object.keys(f.mouth).forEach((k) => { f.mouth[k].visible = k === f.mood; });
-    }
-    f.wasTalking = talking;
-
-    if (f.action) runAction(f, t, dt);
   }
 
-  function runAction(f, t, dt) {
+  // One frame of life: breathing, a gentle sway, blinking, looking, and any action in progress.
+  function animate(f, t, dt) {
+    const ph = t + f.phase;
+    const breath = Math.sin(ph * 1.9);
+    f.chest.scale.set(1 + breath * 0.008, 1 + breath * 0.012, 1 + breath * 0.008);
+    f.hips.position.set(0, 0.3, 0);
+    f.hips.rotation.set(0, 0, Math.sin(ph * 0.8) * 0.02);
+    f.root.scale.setScalar(f.pop == null ? 1 : f.pop);
+    f.shoulders.forEach((sh, i) => {
+      sh.rotation.copy(f.rest.sh[i]);
+      sh.rotation.z += Math.sin(ph * 1.9 + i) * 0.015;
+    });
+    f.elbows.forEach((el, i) => el.rotation.copy(f.rest.el[i]));
+    f.look = damp(f.look, f.lookTarget, 4, dt);
+    f.neck.rotation.set(Math.sin(ph * 0.9) * 0.03, f.look + Math.sin(ph * 0.45) * 0.05, Math.sin(ph * 0.7) * 0.04);
+
+    const cur = f.faceNow;
+    [0, 1].forEach((i) => {
+      cur.brow[i] = damp(cur.brow[i], f.face.brow[i], 10, dt);
+      cur.tilt[i] = damp(cur.tilt[i], f.face.tilt[i], 10, dt);
+    });
+    f.eyes.forEach((e, i) => {
+      e.brow.children[0].position.y = cur.brow[i];
+      e.brow.children[0].rotation.z = -e.side * cur.tilt[i];
+    });
+
+    // A blink every few seconds.
+    let lid = 1;
+    if (!reduceMotion) {
+      if (t > f.blinkAt + 0.16) f.blinkAt = t + 2.2 + Math.random() * 3.5;
+      const b = t - f.blinkAt;
+      if (b > 0 && b < 0.16) lid = 1 - 0.9 * Math.sin((b / 0.16) * Math.PI);
+    }
+    f.eyes.forEach((e) => { e.open.scale.y = lid; });
+
+    // Talking: a small mouth opens and closes while a speech bubble is fresh.
+    const talking = t < f.talkUntil && !reduceMotion && (f.mood === 'happy' || f.mood === 'think');
+    Object.keys(f.moods).forEach((k) => { f.moods[k].visible = talking ? k === 'talk' : k === f.mood; });
+    if (talking) f.moods.talk.scale.y = 0.35 + 0.65 * Math.abs(Math.sin(t * 9));
+    sparks(f, '#ffc93c', 0);
+    if (f.action) act(f, t);
+  }
+
+  function act(f, t) {
     const a = f.action;
     const k = t - a.t0;
+    if (k < 0) {
+      if (a.name === 'enter') f.root.position.x = a.from;
+      return;
+    }
+    const env = (d) => (k < 0.3 ? ease(k / 0.3) : k > d - 0.35 ? ease(Math.max(0, d - k) / 0.35) : 1);
+    const pop = (d) => (k < d - 0.3 ? back(Math.min(1, k / 0.3)) : ease(Math.max(0, d - k) / 0.3));
     if (a.name === 'cheer') {
-      const d = 1.1;
+      const d = 1.9;
       if (k > d) { f.action = null; return; }
-      const u = k / d;
-      const hop = Math.max(0, Math.sin(u * Math.PI * 2)) * 0.035 * (1 - u);
-      f.hips.position.y = HIP + hop;
-      f.neck.rotation.x += Math.sin(u * Math.PI * 4) * 0.12 * (1 - u);
-      f.shoulders[1].rotation.x -= Math.sin(u * Math.PI) * 0.5;
-      f.elbows[1].rotation.x -= Math.sin(u * Math.PI) * 0.9;
+      pose(f, 'thumbs', env(d));
+      f.hips.position.y += Math.max(0, Math.sin(Math.min(1, k / 0.45) * Math.PI)) * 0.06;
+      f.neck.rotation.x += Math.sin(k * 10) * 0.04 * env(d);
+      sparks(f, SPARK.cheer, pop(d));
     } else if (a.name === 'ponder' || a.name === 'think-hold') {
-      const d = a.name === 'ponder' ? 1.8 : 1e9;
+      const d = a.name === 'ponder' ? 2.3 : 1e9;
       if (k > d) { f.action = null; return; }
-      const env = a.name === 'ponder' ? Math.sin(Math.min(1, k / d) * Math.PI) : Math.min(1, k / 0.6);
-      f.neck.rotation.z += 0.16 * env;
-      f.shoulders[1].rotation.x -= 0.95 * env;
-      f.shoulders[1].rotation.z -= 0.15 * env;
-      f.elbows[1].rotation.x -= 1.95 * env;
-      f.elbows[1].rotation.y += 0.35 * env;
+      pose(f, 'chin', env(d));
+      f.neck.rotation.z += 0.12 * env(d);
+      if (a.name === 'ponder') sparks(f, SPARK.ponder, pop(d) * 0.9);
     } else if (a.name === 'doubt') {
-      const d = 0.9;
+      const d = 2.0;
       if (k > d) { f.action = null; return; }
-      const u = k / d;
-      f.neck.rotation.y += Math.sin(u * Math.PI * 3) * 0.2 * (1 - u * 0.6);
+      pose(f, 'cheeks', env(d));
+      f.neck.rotation.y += Math.sin(k * 9) * 0.08 * env(d);
+      sparks(f, SPARK.doubt, pop(d));
     } else if (a.name === 'gesture') {
       const d = 1.6;
       if (k > d) { f.action = null; return; }
-      const env = Math.sin((k / d) * Math.PI);
-      f.shoulders[1].rotation.x -= 0.55 * env;
-      f.shoulders[1].rotation.z -= 0.12 * env;
-      f.elbows[1].rotation.x -= 0.75 * env;
-      f.elbows[1].rotation.y += 0.25 * env;
+      pose(f, 'present', env(d));
     } else if (a.name === 'wave') {
-      const d = 2;
+      const d = 2.2;
       if (k > d) { f.action = null; return; }
-      const env = Math.sin(Math.min(1, k / d) * Math.PI);
-      f.shoulders[1].rotation.z -= 2.3 * env;
-      f.elbows[1].rotation.z -= 0.6 * env + Math.sin(k * 9) * 0.25 * env;
-    } else if (a.name === 'walk') {
-      const d = a.dur || 1.8;
+      pose(f, 'wave', env(d), k);
+    } else if (a.name === 'enter') {
+      // Hops in from the side and settles.
+      const d = 1.1;
       const u = Math.min(1, k / d);
-      const x = lerp(a.from, a.to, ease(u) * 0.35 + u * 0.65);
-      f.root.position.x = x;
-      const stride = Math.sin(k * 7.4);
-      const on = u < 1 ? 1 : Math.max(0, 1 - (k - d) / 0.3);
-      f.legs[0].rotation.x = stride * 0.42 * on;
-      f.legs[1].rotation.x = -stride * 0.42 * on;
-      f.knees[0].rotation.x = Math.max(0, -stride) * 0.6 * on;
-      f.knees[1].rotation.x = Math.max(0, stride) * 0.6 * on;
-      f.shoulders[0].rotation.x -= stride * 0.3 * on;
-      f.shoulders[1].rotation.x += stride * 0.3 * on;
-      f.hips.position.y = HIP + Math.abs(Math.cos(k * 7.4)) * 0.018 * on;
-      const turn = u < 1 ? 0 : Math.min(1, (k - d) / 0.45);
-      f.root.rotation.y = lerp(Math.PI / 2, a.face, ease(turn));
-      if (turn >= 1) { f.root.rotation.y = a.face; f.action = null; }
+      f.root.position.x = lerp(a.from, a.to, ease(u));
+      f.hips.position.y += Math.abs(Math.sin(u * Math.PI * 3)) * 0.07 * (1 - u);
+      if (k > d) f.action = null;
     }
   }
 
-  // ---------- lights ----------
-  function lights(scene, o) {
-    const golden = o && o.golden;
-    const hemi = new T.HemisphereLight(golden ? '#ffd9b0' : '#dcecff', golden ? '#6b5440' : '#8a7a60', golden ? 1.25 : 1.5);
-    scene.add(hemi);
-    const sun = new T.DirectionalLight(golden ? '#ffc58a' : '#fff4e2', golden ? 2.4 : 2.8);
-    sun.position.set(golden ? -5 : -4, golden ? 4.5 : 9, 6);
-    sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
-    sun.shadow.camera.left = -7;
-    sun.shadow.camera.right = 7;
-    sun.shadow.camera.top = 6;
-    sun.shadow.camera.bottom = -4;
-    sun.shadow.camera.near = 1;
-    sun.shadow.camera.far = 30;
-    sun.shadow.bias = -0.0004;
-    sun.shadow.normalBias = 0.02;
-    sun.shadow.radius = 4;
-    scene.add(sun);
-    const rim = new T.DirectionalLight(golden ? '#ffb27a' : '#cfe6ff', golden ? 1.4 : 1.0);
-    rim.position.set(4, 5, -6);
-    scene.add(rim);
-    const fill = new T.DirectionalLight('#ffffff', 0.35);
-    fill.position.set(5, 2, 5);
+  // Soft, bright studio light like the group's renders.
+  function lights(scene) {
+    scene.add(new T.HemisphereLight('#ffffff', '#e9dcff', 0.95));
+    const key = new T.DirectionalLight('#fffaf4', 2.5);
+    key.position.set(-2.2, 3.4, 4.2);
+    key.castShadow = true;
+    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.camera.left = -4.5;
+    key.shadow.camera.right = 4.5;
+    key.shadow.camera.top = 3;
+    key.shadow.camera.bottom = -1.5;
+    key.shadow.bias = -0.0006;
+    key.shadow.normalBias = 0.02;
+    scene.add(key);
+    const fill = new T.DirectionalLight('#ffeaf3', 0.6);
+    fill.position.set(3, 1.2, 3);
     scene.add(fill);
-    return { hemi, sun, rim, fill };
+    const rim = new T.DirectionalLight('#e2eaff', 1.6);
+    rim.position.set(0.5, 3, -4);
+    scene.add(rim);
   }
 
-  function renderer(canvasHost, opts) {
-    const r = new T.WebGLRenderer({ antialias: true, alpha: Boolean(opts && opts.alpha), powerPreference: 'high-performance', preserveDrawingBuffer: Boolean(opts && opts.keep) });
+  function renderer(host, opts) {
+    const r = new T.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: Boolean(opts && opts.keep) });
     r.setPixelRatio(Math.min(window.devicePixelRatio || 1, (opts && opts.dpr) || 2));
     r.outputColorSpace = T.SRGBColorSpace;
     r.toneMapping = T.ACESFilmicToneMapping;
-    r.toneMappingExposure = 1.05;
+    r.toneMappingExposure = 1.0;
     r.shadowMap.enabled = true;
     r.shadowMap.type = T.PCFSoftShadowMap;
-    if (canvasHost) canvasHost.appendChild(r.domElement);
+    r.setClearColor(0x000000, 0);
+    if (host) host.appendChild(r.domElement);
     return r;
   }
+  function release(r) {
+    r.dispose();
+    r.forceContextLoss();
+  }
 
-  // A soft contact shadow under a figure, to ground it even where the sun's shadow falls behind.
-  let blobTex = null;
+  // A soft contact shadow under a figure.
   function blob(size) {
-    if (!blobTex) {
-      const c = document.createElement('canvas');
-      c.width = 128;
-      c.height = 128;
-      const g = c.getContext('2d');
+    const tex = canvasTex('blob', 128, 128, (g) => {
       const rg = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-      rg.addColorStop(0, 'rgba(18,24,34,0.42)');
-      rg.addColorStop(0.55, 'rgba(18,24,34,0.16)');
-      rg.addColorStop(1, 'rgba(18,24,34,0)');
+      rg.addColorStop(0, 'rgba(70,50,120,0.32)');
+      rg.addColorStop(0.6, 'rgba(70,50,120,0.11)');
+      rg.addColorStop(1, 'rgba(70,50,120,0)');
       g.fillStyle = rg;
       g.fillRect(0, 0, 128, 128);
-      blobTex = new T.CanvasTexture(c);
-    }
-    const m = new T.Mesh(G('blobPlane', () => new T.PlaneGeometry(1, 1)), G('mat:blob', () => new T.MeshBasicMaterial({ map: blobTex, transparent: true, depthWrite: false })));
+    });
+    const m = new T.Mesh(G('blobPlane', () => new T.PlaneGeometry(1, 1)), G('mat:blob', () => new T.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })));
     m.rotation.x = -Math.PI / 2;
-    m.position.y = 0.004;
-    m.scale.set(size, size * 0.62, 1);
-    m.renderOrder = 1;
+    m.position.y = 0.003;
+    m.scale.set(size, size * 0.55, 1);
     return m;
   }
 
-  // ---------- settings ----------
-  // Each setting is a small diorama around the characters (who stand near z = 0), lit by the sun,
-  // with fog that fades distant things into the sky like the glow around the globe.
-  const box = (w, h, d, mat, at, noShadow) => mesh(G(`box${w},${h},${d}`, () => new T.BoxGeometry(w, h, d)), mat, at, noShadow);
-  const cyl = (rt, rb, h, mat, at, segs, noShadow) => mesh(G(`cyl${rt},${rb},${h},${segs || 24}`, () => new T.CylinderGeometry(rt, rb, h, segs || 24)), mat, at, noShadow);
-  function canvasTex(key, w, h, draw, repeat) {
-    return G(`tex:${key}`, () => {
-      const c = document.createElement('canvas');
-      c.width = w;
-      c.height = h;
-      draw(c.getContext('2d'), w, h);
-      const t = new T.CanvasTexture(c);
-      t.colorSpace = T.SRGBColorSpace;
-      t.anisotropy = 4;
-      if (repeat) {
-        t.wrapS = T.RepeatWrapping;
-        t.wrapT = T.RepeatWrapping;
-        t.repeat.set(repeat[0], repeat[1]);
-      }
-      return t;
-    });
-  }
-  const hash = (n) => {
-    const x = Math.sin(n * 127.1) * 43758.5453;
-    return x - Math.floor(x);
-  };
-  // Speckled ground: sand, earth, grass, paving or floorboards.
-  function groundTex(kind, base) {
-    return canvasTex(`ground-${kind}-${base}`, 512, 512, (g, w, h) => {
-      g.fillStyle = base;
-      g.fillRect(0, 0, w, h);
-      if (kind === 'tiles' || kind === 'boards') {
-        g.strokeStyle = 'rgba(70,50,30,0.22)';
-        g.lineWidth = 2;
-        const step = kind === 'tiles' ? 64 : 42;
-        for (let i = 0; i <= w; i += step) {
-          g.beginPath();
-          g.moveTo(i, 0);
-          g.lineTo(i, h);
-          g.stroke();
-        }
-        if (kind === 'tiles') {
-          for (let j = 0; j <= h; j += 64) {
-            g.beginPath();
-            g.moveTo(0, j);
-            g.lineTo(w, j);
-            g.stroke();
-          }
-        } else {
-          for (let i = 0; i < w; i += 42) {
-            for (let j = (i * 7) % 160; j < h; j += 160) {
-              g.beginPath();
-              g.moveTo(i, j);
-              g.lineTo(i + 42, j);
-              g.stroke();
-            }
-          }
-        }
-      }
-      for (let i = 0; i < 2600; i += 1) {
-        const v = hash(i) > 0.5 ? 255 : 0;
-        g.fillStyle = `rgba(${v},${v},${v},${0.03 + hash(i + 9) * 0.05})`;
-        const r = 1 + hash(i + 3) * (kind === 'grass' ? 3 : 2);
-        g.fillRect(hash(i + 1) * w, hash(i + 2) * h, r, kind === 'grass' ? r * 2.2 : r);
-      }
-    }, kind === 'boards' ? [6, 6] : [24, 24]);
-  }
-
-  function skyDome(o) {
-    const mat = new T.ShaderMaterial({
-      side: T.BackSide,
-      depthWrite: false,
-      fog: false,
-      uniforms: { top: { value: new T.Color(o.top) }, horizon: { value: new T.Color(o.horizon) }, sun: { value: o.sun.clone().normalize() }, glow: { value: new T.Color(o.glow) } },
-      vertexShader: 'varying vec3 vDir; void main() { vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-      fragmentShader: `uniform vec3 top; uniform vec3 horizon; uniform vec3 sun; uniform vec3 glow; varying vec3 vDir;
-        void main() {
-          vec3 d = normalize(vDir);
-          float h = clamp(d.y, 0.0, 1.0);
-          vec3 c = mix(horizon, top, pow(h, 0.5));
-          float s = max(dot(d, sun), 0.0);
-          c += glow * (pow(s, 900.0) * 3.0 + pow(s, 40.0) * 0.45 + pow(s, 6.0) * 0.18);
-          gl_FragColor = vec4(c, 1.0);
-          #include <tonemapping_fragment>
-          #include <colorspace_fragment>
-        }`
-    });
-    const m = new T.Mesh(G('skyBall', () => new T.SphereGeometry(95, 40, 20)), mat);
-    m.renderOrder = -1;
-    return m;
-  }
-
-  // A lumpy canopy blob for trees and bushes.
-  const canopyGeo = () => G('canopy', () => {
-    const g = new T.SphereGeometry(1, 32, 22);
-    const p = g.attributes.position;
-    for (let i = 0; i < p.count; i += 1) {
-      const v = V3(p.getX(i), p.getY(i), p.getZ(i));
-      const n = 1 + 0.09 * Math.sin(v.x * 7.1 + v.y * 3.3) * Math.cos(v.z * 6.7 - v.y * 2.1) + 0.05 * Math.sin(v.y * 13 + v.x * 5);
-      v.multiplyScalar(n);
-      p.setXYZ(i, v.x, v.y, v.z);
-    }
-    g.computeVertexNormals();
-    return g;
-  });
-  function tree(at, s, tint, noShadow) {
-    const g = group(at);
-    g.add(mesh(G('trunk', () => taper(new T.CylinderGeometry(0.1, 0.15, 1.7, 12), 1, 0.7)), M('#6b4a31', { roughness: 0.95 }), { p: [0, 0.85, 0] }, noShadow));
-    const leaf = M(tint || '#5a9a4f', { roughness: 0.88 });
-    const dark = M(shade(tint || '#5a9a4f', 0.82), { roughness: 0.9 });
-    [[0, 2.35, 0, 1.05, leaf], [0.7, 2.05, 0.25, 0.75, dark], [-0.68, 2.1, -0.1, 0.8, leaf], [0.2, 2.85, -0.25, 0.72, leaf], [-0.3, 2.55, 0.5, 0.62, dark]]
-      .forEach(([x, y, z, r, m]) => g.add(mesh(canopyGeo(), m, { p: [x, y, z], s: r }, noShadow)));
-    g.scale.multiplyScalar(s || 1);
-    return g;
-  }
-  const bush = (at, s, tint) => group(at, [[0, 0.32, 0, 0.42], [0.35, 0.26, 0.1, 0.32], [-0.32, 0.25, 0.05, 0.3]].map(([x, y, z, r]) => mesh(canopyGeo(), M(tint || '#5f9a4c', { roughness: 0.9 }), { p: [x * (s || 1), y * (s || 1), z], s: r * (s || 1) })));
-
-  // Window, door and roof textures.
-  function facadeTex(key, o) {
-    return canvasTex(`facade-${key}`, 256, Math.round(256 * o.h / o.w), (g, w, h) => {
-      const lg = g.createLinearGradient(0, 0, 0, h);
-      lg.addColorStop(0, shade(o.wall, 1.04));
-      lg.addColorStop(1, shade(o.wall, 0.9));
-      g.fillStyle = lg;
-      g.fillRect(0, 0, w, h);
-      g.fillStyle = shade(o.wall, 0.78);
-      g.fillRect(0, 0, w, 10);
-      const floors = Math.max(1, Math.floor((o.h - 1.6) / 2.6));
-      const cols = Math.max(1, Math.round(o.w / 1.9));
-      const ppm = h / o.h;
-      for (let f = 0; f < floors; f += 1) {
-        for (let c = 0; c < cols; c += 1) {
-          const ww = (w / cols) * 0.42;
-          const x = (w / cols) * (c + 0.5) - ww / 2;
-          const y = 22 + f * 2.6 * ppm;
-          const wh = 1.3 * ppm;
-          if (o.shutters) {
-            g.fillStyle = o.shutters;
-            g.fillRect(x - ww * 0.42, y, ww * 0.38, wh);
-            g.fillRect(x + ww * 1.04, y, ww * 0.38, wh);
-          }
-          const gl = g.createLinearGradient(0, y, 0, y + wh);
-          gl.addColorStop(0, o.glow ? '#ffe7ad' : '#cfe4f3');
-          gl.addColorStop(1, o.glow ? '#f0a85c' : '#5f86aa');
-          g.fillStyle = gl;
-          g.fillRect(x, y, ww, wh);
-          g.strokeStyle = shade(o.wall, 0.7);
-          g.lineWidth = 3;
-          g.strokeRect(x, y, ww, wh);
-          g.beginPath();
-          g.moveTo(x + ww / 2, y);
-          g.lineTo(x + ww / 2, y + wh);
-          g.stroke();
-          g.fillStyle = shade(o.wall, 0.8);
-          g.fillRect(x - 3, y + wh, ww + 6, 4);
-          if (o.balcony && f === 0 && c % 2 === 0) {
-            g.strokeStyle = '#4a5266';
-            g.lineWidth = 2;
-            g.strokeRect(x - 6, y + wh - 14, ww + 12, 14);
-            for (let k = 0; k < 6; k += 1) {
-              g.beginPath();
-              g.moveTo(x - 6 + k * (ww + 12) / 5, y + wh - 14);
-              g.lineTo(x - 6 + k * (ww + 12) / 5, y + wh);
-              g.stroke();
-            }
-          }
-        }
-      }
-      const sh = 1.9 * ppm;
-      g.fillStyle = shade(o.wall, 0.86);
-      g.fillRect(0, h - sh - 8, w, sh + 8);
-      const dw = w * 0.36;
-      const dl = g.createLinearGradient(0, h - sh, 0, h);
-      dl.addColorStop(0, o.glow ? '#ffd894' : '#6f5a4a');
-      dl.addColorStop(1, o.glow ? '#e9a55a' : '#4b3c32');
-      g.fillStyle = dl;
-      g.fillRect((w - dw) / 2, h - sh, dw, sh);
-      if (o.awning) {
-        for (let i = 0; i < 10; i += 1) {
-          g.fillStyle = i % 2 ? '#fbf3e4' : o.awning;
-          g.fillRect((w - dw) / 2 - 10 + i * (dw + 20) / 10, h - sh - 22, (dw + 20) / 10, 18);
-        }
-      }
-    });
-  }
-  function building(o, at) {
-    const side = M(shade(o.wall, 0.86), { roughness: 0.92 });
-    const front = new T.MeshStandardMaterial({ map: facadeTex(`${o.w}x${o.h}-${o.wall}-${o.shutters || ''}-${o.glow ? 1 : 0}-${o.balcony ? 1 : 0}-${o.awning || ''}`, o), roughness: 0.9, emissive: o.glow ? '#ffffff' : '#000000', emissiveMap: o.glow ? facadeTex(`${o.w}x${o.h}-${o.wall}-${o.shutters || ''}-1-${o.balcony ? 1 : 0}-${o.awning || ''}`, o) : null, emissiveIntensity: o.glow ? 0.35 : 0 });
-    const g = group(at);
-    g.add(mesh(G(`bld${o.w},${o.h},${o.d || 6}`, () => new T.BoxGeometry(o.w, o.h, o.d || 6)), [side, side, M(shade(o.wall, 0.75)), side, front, side], { p: [0, o.h / 2, 0] }, true));
-    g.add(box(o.w + 0.3, 0.3, (o.d || 6) + 0.3, M(shade(o.wall, 0.78), { roughness: 0.9 }), { p: [0, o.h + 0.15, 0] }, true));
-    return g;
-  }
-
-  // A plastered house with a corrugated metal hip roof.
-  function house(o, at) {
-    const g = group(at);
-    const wall = M(o.wall, { roughness: 0.93 });
-    g.add(box(o.w, o.h, o.d, wall, { p: [0, o.h / 2, 0] }, o.far));
-    g.add(box(o.w + 0.06, 0.24, o.d + 0.06, M(shade(o.wall, 0.78), { roughness: 0.95 }), { p: [0, 0.12, 0] }, true));
-    const ribs = canvasTex(`roof-${o.roof}`, 256, 64, (c, w, h) => {
-      c.fillStyle = o.roof;
-      c.fillRect(0, 0, w, h);
-      for (let x = 0; x < w; x += 8) {
-        const lg = c.createLinearGradient(x, 0, x + 8, 0);
-        lg.addColorStop(0, 'rgba(255,255,255,0.28)');
-        lg.addColorStop(0.5, 'rgba(0,0,0,0.12)');
-        lg.addColorStop(1, 'rgba(255,255,255,0.05)');
-        c.fillStyle = lg;
-        c.fillRect(x, 0, 8, h);
-      }
-    });
-    g.add(mesh(G('hipRoof', () => new T.ConeGeometry(Math.SQRT1_2, 1, 4, 1)), new T.MeshStandardMaterial({ map: ribs, roughness: 0.42, metalness: 0.45 }), { p: [0, o.h + 0.45, 0], r: [0, Math.PI / 4, 0], s: [o.w + 0.6, 0.9, o.d + 0.6] }, o.far));
-    const glass = M('#5f86aa', { roughness: 0.15, metalness: 0.3 });
-    const frame = M('#f4efe6', { roughness: 0.6 });
-    [-0.3, 0.3].forEach((fx) => {
-      g.add(box(0.62, 0.72, 0.06, frame, { p: [fx * o.w, o.h * 0.58, o.d / 2 + 0.01] }, true));
-      g.add(box(0.5, 0.6, 0.07, glass, { p: [fx * o.w, o.h * 0.58, o.d / 2 + 0.02] }, true));
-    });
-    g.add(box(0.72, 1.55, 0.07, M('#7a5236', { roughness: 0.7 }), { p: [0, 0.78, o.d / 2 + 0.02] }, true));
-    return g;
-  }
-
-  // A ridge tent: canvas gable, a door flap and sometimes a blue tarp.
-  function tent(o, at) {
-    const g = group(at);
-    const shape = new T.Shape();
-    shape.moveTo(-o.w / 2, 0);
-    shape.lineTo(o.w / 2, 0);
-    shape.lineTo(0, o.h);
-    shape.lineTo(-o.w / 2, 0);
-    g.add(mesh(G(`tent${o.w},${o.h},${o.d}`, () => new T.ExtrudeGeometry(shape, { depth: o.d, bevelEnabled: false }).translate(0, 0, -o.d / 2)), M('#ece8de', { roughness: 0.95 }), null, o.far));
-    const door = new T.Shape();
-    door.moveTo(-o.w * 0.16, 0);
-    door.lineTo(o.w * 0.16, 0);
-    door.lineTo(0, o.h * 0.62);
-    door.lineTo(-o.w * 0.16, 0);
-    g.add(mesh(G(`tentDoor${o.w},${o.h}`, () => new T.ShapeGeometry(door)), M('#6f7889', { roughness: 0.9 }), { p: [0, 0.01, o.d / 2 + 0.01] }, true));
-    if (o.tarp) {
-      const slope = Math.atan2(o.h, o.w / 2);
-      g.add(box(o.w * 0.42, 0.02, o.d * 0.6, M('#3f7fc4', { roughness: 0.6 }), { p: [-o.w * 0.25, o.h * 0.5, 0], r: [0, 0, slope] }, true));
-    }
-    return g;
-  }
-
-  function jerrycan(at, r) {
-    return group(at, [mesh(G('jerry', () => roundBox(0.24, 0.33, 0.15, 0.035)), M('#f0c43a', { roughness: 0.45 }), { p: [0, 0.165, 0] }),
-      mesh(G('jerryCap', () => new T.CylinderGeometry(0.025, 0.025, 0.04, 12)), M('#2f6fd0', { roughness: 0.4 }), { p: [0.07, 0.35, 0] }, true),
-      mesh(G('jerryHandle', () => new T.TorusGeometry(0.045, 0.012, 8, 16, Math.PI)), M('#d9a51f', { roughness: 0.45 }), { p: [-0.04, 0.33, 0] }, true)]).rotateY(r || 0);
-  }
-
-  // A market stall: striped awning, posts, a cloth-fronted table and piles of produce.
-  function stall(color, at) {
-    const g = group(at);
-    const wood = M('#7a5a3c', { roughness: 0.8 });
-    [-1, 1].forEach((sx) => [-1, 1].forEach((sz) => g.add(cyl(0.035, 0.035, 2.1, wood, { p: [sx * 1.05, 1.05, sz * 0.45] }, 10))));
-    const stripes = canvasTex(`stripes-${color}`, 256, 64, (c, w, h) => {
-      for (let i = 0; i < 8; i += 1) {
-        c.fillStyle = i % 2 ? '#fbf3e4' : color;
-        c.fillRect(i * 32, 0, 32, h);
-      }
-    });
-    g.add(mesh(G('awning', () => new T.BoxGeometry(2.4, 0.04, 1.3)), new T.MeshStandardMaterial({ map: stripes, roughness: 0.85 }), { p: [0, 2.15, 0.08], r: [0.2, 0, 0] }));
-    g.add(box(2.2, 0.08, 0.95, M('#b98b5c', { roughness: 0.7 }), { p: [0, 0.86, 0] }));
-    g.add(box(2.16, 0.78, 0.04, M(shade(color, 0.9), { roughness: 0.9 }), { p: [0, 0.44, 0.47] }));
-    const fruit = [['#f08a2c', -0.6], ['#d9452f', 0], ['#7ab648', 0.6]];
-    fruit.forEach(([c, x]) => {
-      const pile = [[-0.12, 0], [0, 0], [0.12, 0], [-0.06, 0.1], [0.06, 0.1], [0, 0.2], [-0.06, 0], [0.06, 0]];
-      pile.forEach(([dx, dy], i) => g.add(mesh(G('fruit', () => new T.SphereGeometry(0.06, 14, 10)), M(c, { roughness: 0.45 }), { p: [x + dx, 0.96 + dy * 0.9, (i > 5 ? -0.12 : 0.05)] })));
-    });
-    return g;
-  }
-
-  // A catenary of lights or flags between two points.
-  function catenary(a, b, sag, n) {
-    const pts = [];
-    for (let i = 0; i <= n; i += 1) {
-      const t = i / n;
-      pts.push(V3(lerp(a[0], b[0], t), lerp(a[1], b[1], t) - Math.sin(t * Math.PI) * sag, lerp(a[2], b[2], t)));
-    }
-    return pts;
-  }
-
-  function mountains(color, z, n, seed) {
-    const g = group();
-    for (let i = 0; i < n; i += 1) {
-      const h = 6 + hash(i + seed) * 9;
-      g.add(mesh(G(`peak${i % 3}`, () => new T.ConeGeometry(1, 1, 7 + (i % 3), 1)), M(color, { roughness: 1 }), { p: [-60 + i * (120 / n) + hash(i * 3 + seed) * 6, h / 2 - 0.5, z - hash(i + 7) * 12], s: [8 + hash(i + 2) * 7, h, 6 + hash(i + 5) * 4], r: [0, hash(i) * 3, 0] }, true));
-    }
-    return g;
-  }
-
-  // A soft additive halo around a light at dusk.
-  function glow(color, size) {
-    const tex = canvasTex('glow', 128, 128, (g) => {
-      const rg = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-      rg.addColorStop(0, 'rgba(255,255,255,0.95)');
-      rg.addColorStop(0.25, 'rgba(255,255,255,0.4)');
-      rg.addColorStop(1, 'rgba(255,255,255,0)');
-      g.fillStyle = rg;
-      g.fillRect(0, 0, 128, 128);
-    });
-    const sp = new T.Sprite(G(`mat:glow${color}`, () => new T.SpriteMaterial({ map: tex, color, blending: T.AdditiveBlending, depthWrite: false, transparent: true, fog: false })));
-    sp.scale.set(size, size, 1);
-    return sp;
-  }
-
-  const SKY = {
-    day: { top: '#2f80d0', horizon: '#d4ebf8', glow: '#fff1c8', sun: [-0.35, 0.55, -0.75] },
-    golden: { top: '#a7697a', horizon: '#fbd2a2', glow: '#ffcb7a', sun: [0.55, 0.1, -0.85] }
-  };
-
-  const SETTINGS = {
-    village(ctx) {
-      const { add } = ctx;
-      add(mountains('#9fb7a6', -55, 9, 1));
-      add(ctx.ground('earth', '#d6bb88'));
-      add(mesh(G('villagePath', () => {
-        const s = new T.Shape();
-        s.moveTo(-2.6, 6);
-        s.bezierCurveTo(-1.6, 1, 1.5, -3, 4.5, -9);
-        s.lineTo(6.2, -9);
-        s.bezierCurveTo(3, -3, 0.4, 1, -0.6, 6);
-        s.lineTo(-2.6, 6);
-        return new T.ShapeGeometry(s, 24).rotateX(-Math.PI / 2).translate(0, 0.006, 0);
-      }), M('#e6d1a6', { roughness: 1 }), null, true));
-      add(house({ w: 4.2, h: 2.6, d: 3.4, wall: '#efdcbf', roof: '#97a3ae' }, { p: [-5.2, 0, -7.5], r: [0, 0.18, 0] }));
-      add(house({ w: 3.4, h: 2.3, d: 3, wall: '#e5cda9', roof: '#a5afb9', far: true }, { p: [-0.6, 0, -11], r: [0, -0.1, 0] }));
-      add(house({ w: 4.6, h: 2.8, d: 3.6, wall: '#f2e4cb', roof: '#8a97a3' }, { p: [5.6, 0, -8], r: [0, -0.22, 0] }));
-      add(tree({ p: [2.6, 0, -6] }, 1.15));
-      add(tree({ p: [-9, 0, -12] }, 1.3, '#6aa257', true));
-      add(tree({ p: [10, 0, -14] }, 1.2, '#6aa257', true));
-      add(bush({ p: [-2.8, 0, -4.5] }, 1.1));
-      add(bush({ p: [6.8, 0, -4.2] }, 1));
-    },
-    office(ctx) {
-      const { add } = ctx;
-      add(ctx.ground('boards', '#c9a77e'));
-      const wallM = M('#e9eef3', { roughness: 0.95 });
-      const z = -3.6;
-      // Back wall with a wide window onto the city.
-      add(box(30, 1.0, 0.25, wallM, { p: [0, 0.5, z] }, true));
-      add(box(30, 2.0, 0.25, wallM, { p: [0, 4.2, z] }, true));
-      add(box(12.8, 2.2, 0.25, wallM, { p: [-10.6, 2.1, z] }, true));
-      add(box(13.8, 2.2, 0.25, wallM, { p: [8.1, 2.1, z] }, true));
-      add(box(30, 0.12, 0.3, M('#cfd6de'), { p: [0, 0.06, z + 0.05] }, true));
-      const frame = M('#f8fafc', { roughness: 0.5 });
-      [[-4.2, 2.1, 0.12, 2.2], [1.2, 2.1, 0.12, 2.2], [-1.5, 2.1, 0.08, 2.2]].forEach(([x, y, w, h]) => add(box(w, h, 0.2, frame, { p: [x, y, z] }, true)));
-      add(box(5.6, 0.1, 0.2, frame, { p: [-1.5, 1.0, z] }, true));
-      add(box(5.6, 0.1, 0.2, frame, { p: [-1.5, 3.2, z] }, true));
-      add(box(5.8, 0.08, 0.45, M('#ffffff', { roughness: 0.5 }), { p: [-1.5, 0.98, z + 0.2] }, true));
-      [[-6, 3.5, -16], [-3, 5, -18], [0.5, 4, -17], [3, 6, -20], [-8.5, 4.5, -19]].forEach(([x, h, zz], i) => add(building({ w: 2.6, h: h + 2, wall: ['#c9d6e3', '#d9cfc2', '#bfcbd8'][i % 3] }, { p: [x, -0.5, zz] })));
-      // Whiteboard, clock and cabinet.
-      const board = canvasTex('whiteboard', 512, 256, (g, w, h) => {
-        g.fillStyle = '#fdfefe';
-        g.fillRect(0, 0, w, h);
-        g.strokeStyle = '#7aa7d8';
-        g.lineWidth = 7;
-        g.lineCap = 'round';
-        [[40, 60, 190], [40, 95, 150], [40, 130, 170]].forEach(([x, y, l]) => { g.beginPath(); g.moveTo(x, y); g.lineTo(x + l, y); g.stroke(); });
-        g.strokeStyle = '#2f80c4';
-        g.lineWidth = 5;
-        g.strokeRect(270, 45, 80, 52);
-        g.strokeRect(400, 45, 80, 52);
-        g.beginPath();
-        g.moveTo(350, 71);
-        g.lineTo(400, 71);
-        g.stroke();
-        [['#ffe08a', 300, 150], ['#a9d4ff', 365, 158], ['#ffc2d1', 430, 148]].forEach(([c, x, y]) => { g.fillStyle = c; g.fillRect(x, y, 50, 50); });
-      });
-      add(box(2.5, 1.3, 0.05, M('#c9d1db', { roughness: 0.5 }), { p: [3.6, 2.2, z + 0.15] }, true));
-      add(mesh(G('boardFace', () => new T.PlaneGeometry(2.36, 1.16)), new T.MeshStandardMaterial({ map: board, roughness: 0.35 }), { p: [3.6, 2.2, z + 0.18] }, true));
-      const clock = canvasTex('clock', 128, 128, (g) => {
-        g.fillStyle = '#ffffff';
-        g.beginPath();
-        g.arc(64, 64, 60, 0, Math.PI * 2);
-        g.fill();
-        g.strokeStyle = '#4a5266';
-        g.lineWidth = 8;
-        g.stroke();
-        g.lineWidth = 6;
-        g.lineCap = 'round';
-        g.beginPath();
-        g.moveTo(64, 64);
-        g.lineTo(64, 26);
-        g.moveTo(64, 64);
-        g.lineTo(92, 78);
-        g.stroke();
-      });
-      add(mesh(G('clockFace', () => new T.CircleGeometry(0.32, 32)), new T.MeshStandardMaterial({ map: clock, roughness: 0.4 }), { p: [6.1, 2.7, z + 0.14] }, true));
-      add(box(1.6, 1.1, 0.5, M('#c9b08d', { roughness: 0.7 }), { p: [7.2, 0.55, z + 0.35] }));
-      ['#2f80c4', '#e2735f', '#3faa86', '#e6b13e', '#8268cc', '#2f80c4', '#3faa86'].forEach((c, i) => add(box(0.12, 0.38, 0.3, M(c, { roughness: 0.6 }), { p: [6.65 + i * 0.16, 1.29, z + 0.35] })));
-      // Meeting table with laptops, papers and chairs.
-      const wood = M('#b98f63', { roughness: 0.55 });
-      add(box(3.6, 0.07, 1.2, wood, { p: [0.4, 0.76, -2.1] }));
-      [[-1.3, -2.5], [2.1, -2.5], [-1.3, -1.7], [2.1, -1.7]].forEach(([x, zz]) => add(cyl(0.035, 0.035, 0.74, M('#5b4636'), { p: [x, 0.37, zz] }, 10)));
-      [-0.6, 1.0].forEach((x) => {
-        add(box(0.42, 0.02, 0.3, M('#9aa3b5', { roughness: 0.3, metalness: 0.5 }), { p: [x, 0.805, -2.1] }));
-        add(box(0.42, 0.28, 0.02, M('#3a4150', { roughness: 0.3, metalness: 0.4 }), { p: [x, 0.95, -2.25], r: [-0.25, 0, 0] }));
-      });
-      add(box(0.3, 0.005, 0.22, M('#ffffff', { roughness: 0.8 }), { p: [0.2, 0.8, -1.9], r: [0, 0.2, 0] }, true));
-      add(cyl(0.04, 0.035, 0.1, M('#ffffff', { roughness: 0.4 }), { p: [1.7, 0.84, -1.85] }, 16));
-      [-0.8, 0.4, 1.6].forEach((x) => {
-        add(box(0.5, 0.06, 0.48, M('#3d4658', { roughness: 0.6 }), { p: [x, 0.5, -2.95] }));
-        add(box(0.5, 0.6, 0.06, M('#3d4658', { roughness: 0.6 }), { p: [x, 0.85, -3.2] }));
-        add(cyl(0.03, 0.03, 0.45, M('#7d8597', { metalness: 0.6, roughness: 0.3 }), { p: [x, 0.25, -2.95] }, 8));
-      });
-      // A plant by the window.
-      const pot = group({ p: [-4.9, 0, -2.6] }, [cyl(0.24, 0.18, 0.5, M('#d9765c', { roughness: 0.8 }), { p: [0, 0.25, 0] })]);
-      for (let i = 0; i < 9; i += 1) {
-        const a = (i / 9) * Math.PI * 2;
-        pot.add(mesh(G('leafBlade', () => new T.SphereGeometry(1, 12, 8)), M(i % 2 ? '#3f8f5e' : '#4ea36d', { roughness: 0.7 }), { p: [Math.cos(a) * 0.16, 0.85 + (i % 3) * 0.1, Math.sin(a) * 0.16], s: [0.06, 0.42, 0.13], r: [Math.sin(a) * 0.5, a, Math.cos(a) * 0.5] }));
-      }
-      add(pot);
-      add(mesh(G('lightPatch', () => new T.PlaneGeometry(5.4, 3.2).rotateX(-Math.PI / 2)), G('mat:lightPatch', () => new T.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.12, depthWrite: false })), { p: [-0.6, 0.008, -1.4], r: [0, 0.35, 0] }, true));
-    },
-    camp(ctx) {
-      const { add } = ctx;
-      add(mountains('#c4ae8e', -55, 9, 4));
-      add(ctx.ground('sand', '#dcc69c'));
-      [-9, -5.5, -2, 1.5, 5, 8.5].forEach((x, i) => add(tent({ w: 3, h: 2, d: 3.6, tarp: i === 3, far: true }, { p: [x, 0, -14 - (i % 2) * 2], r: [0, (hash(i) - 0.5) * 0.3, 0] })));
-      add(tent({ w: 3.2, h: 2.2, d: 3.8 }, { p: [-6, 0, -7], r: [0, 0.25, 0] }));
-      add(tent({ w: 3, h: 2.1, d: 3.6, tarp: true }, { p: [5.5, 0, -8], r: [0, -0.2, 0] }));
-      // The assessment desk under a shade canopy.
-      const desk = group({ p: [-1.6, 0, -2.6], r: [0, 0.12, 0] });
-      [-1, 1].forEach((sx) => [-1, 1].forEach((sz) => desk.add(cyl(0.03, 0.03, 2.3, M('#8a93a3', { metalness: 0.6, roughness: 0.3 }), { p: [sx * 1.4, 1.15, sz * 1.1] }, 10))));
-      desk.add(mesh(G('canopyRoof', () => new T.ConeGeometry(Math.SQRT1_2, 1, 4, 1)), M('#f4f6f8', { roughness: 0.8 }), { p: [0, 2.55, 0], r: [0, Math.PI / 4, 0], s: [3.3, 0.55, 2.7] }));
-      desk.add(box(3.3, 0.18, 2.7, M('#2f80c4', { roughness: 0.7 }), { p: [0, 2.21, 0] }));
-      desk.add(box(1.8, 0.05, 0.75, M('#eef1f4', { roughness: 0.6 }), { p: [0, 0.75, 0] }));
-      [-0.75, 0.75].forEach((x) => desk.add(cyl(0.025, 0.025, 0.73, M('#8a93a3'), { p: [x, 0.37, 0] }, 8)));
-      desk.add(box(0.32, 0.01, 0.24, M('#ffffff'), { p: [-0.4, 0.78, 0.05] }, true));
-      desk.add(box(0.24, 0.02, 0.32, M('#b88a55', { roughness: 0.6 }), { p: [0.35, 0.785, 0.05] }));
-      [-0.5, 0.5].forEach((x) => {
-        desk.add(box(0.42, 0.05, 0.42, M('#3f86c9', { roughness: 0.5 }), { p: [x, 0.45, -0.7] }));
-        desk.add(box(0.42, 0.42, 0.05, M('#3f86c9', { roughness: 0.5 }), { p: [x, 0.7, -0.9] }));
-      });
-      add(desk);
-      // Water tank on a stand.
-      const tank = group({ p: [2.9, 0, -3.4] });
-      [[-0.5, -0.5], [0.5, -0.5], [-0.5, 0.5], [0.5, 0.5]].forEach(([x, zz]) => tank.add(cyl(0.04, 0.04, 1.2, M('#7c8494', { metalness: 0.5, roughness: 0.4 }), { p: [x, 0.6, zz] }, 8)));
-      tank.add(cyl(0.72, 0.72, 1.2, M('#3f86c9', { roughness: 0.45 }), { p: [0, 1.82, 0] }, 32));
-      tank.add(cyl(0.74, 0.74, 0.06, M('#2d6aa6', { roughness: 0.45 }), { p: [0, 2.44, 0] }, 32));
-      add(tank);
-      for (let i = 0; i < 6; i += 1) add(cyl(0.05, 0.05, 1.1, M('#8a6b45', { roughness: 0.9 }), { p: [6 + i * 1.2, 0.55, -3 - i * 0.15] }, 8));
-      add(box(6.2, 0.05, 0.05, M('#8a6b45'), { p: [9, 0.85, -3.4], r: [0, 0.12, 0] }));
-    },
-    market(ctx) {
-      const { add } = ctx;
-      add(ctx.ground('tiles', '#d8c3a0'));
-      const row = [[-11, 6, 7.5, '#e8cda6', '#3f8f9a'], [-5.2, 5.4, 6.4, '#dcb894', null], [0.2, 5.2, 8.2, '#efdcc2', '#4d6fa8'], [5.4, 5.2, 6.6, '#d8b48c', null], [10.8, 5.6, 7.8, '#e6d3b8', '#a65d3f']];
-      row.forEach(([x, w, h, wall, shutters], i) => add(building({ w, h, wall, shutters, balcony: i % 2 === 1, awning: ['#c2603f', '#3f8f9a', '#d39a2b'][i % 3] }, { p: [x * 1.15, 0, -12.5] })));
-      // Rooftop radio mast.
-      const mast = group({ p: [6.2, 6.6, -14] });
-      [-1, 1].forEach((s1) => [-1, 1].forEach((s2) => mast.add(mesh(G('mastLeg', () => new T.CylinderGeometry(0.025, 0.025, 3.2, 6)), M('#7d8597', { metalness: 0.6, roughness: 0.3 }), { p: [s1 * 0.12, 1.6, s2 * 0.12], r: [s2 * 0.035, 0, -s1 * 0.035] }, true))));
-      mast.add(mesh(G('beacon', () => new T.SphereGeometry(0.08, 12, 8)), G('mat:beacon', () => new T.MeshBasicMaterial({ color: '#ff5d4f' })), { p: [0, 3.25, 0] }, true));
-      add(mast);
-      add(stall('#c2603f', { p: [-2.0, 0, -3.2], r: [0, 0.1, 0] }));
-      add(stall('#3f8f9a', { p: [1.6, 0, -4.2], r: [0, -0.05, 0] }));
-      add(stall('#d39a2b', { p: [5.4, 0, -3.4], r: [0, -0.15, 0] }));
-      const flags = catenary([-12, 3.9, -7.5], [12, 3.8, -7.5], 0.7, 26);
-      add(mesh(new T.TubeGeometry(new T.CatmullRomCurve3(flags), 48, 0.012, 4), M('#5b4a3e'), null, true));
-      const flag = new T.Shape();
-      flag.moveTo(-0.16, 0);
-      flag.lineTo(0.16, 0);
-      flag.lineTo(0, -0.34);
-      flag.lineTo(-0.16, 0);
-      flags.forEach((p, i) => { if (i % 1 === 0 && i < flags.length - 1) add(mesh(G('flag', () => new T.ShapeGeometry(flag)), G(`mat:flag${i % 5}`, () => new T.MeshStandardMaterial({ color: ['#d9534f', '#f0ad4e', '#3f8f9a', '#4d6fa8', '#7ab648'][i % 5], side: T.DoubleSide, roughness: 0.8 })), { p: [p.x, p.y, p.z] }, true)); });
-    },
-    town(ctx) {
-      const { add, golden } = ctx;
-      add(ctx.ground('tiles', '#cfc8bc'));
-      [[-13.5, 6.5, 7.4, '#e9d6b9', null], [-7.6, 5, 6.2, '#d6e0ea', null], [7.8, 5.6, 7.6, '#f0dcc4', '#5a7fa8'], [13.6, 5.8, 6.4, '#dfe8d8', null]]
-        .forEach(([x, w, h, wall, shutters], i) => add(building({ w, h, wall, shutters, glow: golden, balcony: i % 2 === 1, awning: i === 3 ? '#4d6fa8' : null }, { p: [x, 0, -14] })));
-      // The civic portico.
-      const civic = group({ p: [0.2, 0, -14.5] });
-      const stone = M('#efe5d4', { roughness: 0.85 });
-      civic.add(box(8, 5.4, 4, stone, { p: [0, 3.0, -1] }, true));
-      civic.add(box(7.4, 4.4, 0.2, M('#cbbda5', { roughness: 0.9 }), { p: [0, 2.8, 1.0] }, true));
-      civic.add(box(1.3, 2.4, 0.1, golden ? M('#e9a55a', { emissive: '#ffb45c', emissiveIntensity: 0.6 }) : M('#5a4436', { roughness: 0.7 }), { p: [0, 1.8, 1.12] }, true));
-      [-3, -1.8, -0.6, 0.6, 1.8, 3].forEach((x) => civic.add(cyl(0.22, 0.25, 4.2, M('#f6efe3', { roughness: 0.7 }), { p: [x, 2.7, 1.6] }, 20, true)));
-      const ped = new T.Shape();
-      ped.moveTo(-4.3, 0);
-      ped.lineTo(4.3, 0);
-      ped.lineTo(0, 1.5);
-      ped.lineTo(-4.3, 0);
-      civic.add(mesh(G('pediment', () => new T.ExtrudeGeometry(ped, { depth: 1.2, bevelEnabled: false })), stone, { p: [0, 5.1, 0.6] }, true));
-      civic.add(box(8.8, 0.3, 1.6, stone, { p: [0, 4.95, 1.2] }, true));
-      [0, 1, 2].forEach((i) => civic.add(box(8.4 + i * 0.6, 0.18, 1.0 + i * 0.5, M('#ddd3c1', { roughness: 0.9 }), { p: [0, 0.09 + (2 - i) * 0.18, 1.9 + i * 0.25] }, true)));
-      add(civic);
-      [[-4.2, -5.5], [4.6, -5.8]].forEach(([x, zz]) => {
-        const lamp = group({ p: [x, 0, zz] }, [cyl(0.06, 0.08, 3.6, M('#4a5266', { metalness: 0.5, roughness: 0.4 }), { p: [0, 1.8, 0] }, 12),
-          box(0.5, 0.06, 0.06, M('#4a5266'), { p: [0.22, 3.55, 0] }),
-          mesh(G('lampHead', () => new T.ConeGeometry(0.2, 0.22, 16, 1, true)), M('#4a5266', { side: T.DoubleSide }), { p: [0.44, 3.45, 0] }),
-          mesh(G('bulb', () => new T.SphereGeometry(0.09, 12, 8)), golden ? M('#fff1c4', { emissive: '#ffe2a0', emissiveIntensity: 1.6 }) : M('#eef2f6', { roughness: 0.2 }), { p: [0.44, 3.36, 0] }, true)]);
-        if (golden) lamp.add(place(glow('#ffd9a0', 1.4), { p: [0.44, 3.32, 0] }));
-        if (golden) {
-          const pl = new T.PointLight('#ffcf8a', 6, 9, 1.6);
-          pl.position.set(0.44, 3.2, 0);
-          lamp.add(pl);
-        }
-        add(lamp);
-      });
-      [[-8.4, -6.2], [8.8, -6.6]].forEach(([x, zz]) => {
-        add(box(1.2, 0.5, 1.2, M('#b9ad98', { roughness: 0.9 }), { p: [x, 0.25, zz] }));
-        add(tree({ p: [x, 0.4, zz] }, 0.75));
-      });
-    },
-    fields(ctx) {
-      const { add } = ctx;
-      add(mountains('#8fa9c4', -70, 10, 7));
-      add(mountains('#9cbf86', -40, 8, 3));
-      add(ctx.ground('grass', '#8dbb5e'));
-      // Crop rows in real perspective: green on the left, ripe grain on the right.
-      const rows = new T.InstancedMesh(G('cropRow', () => new T.BoxGeometry(0.34, 0.26, 40)), M('#6fa847', { roughness: 0.9 }), 22);
-      const grain = new T.InstancedMesh(G('cropRow', () => new T.BoxGeometry(0.34, 0.26, 40)), M('#d9bd5a', { roughness: 0.9 }), 22);
-      const m4 = new T.Matrix4();
-      for (let i = 0; i < 22; i += 1) {
-        m4.makeTranslation(-14 + i * 0.6, 0.13, -24);
-        rows.setMatrixAt(i, m4);
-        m4.makeTranslation(1.2 + i * 0.6, 0.13, -24);
-        grain.setMatrixAt(i, m4);
-      }
-      rows.receiveShadow = true;
-      grain.receiveShadow = true;
-      add(rows);
-      add(grain);
-      add(house({ w: 3.6, h: 2.4, d: 3, wall: '#f3e6d2', roof: '#b5533c', far: true }, { p: [9, 0, -22], r: [0, -0.3, 0] }));
-      for (let i = 0; i < 8; i += 1) add(tree({ p: [-12 + i * 1.6, 0, -30 - (i % 2)] }, 0.55, '#5e9b4c', true));
-      add(tree({ p: [-5.2, 0, -5] }, 0.95));
-      add(tree({ p: [4.4, 0, -9] }, 0.8, '#68a556'));
-      for (let i = 0; i < 9; i += 1) add(cyl(0.05, 0.06, 1.1, M('#8a6b45', { roughness: 0.9 }), { p: [3.4 + i * 1.3, 0.55, -2.4 - i * 0.05] }, 8));
-      [0.45, 0.85].forEach((y) => add(box(11, 0.06, 0.05, M('#8a6b45', { roughness: 0.9 }), { p: [8.6, y, -2.6], r: [0, 0.04, 0] })));
-    }
-  };
-
-  const PROPS3D = {
-    pump(ctx) {
-      const g = group({ p: [-0.9, 0, -1.4] });
-      g.add(cyl(0.75, 0.82, 0.08, M('#cfcac0', { roughness: 0.9 }), { p: [0, 0.04, 0] }, 32));
-      g.add(cyl(0.065, 0.07, 0.95, M('#2f73b8', { roughness: 0.35, metalness: 0.3 }), { p: [0, 0.55, 0] }, 16));
-      g.add(cyl(0.1, 0.1, 0.12, M('#245f99', { roughness: 0.35, metalness: 0.3 }), { p: [0, 1.06, 0] }, 16));
-      g.add(cyl(0.022, 0.022, 0.75, M('#3a4150', { roughness: 0.4, metalness: 0.5 }), { p: [0.32, 1.2, 0], r: [0, 0, 1.1] }, 8));
-      g.add(cyl(0.035, 0.035, 0.32, M('#2f73b8', { roughness: 0.35, metalness: 0.3 }), { p: [-0.16, 0.8, 0.06], r: [0, 0, 1.4] }, 10));
-      g.add(jerrycan({ p: [-0.55, 0.08, 0.35] }, 0.4));
-      g.add(jerrycan({ p: [0.5, 0.08, 0.4] }, -0.3));
-      g.add(jerrycan({ p: [0.85, 0, 0.75] }, 0.9));
-      ctx.add(g);
-    },
-    signpost(ctx) {
-      const g = group({ p: [-0.9, 0, -1.6] });
-      g.add(cyl(0.06, 0.07, 2.6, M('#8a6444', { roughness: 0.8 }), { p: [0, 1.3, 0] }, 10));
-      const sign = (dir, y, color, patch) => {
-        const tex = canvasTex(`sign-${color}-${patch}`, 256, 64, (c, w, h) => {
-          c.fillStyle = color;
-          c.fillRect(0, 0, w, h);
-          c.strokeStyle = 'rgba(255,255,255,0.9)';
-          c.lineWidth = 8;
-          c.lineCap = 'round';
-          c.beginPath();
-          c.moveTo(40, 32);
-          c.lineTo(190, 32);
-          c.stroke();
-          if (patch) {
-            c.fillStyle = '#e8e2d4';
-            c.fillRect(110, 12, 90, 40);
-          }
-        });
-        const s = new T.Shape();
-        s.moveTo(0, -0.14);
-        s.lineTo(0.95, -0.14);
-        s.lineTo(1.12, 0);
-        s.lineTo(0.95, 0.14);
-        s.lineTo(0, 0.14);
-        s.lineTo(0, -0.14);
-        const geo = G(`arrow${dir}`, () => {
-          const e = new T.ExtrudeGeometry(s, { depth: 0.04, bevelEnabled: false });
-          const uv = e.attributes.uv;
-          const p = e.attributes.position;
-          for (let i = 0; i < uv.count; i += 1) uv.setXY(i, p.getX(i) / 1.12, (p.getY(i) + 0.14) / 0.28);
-          return e;
-        });
-        return mesh(geo, new T.MeshStandardMaterial({ map: tex, roughness: 0.6 }), { p: [0, y, 0.04], r: [0, dir < 0 ? Math.PI : 0, 0] });
-      };
-      g.add(sign(1, 2.25, '#2f6aa6', false));
-      g.add(sign(-1, 1.85, '#2f7d5b', true));
-      ctx.add(g);
-    },
-    track(ctx) {
-      ctx.add(mesh(G('track', () => {
-        const s = new T.Shape();
-        s.moveTo(-3.2, 7);
-        s.bezierCurveTo(-1.6, 0, 1.2, -10, 2.2, -40);
-        s.lineTo(3.4, -40);
-        s.bezierCurveTo(2.6, -10, 0.6, 0, -0.4, 7);
-        s.lineTo(-3.2, 7);
-        return new T.ShapeGeometry(s, 32).rotateX(-Math.PI / 2).translate(0, 0.012, 0);
-      }), M('#c9a46d', { roughness: 1 }), null, true));
-      [-0.55, 0.55].forEach((dx) => ctx.add(mesh(G(`rut${dx}`, () => new T.TubeGeometry(new T.CatmullRomCurve3([V3(-1.8 + dx, 0.016, 7), V3(-0.3 + dx * 0.8, 0.016, -2), V3(1.6 + dx * 0.5, 0.016, -14), V3(2.8 + dx * 0.2, 0.016, -40)]), 60, 0.07, 4).scale(1, 0.15, 1)), M('#a8834f', { roughness: 1 }), null, true)));
-    },
-    lanterns(ctx) {
-      const pts = catenary([-9, 2.85, -2.8], [9, 2.8, -2.8], 0.45, 18);
-      ctx.add(mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 40, 0.01, 4), M('#4a3f3a'), null, true));
-      pts.forEach((p, i) => {
-        if (i === 0 || i === pts.length - 1) return;
-        const on = ctx.golden;
-        const color = ['#ffcf73', '#ff9f6b', '#ffe39a'][i % 3];
-        const lan = group({ p: [p.x, p.y - 0.13, p.z] }, [mesh(G('lantern', () => new T.SphereGeometry(0.075, 16, 12).scale(1, 1.2, 1)), M(color, on ? { roughness: 0.6, emissive: color, emissiveIntensity: 1.4 } : { roughness: 0.6 }), null, true),
-          mesh(G('lanternCap', () => new T.CylinderGeometry(0.03, 0.04, 0.03, 10)), M('#4a3f3a'), { p: [0, 0.095, 0] }, true)]);
-        if (on) lan.add(glow(color, 0.75));
-        if (on && i % 6 === 3) lan.add(new T.PointLight('#ffc27a', 3, 6, 1.6));
-        ctx.add(lan);
-      });
-    }
-  };
-
-  // Builds a setting into a scene and returns its lights.
-  function buildSetting(scene, theme, prop, golden) {
-    const sky = SKY[golden ? 'golden' : 'day'];
-    const sunDir = V3(sky.sun[0], sky.sun[1], sky.sun[2]);
-    scene.background = new T.Color(sky.horizon);
-    if (theme !== 'office' || true) scene.add(skyDome({ top: sky.top, horizon: sky.horizon, glow: sky.glow, sun: sunDir }));
-    scene.fog = new T.Fog(sky.horizon, theme === 'office' ? 14 : 20, theme === 'office' ? 40 : 85);
-    const ctx = {
-      golden,
-      add: (o) => scene.add(o),
-      ground: (kind, base) => {
-        const m = mesh(G(`groundPlane`, () => new T.PlaneGeometry(240, 240).rotateX(-Math.PI / 2)), new T.MeshStandardMaterial({ color: '#ffffff', map: groundTex(kind, base), roughness: 0.96 }), null, true);
-        m.receiveShadow = true;
-        return m;
-      }
-    };
-    (SETTINGS[theme] || SETTINGS.village)(ctx);
-    if (prop && PROPS3D[prop]) PROPS3D[prop](ctx);
-    const L = lights(scene, { golden });
-    if (golden) L.sun.position.set(6, 3.2, -4);
-    return L;
-  }
-
-  // ---------- the live story stage ----------
-  // One stage stays alive while a scenario is played: re-rendering the same scene only updates moods,
-  // reactions and who is speaking, so the camera doesn't fly in again at every step.
-  const FACING = { you: 0.42, npc: -0.3, mentor: -0.42 };
-  const DEPTH = { you: 0.35, npc: 0, mentor: -0.2 };
-  const SPOTS = { wide: { you: 0.13, npc: 0.63, mentor: 0.86 }, narrow: { you: 0.13, npc: 0.58, mentor: 0.875 } };
+  // ---------- the story stage ----------
+  // Calm, like the group's app: the characters pop in on a soft pastel card, breathe, blink, look at
+  // whoever is speaking and react to your choices. One live stage carries through a scenario's steps.
+  const FACING = { you: 0.35, npc: -0.25, mentor: -0.3 };
+  const SPOTS = { wide: { you: 0.13, npc: 0.63, mentor: 0.86 }, narrow: { you: 0.14, npc: 0.58, mentor: 0.875 } };
   let live = null;
-
-  function sceneKey(cfg) {
-    return JSON.stringify([cfg.theme, cfg.prop || '', cfg.sky || '', cfg.actors.map((a) => [a.id, a.spec])]);
-  }
+  const sceneKey = (cfg) => JSON.stringify(cfg.actors.map((a) => [a.id, a.spec]));
 
   function buildStage(art, cfg, key) {
-    const L = { key, art, cfg, figs: {}, t: 0, last: performance.now(), busyUntil: 0, raf: 0, visible: true, pointer: [0, 0], pointerNow: [0, 0] };
-    L.renderer = renderer(null, { dpr: window.innerWidth < 768 ? 1.5 : 2 });
+    const L = { key, art, cfg, figs: {}, t: 0, last: performance.now(), raf: 0, timer: 0, visible: true, busyUntil: 0 };
+    L.renderer = renderer(null, { dpr: window.innerWidth < 768 ? 1.75 : 2 });
     L.canvas = L.renderer.domElement;
     L.canvas.className = 'stage-3d';
     L.canvas.setAttribute('aria-hidden', 'true');
     L.scene = new T.Scene();
-    L.lights = buildSetting(L.scene, cfg.theme, cfg.prop, cfg.sky === 'golden');
-    L.camera = new T.PerspectiveCamera(28, 2, 0.1, 200);
-    cfg.actors.forEach((a) => {
+    L.scene.environment = studio(L.renderer);
+    lights(L.scene);
+    L.camera = new T.PerspectiveCamera(22, 2, 0.1, 60);
+    cfg.actors.forEach((a, i) => {
       const f = figure(a.spec, { mood: a.mood || 'happy' });
       f.id = a.id;
+      f.moodIn = a.mood;
       f.root.rotation.y = FACING[a.id] || 0;
-      f.root.add(blob(0.95));
+      f.root.add(blob(0.8));
+      f.pop = reduceMotion ? 1 : 0;
+      f.popAt = 0.1 + 0.12 * i;
       L.scene.add(f.root);
       L.figs[a.id] = f;
     });
-    L.fly = reduceMotion ? null : { t0: 0, dur: 2.4 };
     art.prepend(L.canvas);
     L.resize = new ResizeObserver(() => layout(L));
     L.resize.observe(art);
-    L.io = new IntersectionObserver((entries) => { L.visible = entries.some((e) => e.isIntersecting); if (L.visible) kick(L); });
+    L.io = new IntersectionObserver((entries) => {
+      L.visible = entries.some((e) => e.isIntersecting);
+      if (L.visible) kick(L);
+    });
     L.io.observe(art);
-    L.onPointer = (e) => {
-      const r = L.art.getBoundingClientRect();
-      L.pointer = [((e.clientX - r.left) / r.width - 0.5) * 2, ((e.clientY - r.top) / r.height - 0.5) * 2];
-      kick(L);
-    };
-    art.addEventListener('pointermove', L.onPointer);
     L.onVis = () => kick(L);
     document.addEventListener('visibilitychange', L.onVis);
     layout(L);
     return L;
   }
 
-  // Places the camera and the characters so they stand where the speech bubbles expect them.
+  // The camera frames the figures at about two thirds of the stage height, standing near the bottom,
+  // and each figure stands where its name label sits in the drawn version.
   function layout(L) {
     const w = L.art.clientWidth;
     const h = L.art.clientHeight;
     if (!w || !h) return;
     L.renderer.setSize(w, h, false);
     L.camera.aspect = w / h;
+    L.camera.position.set(0, 0.95, 5.45);
+    L.camera.lookAt(0, 0.84, 0);
     L.camera.updateProjectionMatrix();
-    L.home = { pos: V3(0, 1.55, 5.2), look: V3(0, 1.0, 0) };
-    L.camera.position.copy(L.home.pos);
-    L.camera.lookAt(L.home.look);
     L.camera.updateMatrixWorld();
     const spots = SPOTS[w / h > 2.4 ? 'wide' : 'narrow'];
     const p = V3();
     Object.values(L.figs).forEach((f) => {
-      const z = DEPTH[f.id] || 0;
-      p.set(0, 0.9, z).project(L.camera);
+      p.set(0, 0.6, 0).project(L.camera);
       const x0 = p.x;
-      p.set(1, 0.9, z).project(L.camera);
+      p.set(1, 0.6, 0).project(L.camera);
       const x = ((spots[f.id] || 0.5) * 2 - 1 - x0) / (p.x - x0);
-      f.home = V3(x, 0, z);
-      if (!(f.action && f.action.name === 'walk')) f.root.position.copy(f.home);
-      else { f.action.to = x; f.action.from = x - 3.2; f.root.position.z = z; }
+      f.home = x;
+      if (f.action && f.action.name === 'enter') {
+        f.action.to = x;
+        f.action.from = x - 1.8;
+      } else {
+        f.root.position.x = x;
+      }
     });
     kick(L);
   }
 
-  // Applies a re-render: moods, reactions, who speaks and who listens.
   function updateStage(L, cfg) {
     L.cfg = cfg;
     const t = L.t;
-    const speaker = (cfg.bubbles || []).reduce((s, b) => (b.side === 'left' ? 'you' : b.side === 'right' ? 'mentor' : s), null);
+    const speaker = (cfg.bubbles || []).reduce((sp, b) => (b.side === 'left' ? 'you' : b.side === 'right' ? 'mentor' : sp), null);
     cfg.actors.forEach((a) => {
       const f = L.figs[a.id];
       if (!f) return;
@@ -1589,32 +901,31 @@
         f.moodIn = a.mood;
       }
       if (a.anim === 'walk') {
-        play(f, 'walk', t + (L.fly ? 0.5 : 0), { from: f.home.x - 3.2, to: f.home.x, face: FACING[a.id] || 0, dur: 1.9 });
-      } else if (a.anim) {
-        play(f, a.anim, t);
-      } else if (a.mood === 'think' && a.id === 'npc') {
-        if (!f.action) play(f, 'think-hold', t);
-      } else if (f.action && f.action.name === 'think-hold') {
-        f.action = null;
+        if (!reduceMotion) play(f, 'enter', t + 0.15, { from: f.home - 1.8, to: f.home });
       }
+      else if (a.anim) play(f, a.anim, t + 0.1);
+      else if (a.mood === 'think' && a.id === 'npc') {
+        if (!f.action) play(f, 'think-hold', t);
+      } else if (f.action && f.action.name === 'think-hold') f.action = null;
     });
-    const bubble = (cfg.bubbles || []).filter((b) => b.side === 'left' || b.side === 'right').pop();
+    const said = (cfg.bubbles || []).filter((b) => b.side === 'left' || b.side === 'right').pop();
     if (speaker && L.figs[speaker]) {
       const f = L.figs[speaker];
-      f.talkUntil = t + Math.min(2.6, 0.6 + ((bubble && bubble.text) || '').length * 0.03);
+      f.talkUntil = t + 0.25 + Math.min(1.8, 0.4 + ((said && said.text) || '').length * 0.02);
       if (!f.action) play(f, 'gesture', t + 0.2);
     }
-    const target = (id) => {
-      if (speaker && id !== speaker) return speaker;
-      if (id === 'you') return 'npc';
-      return 'you';
-    };
-    Object.values(L.figs).forEach((f) => { f.watch = target(f.id); });
-    L.busyUntil = t + 3;
+    Object.values(L.figs).forEach((f) => {
+      f.watch = speaker && f.id !== speaker ? speaker : f.id === 'you' ? 'npc' : 'you';
+    });
+    L.busyUntil = t + 2.5;
     kick(L);
   }
 
   function kick(L) {
+    if (L.timer) {
+      clearTimeout(L.timer);
+      L.timer = 0;
+    }
     if (!L.raf && L.visible && !document.hidden && L.canvas.isConnected) {
       L.last = performance.now();
       L.raf = requestAnimationFrame((now) => frame(L, now));
@@ -1629,55 +940,35 @@
     L.t += dt;
     const t = L.t;
     Object.values(L.figs).forEach((f) => {
-      const o = L.figs[f.watch];
-      if (o) {
-        const dx = o.root.position.x - f.root.position.x;
-        const dz = o.root.position.z - f.root.position.z;
-        // Like actors on a stage, characters turn partly toward each other and keep their faces to the audience.
-        f.lookTarget = Math.max(-0.55, Math.min(0.55, (Math.atan2(dx, dz) - f.root.rotation.y) * 0.6));
-      }
+      if (f.pop < 1) f.pop = t < f.popAt ? 0 : back(Math.min(1, (t - f.popAt) / 0.45));
+      const other = L.figs[f.watch];
+      if (other) f.lookTarget = Math.max(-0.35, Math.min(0.35, (Math.atan2(other.root.position.x - f.root.position.x, 1.2) - f.root.rotation.y) * 0.5));
       animate(f, t, dt);
     });
-    // The camera flies in like the globe does, then drifts gently and leans toward the pointer.
-    L.pointerNow[0] = damp(L.pointerNow[0], L.pointer[0], 2.5, dt);
-    L.pointerNow[1] = damp(L.pointerNow[1], L.pointer[1], 2.5, dt);
-    const home = L.home;
-    const pos = home.pos.clone();
-    if (!reduceMotion) {
-      pos.x += Math.sin(t * 0.17) * 0.16 + L.pointerNow[0] * 0.22;
-      pos.y += Math.sin(t * 0.23) * 0.05 - L.pointerNow[1] * 0.1;
-    }
-    if (L.fly) {
-      const u = Math.min(1, t / L.fly.dur);
-      const k = ease(u);
-      pos.set(lerp(home.pos.x + 4.2, pos.x, k), lerp(home.pos.y + 2.6, pos.y, k), lerp(home.pos.z + 7.5, pos.z, k));
-      if (u >= 1) L.fly = null;
-    }
-    L.camera.position.copy(pos);
-    L.camera.lookAt(home.look);
     L.renderer.render(L.scene, L.camera);
     placeLabels(L);
     if (!L.shown) {
       L.shown = true;
       L.canvas.style.opacity = '1';
-      L.stage.classList.add('is-3d');
-      const A = window.Avatar;
-      if (A && A.isSet() && !A.portraitUrl()) setTimeout(() => A.storePortrait(portrait(A.get(), 256)), 400);
+      if (L.stage) L.stage.classList.add('is-3d');
+      const Av = window.Avatar;
+      if (Av && Av.isSet() && !Av.portraitUrl()) setTimeout(() => Av.storePortrait(portrait(Av.get(), 256)), 400);
     }
-    const busy = t < L.busyUntil || L.fly || Object.values(L.figs).some((f) => f.action && f.action.name !== 'think-hold' || t < f.talkUntil);
+    const busy = t < L.busyUntil || Object.values(L.figs).some((f) => (f.action && f.action.name !== 'think-hold') || f.pop < 1 || t < f.talkUntil);
     if (reduceMotion && !busy) return;
+    // Idle breathing and blinking run at a gentle 30 frames a second.
     if (busy) L.raf = requestAnimationFrame((n) => frame(L, n));
     else L.timer = setTimeout(() => { L.timer = 0; L.raf = requestAnimationFrame((n) => frame(L, n)); }, 33);
   }
 
-  // Keeps the HTML name labels under each character's feet.
   function placeLabels(L) {
+    if (!L.stage) return;
     const p = V3();
     L.cfg.actors.forEach((a) => {
       const f = L.figs[a.id];
       const el = L.stage.querySelector(`.actor[data-actor="${a.id}"]`);
       if (!f || !el) return;
-      p.set(f.root.position.x, 0, f.root.position.z).project(L.camera);
+      p.set(f.root.position.x, 0, 0).project(L.camera);
       el.style.left = `${((p.x + 1) / 2) * 100}%`;
       el.style.bottom = `${((p.y + 1) / 2) * 100}%`;
     });
@@ -1688,17 +979,13 @@
     clearTimeout(L.timer);
     L.resize.disconnect();
     L.io.disconnect();
-    L.art.removeEventListener('pointermove', L.onPointer);
     document.removeEventListener('visibilitychange', L.onVis);
     Object.values(L.figs).forEach(dispose);
-    L.scene.traverse((o) => {
-      if (o.isMesh && o.material && !Array.isArray(o.material) && o.material.isShaderMaterial) o.material.dispose();
-    });
-    L.renderer.dispose();
+    release(L.renderer);
     L.canvas.remove();
   }
 
-  // Attaches 3D to a story stage element rendered by Scenes.stage(); returns false to keep the SVG art.
+  // Attaches 3D to a story stage rendered by Scenes.stage(); returns false to keep the SVG art.
   async function attachStage(stage, cfg) {
     try {
       await load();
@@ -1712,12 +999,10 @@
       if (live.art !== art) {
         live.resize.disconnect();
         live.io.disconnect();
-        live.art.removeEventListener('pointermove', live.onPointer);
         live.art = art;
         art.prepend(live.canvas);
         live.resize.observe(art);
         live.io.observe(art);
-        art.addEventListener('pointermove', live.onPointer);
       }
     } else {
       if (live) destroy(live);
@@ -1730,24 +1015,23 @@
     return true;
   }
 
-  // ---------- the avatar turntable ----------
-  // In the creator the avatar stands on a turntable that spins slowly like the globe; drag to turn it.
+  // ---------- the avatar preview ----------
+  // In the creator the avatar waves hello, then sways gently on its card; drag to turn it.
   function turntable(host, spec) {
-    const R = renderer(host, { alpha: true });
-    R.domElement.className = 'turntable-3d';
-    R.domElement.setAttribute('role', 'img');
-    R.domElement.setAttribute('aria-label', 'Your avatar in 3D. Drag to turn it.');
+    const R = renderer(host);
+    const el = R.domElement;
+    el.className = 'turntable-3d';
+    el.setAttribute('role', 'img');
+    el.setAttribute('aria-label', 'Your avatar in 3D. Drag to turn it.');
     const scene = new T.Scene();
-    lights(scene, {});
-    const floor = mesh(G('ttFloor', () => new T.CircleGeometry(1.4, 48).rotateX(-Math.PI / 2)), G('mat:ttShadow', () => new T.ShadowMaterial({ opacity: 0.22 })), null, true);
-    floor.receiveShadow = true;
-    scene.add(floor);
-    const cam = new T.PerspectiveCamera(26, 0.8, 0.1, 50);
-    const S = { fig: null, angle: 0.35, spin: reduceMotion ? 0 : 0.32, drag: null, resumeAt: 0, face: null, t: 0, last: performance.now(), raf: 0, alive: true };
+    scene.environment = studio(R);
+    lights(scene);
+    const cam = new T.PerspectiveCamera(24, 0.8, 0.1, 30);
+    const S = { fig: null, angle: 0.25, drag: null, hold: 0, bump: -1, t: 0, last: performance.now(), raf: 0, alive: true };
     const set = (sp) => {
       if (S.fig) dispose(S.fig);
       S.fig = figure(sp, { mood: 'happy' });
-      S.fig.root.add(blob(0.9));
+      S.fig.root.add(blob(0.85));
       scene.add(S.fig.root);
     };
     set(spec);
@@ -1757,25 +1041,23 @@
       const h = host.clientHeight || 380;
       R.setSize(w, h, false);
       cam.aspect = w / h;
-      cam.position.set(0, 1.0, 4.6 * Math.max(1, 0.8 / cam.aspect));
-      cam.lookAt(0, 0.9, 0);
+      cam.position.set(0, 0.86, 3.75 * Math.max(1, 0.78 / cam.aspect));
+      cam.lookAt(0, 0.7, 0);
       cam.updateProjectionMatrix();
     };
     const ro = new ResizeObserver(size);
     ro.observe(host);
     size();
-    const el = R.domElement;
     el.addEventListener('pointerdown', (e) => {
       S.drag = { x: e.clientX, angle: S.angle };
       el.setPointerCapture(e.pointerId);
     });
     el.addEventListener('pointermove', (e) => {
-      if (!S.drag) return;
-      S.angle = S.drag.angle + (e.clientX - S.drag.x) * 0.012;
+      if (S.drag) S.angle = S.drag.angle + (e.clientX - S.drag.x) * 0.012;
     });
     const end = () => {
       S.drag = null;
-      S.resumeAt = S.t + 2.5;
+      S.hold = S.t + 2.5;
     };
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);
@@ -1785,31 +1067,28 @@
       const dt = Math.min(0.05, (now - S.last) / 1000);
       S.last = now;
       S.t += dt;
-      if (S.face != null && !S.drag) {
-        S.angle = damp(S.angle, S.face, 5, dt);
-        if (Math.abs(S.angle - S.face) < 0.01) S.face = null;
-      } else if (!S.drag && S.t > S.resumeAt) {
-        S.angle += S.spin * dt;
-      }
+      if (!S.drag && S.t > S.hold) S.angle = damp(S.angle, 0.25 + (reduceMotion ? 0 : Math.sin(S.t * 0.5) * 0.3), 2, dt);
       S.fig.root.rotation.y = S.angle;
       animate(S.fig, S.t, dt);
+      // A small bounce when an option changes.
+      const u = (S.t - S.bump) / 0.35;
+      if (S.bump >= 0 && u < 1) S.fig.root.scale.setScalar(0.94 + 0.06 * back(Math.max(0, u)));
       R.render(scene, cam);
       S.raf = requestAnimationFrame(frame);
     }
     S.raf = requestAnimationFrame(frame);
     return {
-      // A new look turns the avatar to face you for a moment before the spin resumes.
       update(sp) {
         set(sp);
-        S.face = S.angle + ((((0.35 - S.angle) % (Math.PI * 2)) + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-        S.resumeAt = S.t + 3;
+        S.hold = 0;
+        if (!reduceMotion) S.bump = S.t;
       },
       dispose() {
         S.alive = false;
         cancelAnimationFrame(S.raf);
         ro.disconnect();
         if (S.fig) dispose(S.fig);
-        R.dispose();
+        release(R);
         el.remove();
       }
     };
@@ -1821,18 +1100,23 @@
   function portrait(spec, size, o) {
     const px = size || 256;
     if (!shot) {
-      shot = { R: renderer(null, { alpha: true, keep: true, dpr: 1 }), scene: new T.Scene(), cam: new T.PerspectiveCamera(19, 1, 0.1, 20) };
-      lights(shot.scene, {});
+      const R = renderer(null, { keep: true, dpr: 1 });
+      const scene = new T.Scene();
+      scene.environment = studio(R);
+      lights(scene);
+      shot = { R, scene, cam: new T.PerspectiveCamera(22, 1, 0.1, 20) };
     }
     const { R, scene, cam } = shot;
     R.setSize(px, px, false);
     const f = figure(spec, { mood: (o && o.mood) || 'happy' });
-    f.root.rotation.y = (o && o.turn) != null ? o.turn : 0.28;
+    f.root.rotation.y = o && o.turn != null ? o.turn : 0.22;
+    f.phase = 0;
     scene.add(f.root);
-    animate(f, 0.6, 0.016);
-    cam.position.set(0.06, 1.64, 1.45);
-    cam.lookAt(0, 1.6, 0);
-    R.setClearColor(0x000000, 0);
+    animate(f, 0, 0.016);
+    f.neck.rotation.set(0, 0, 0);
+    f.eyes.forEach((e) => { e.open.scale.y = 1; });
+    cam.position.set(0.04, 1.0, 2.6);
+    cam.lookAt(0, 0.96, 0);
     R.render(scene, cam);
     const url = R.domElement.toDataURL('image/png');
     dispose(f);
@@ -1846,7 +1130,7 @@
     portrait: (spec, size, o) => portrait(spec, size, o),
     isLive: (cfg) => Boolean(T && live && live.shown && live.key === sceneKey(cfg)),
     get ready() { return Boolean(T); },
-    // Internal pieces shared with the scene builders below.
-    _: { G, M, shade, place, mesh, group, V3, lerp, ease, damp, roundBox, tube, figure, setMood, play, animate, dispose, lights, renderer, blob, buildSetting, reduceMotion, get T() { return T; } }
+    // Internal pieces, for review renders and tests.
+    _: { figure, setMood, play, animate, lights, renderer, studio, blob, get T() { return T; }, get live() { return live; } }
   };
 })();
