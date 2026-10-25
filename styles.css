@@ -514,9 +514,10 @@ body.is-playing .page-head p { display: none; }
 /* Avatar creator. */
 .agent-stage {
   display: grid; place-items: end center; aspect-ratio: 4 / 5; padding: .5rem 1rem 1rem; border: 1px solid var(--line); border-radius: var(--radius);
-  background: linear-gradient(#cfe8fb 0%, #eef7ff 68%, #cfe6c2 68%, #b8d9a6 100%);
+  background: linear-gradient(rgba(47, 111, 208, 0) 76%, rgba(47, 111, 208, .07) 76%, rgba(47, 111, 208, .13) 100%),
+    radial-gradient(120% 80% at 30% 18%, #ffffff 0%, #eaf3fc 48%, #d3e5f5 100%);
 }
-.agent-preview svg { height: min(260px, 52vw); width: auto; display: block; }
+.agent-preview svg { height: min(360px, 68vw); width: auto; display: block; }
 .agent-row { margin-bottom: .9rem; }
 .agent-row legend { font-size: .95rem; font-weight: 800; margin-bottom: .35rem; }
 .agent-opts { display: flex; flex-wrap: wrap; gap: .45rem; }
@@ -547,7 +548,7 @@ body.is-playing .page-head p { display: none; }
 .actor-body { height: 100%; transform-origin: 50% 100%; animation: bob 4s ease-in-out infinite; }
 .actor:nth-child(2) .actor-body { animation-delay: -1.3s; }
 .actor:nth-child(3) .actor-body { animation-delay: -2.6s; }
-.actor-body svg { display: block; height: 100%; width: auto; filter: drop-shadow(0 3px 2px rgba(0, 0, 0, .12)); }
+.actor-body svg { display: block; height: 100%; width: auto; filter: drop-shadow(0 1px 1px rgba(13, 35, 64, .12)); }
 .actor-name {
   position: absolute; left: 50%; bottom: -1.2rem; transform: translateX(-50%); white-space: nowrap; padding: .12rem .55rem;
   border: 1px solid var(--edge); border-radius: 999px; background: rgba(255, 255, 255, .96); font-size: .72rem; font-weight: 700;
