@@ -1436,6 +1436,16 @@ window.APP_DATA = {
      {
       "prompt": "The mission and a water partner must decide where to move two water points that serve the site, and the partner needs an answer within ten days to keep its funding. Your team leader proposes one consultation tomorrow with the five community leaders who usually attend mission meetings, all of them older men, calling them \"the community's legitimate voice\". The team leader also wants the process kept small, because large gatherings at the site have recently turned tense. What do you recommend?",
       "context": "Women and girls collect most of the water. Two incidents of harassment on the path to the current water point were reported last month, and several families with members who have disabilities live at the far edge of the site.",
+      "sources": [
+       {
+        "title": "IASC Commitments on Accountability to Affected People and PSEA (2017)",
+        "url": "https://interagencystandingcommittee.org/sites/default/files/migrated/2020-11/IASC%20Revised%20AAP%20Commitments%20endorsed%20November%202017.pdf"
+       },
+       {
+        "title": "IASC Guidelines for Integrating Gender-Based Violence Interventions in Humanitarian Action (2015)",
+        "url": "https://interagencystandingcommittee.org/node/10201"
+       }
+      ],
       "choices": [
        {
         "text": "Hold the meeting with the five leaders as planned. They are the community's recognized representatives, the partner's deadline is tight and a small meeting keeps tensions down.",
@@ -1486,7 +1496,7 @@ window.APP_DATA = {
         "rating": "strong",
         "biasTags": [],
         "missed": [],
-        "feedback": "This respects existing structures and the deadline while making sure the people most affected are heard safely. Small, separate, well-facilitated sessions are standard practice for accountability to affected populations, and they avoid the risks of one large meeting."
+        "feedback": "This respects existing structures and the deadline while making sure the people most affected are heard safely. Small, separate, well-facilitated sessions are standard practice for accountability to affected people, and they avoid the risks of one large meeting."
        },
        {
         "text": "Skip the leaders, who may act as gatekeepers, and ask women about the options directly at the water point while they wait, so their views are not filtered.",
@@ -1512,6 +1522,16 @@ window.APP_DATA = {
      {
       "prompt": "Only six women come to the first women's session, although more than two hundred households live on the site. Back at the office, a colleague says, \"They clearly aren't that interested. The leaders' input should be enough.\" Your team leader agrees and wants to close the consultation so the partner can start work. Four days remain before the partner's deadline. How do you respond?",
       "context": "The session was held at 10:00 on market day, in the mission's community center at the main gate, next to an armed checkpoint. No childcare was offered.",
+      "sources": [
+       {
+        "title": "IASC Gender Handbook for Humanitarian Action (2017)",
+        "url": "https://knowledge.unwomen.org/en/digital-library/publications/2017/2/the-gender-handbook-for-humanitarian-action"
+       },
+       {
+        "title": "IASC Commitments on Accountability to Affected People and PSEA (2017)",
+        "url": "https://interagencystandingcommittee.org/sites/default/files/migrated/2020-11/IASC%20Revised%20AAP%20Commitments%20endorsed%20November%202017.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Agree to close the consultation. The session was announced well in advance, the women had a fair chance to attend and the partner's deadline is real.",
@@ -1586,6 +1606,16 @@ window.APP_DATA = {
      {
       "prompt": "Forty women attend the rescheduled afternoon session at a women's center inside the site. Several describe harassment by young men on the path to the current water point, and two women privately name one man. The leaders' preferred site for the new points sits on that same path. Your team leader asks you to present \"the women's position\" at tomorrow's joint meeting with the leaders. What do you do?",
       "context": "The women asked that nothing they said be traced back to them. A protection officer and a referral pathway for gender-based violence are available through the protection cluster.",
+      "sources": [
+       {
+        "title": "IASC Guidelines for Integrating Gender-Based Violence Interventions in Humanitarian Action (2015)",
+        "url": "https://interagencystandingcommittee.org/node/10201"
+       },
+       {
+        "title": "IASC Operational Guidance on Data Responsibility in Humanitarian Action (2023)",
+        "url": "https://interagencystandingcommittee.org/node/43830"
+       }
+      ],
       "choices": [
        {
         "text": "Present the women's concerns in full at the joint meeting, including the man they named, so that the leaders understand how serious and urgent the situation is.",
@@ -1701,6 +1731,16 @@ window.APP_DATA = {
      {
       "prompt": "For three weeks, every interview about the land dispute has gone through Samir, a respected interpreter who grew up in Upper Drehan, one of the two villages. His interpretations consistently support Upper Drehan's account, and your draft report to the head of office, due in five days, already leans that way. A colleague hints that Samir \"shades\" testimony but gives no examples. Samir has worked with the mission for six years and has received threats for doing so. What do you do?",
       "context": "The mission's two other qualified interpreters are fully booked this week. Recordings exist for most of the interviews.",
+      "sources": [
+       {
+        "title": "OHCHR Manual on Human Rights Monitoring (2011)",
+        "url": "https://ohchr.tind.io/record/4835?ln=en"
+       },
+       {
+        "title": "UN Guidance for Effective Mediation (2012)",
+        "url": "https://peacemaker.un.org/sites/default/files/document/files/2022/08/guidanceeffectivemediationundpa2012english0_0.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Have another interpreter spot-check a sample of recordings, re-interview key sources with someone from neither village and note the sourcing limit, without singling Samir out.",
@@ -1774,6 +1814,16 @@ window.APP_DATA = {
      {
       "prompt": "In a re-interview with a new interpreter, an elder from Lower Drehan speaks at length in indirect, proverb-rich language about \"the river that remembers its old bed\". Your colleague, short on time, calls the elder \"evasive\" and suggests leaving the testimony out. The new interpreter will only give a literal translation, saying that explaining the proverbs would mean adding his own opinion. What do you do?",
       "context": "Several national staff say this style is a respected way to discuss sensitive matters, such as old boundaries, without naming people. The report is due in two days.",
+      "sources": [
+       {
+        "title": "OHCHR Manual on Human Rights Monitoring (2011)",
+        "url": "https://ohchr.tind.io/record/4835?ln=en"
+       },
+       {
+        "title": "UN Values and Behaviours Framework (2021)",
+        "url": "https://hr.un.org/page/un-values-and-behaviours-framework-0"
+       }
+      ],
       "choices": [
        {
         "text": "Leave the testimony out. The report needs clear statements that can be attributed, and including material that nobody can interpret reliably would weaken its credibility.",
@@ -1847,6 +1897,15 @@ window.APP_DATA = {
      {
       "prompt": "Your revised analysis finds that both villages have credible historical claims, and notes that earlier drafts relied on a single interpreter. The head of office, who already briefed a government minister along the lines of your first draft, asks you to \"soften the sourcing note\" and keep the original conclusion, because changing course \"will look like the mission can't make up its mind\". What do you do?",
       "context": "Both villages will see the mission's public summary. Upper Drehan's leaders have already quoted the head of office's briefing on local radio.",
+      "sources": [
+       {
+        "title": "UN Guidance for Effective Mediation (2012)",
+        "url": "https://peacemaker.un.org/sites/default/files/document/files/2022/08/guidanceeffectivemediationundpa2012english0_0.pdf"
+       },
+       {
+        "title": "ICSC Standards of Conduct for the International Civil Service (2013)"
+       }
+      ],
       "choices": [
        {
         "text": "Keep the original conclusion as asked. The head of office is responsible for the mission's relationships, and reversing course in public could damage its credibility.",
@@ -1962,6 +2021,16 @@ window.APP_DATA = {
      {
       "prompt": "An international consultant presents a plan to hold a regional dialogue forum in the provincial capital on the 14th of next month. The deputy head of office has already endorsed it, and invitations go out on Friday. After the meeting, Amani, a national officer with twelve years' experience, tells you quietly that the date falls during mourning observances for a respected local chief, and that the venue, a hotel, belongs to a family linked to one of the factions. What do you do?",
       "context": "The consultant presented polished slides in English. Amani is fluent in French and two local languages but rarely speaks in large meetings, which are held in English.",
+      "sources": [
+       {
+        "title": "UN Values and Behaviours Framework (2021)",
+        "url": "https://hr.un.org/page/un-values-and-behaviours-framework-0"
+       },
+       {
+        "title": "UN Guidance for Effective Mediation (2012)",
+        "url": "https://peacemaker.un.org/sites/default/files/document/files/2022/08/guidanceeffectivemediationundpa2012english0_0.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Proceed with the endorsed plan. Changing it now would delay the invitations and undercut the deputy head, and the consultant was hired precisely for this expertise.",
@@ -2035,6 +2104,16 @@ window.APP_DATA = {
      {
       "prompt": "The deputy head agrees to move the forum, but the consultant objects in an email to the whole team: \"Local sensitivities will always exist. If we accommodate every concern, we will never hold anything.\" Two senior international colleagues reply in agreement. No national staff respond. You must propose a new date and venue by Thursday. How do you proceed?",
       "context": "Last year, a mission event held during an observance in a neighboring province was boycotted by two communities and later described in local media as disrespectful.",
+      "sources": [
+       {
+        "title": "UN Values and Behaviours Framework (2021)",
+        "url": "https://hr.un.org/page/un-values-and-behaviours-framework-0"
+       },
+       {
+        "title": "UN Guidance for Effective Mediation (2012)",
+        "url": "https://peacemaker.un.org/sites/default/files/document/files/2022/08/guidanceeffectivemediationundpa2012english0_0.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Reply to all with the evidence from last year's boycott and the media coverage it received, to settle the debate in the email thread before Thursday.",
@@ -2108,6 +2187,12 @@ window.APP_DATA = {
      {
       "prompt": "The forum goes well, and the deputy head asks you to recommend how planning meetings should run from now on. Meetings are held in English, follow the order of seniority and are dominated by international staff. National officers' contributions usually arrive afterward, by email or in corridor conversations. Some international colleagues worry that changing the format will slow decisions down. What do you recommend?",
       "context": "About 70 percent of the planning cell are national staff. Interpretation into French is available on request but has never been requested.",
+      "sources": [
+       {
+        "title": "UN Values and Behaviours Framework (2021)",
+        "url": "https://hr.un.org/page/un-values-and-behaviours-framework-0"
+       }
+      ],
       "choices": [
        {
         "text": "Share agendas early, accept written input in French or English before meetings, invite national officers to speak first on context items and rotate who facilitates.",
@@ -2223,6 +2308,16 @@ window.APP_DATA = {
      {
       "prompt": "A rapid needs assessment shows the most severe needs in the city's displacement sites. But 80 percent of the interviews were done in areas reachable by road, three rural districts weren't surveyed at all because of flooding, and most respondents were men, because enumerators interviewed heads of household. Leadership wants a one-page summary by tomorrow morning to guide the allocation of a pooled fund. What do you write?",
       "context": "Partners report, without data, that some flooded villages may face severe shortages of food and clean water. The fund's allocation window closes in two weeks.",
+      "sources": [
+       {
+        "title": "Humanitarian principles: General Assembly resolutions 46/182 (1991) and 58/114 (2004)",
+        "url": "https://reliefweb.int/report/world/ocha-message-general-assembly-resolution-46182-enar"
+       },
+       {
+        "title": "IASC Gender Handbook for Humanitarian Action (2017)",
+        "url": "https://knowledge.unwomen.org/en/digital-library/publications/2017/2/the-gender-handbook-for-humanitarian-action"
+       }
+      ],
       "choices": [
        {
         "text": "Report that needs are most severe in the city's displacement sites, which is what the data shows, and recommend allocating the fund there while it is open.",
@@ -2294,6 +2389,16 @@ window.APP_DATA = {
      {
       "prompt": "Leadership approves a remote assessment of the flooded districts. With phone networks patchy, a colleague proposes calling the village chiefs whose numbers the mission already has, since they \"know everyone's situation\". You have five days and no road access. Several villages have no chief on your list, and two are home to a minority group that has been excluded from aid in the past. How do you design the assessment?",
       "context": "A women's cooperative and a local health network work in the area and have working radio links. A partner can provide satellite images of the flooding.",
+      "sources": [
+       {
+        "title": "Humanitarian principles: General Assembly resolutions 46/182 (1991) and 58/114 (2004)",
+        "url": "https://reliefweb.int/report/world/ocha-message-general-assembly-resolution-46182-enar"
+       },
+       {
+        "title": "IASC Gender Handbook for Humanitarian Action (2017)",
+        "url": "https://knowledge.unwomen.org/en/digital-library/publications/2017/2/the-gender-handbook-for-humanitarian-action"
+       }
+      ],
       "choices": [
        {
         "text": "Call chiefs, the women's cooperative, health workers and minority-community contacts, check against the satellite images and list the villages you couldn't reach.",
@@ -2367,6 +2472,20 @@ window.APP_DATA = {
      {
       "prompt": "Your draft report calls the displaced population \"helpless beneficiaries\" to stress the urgency for donors. A community representative who reviewed it objects: people have organized their own water committees, a school and a savings group, and the report \"makes us look like we are waiting to be saved\". A donor-relations colleague argues that urgent, emotional language raises more money. How do you revise the report?",
       "context": "The representative also points out that the report's photos show only children and older people, and that no one asked permission to use them.",
+      "sources": [
+       {
+        "title": "UN Principles on Personal Data Protection and Privacy (2018)",
+        "url": "https://unsceb.org/privacy-principles"
+       },
+       {
+        "title": "IASC Operational Guidance on Data Responsibility in Humanitarian Action (2023)",
+        "url": "https://interagencystandingcommittee.org/node/43830"
+       },
+       {
+        "title": "IASC Commitments on Accountability to Affected People and PSEA (2017)",
+        "url": "https://interagencystandingcommittee.org/sites/default/files/migrated/2020-11/IASC%20Revised%20AAP%20Commitments%20endorsed%20November%202017.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Keep the wording and the photos. The report is written for donors, not for the community, and urgent, emotional language is what gets funding released quickly.",
@@ -2404,7 +2523,7 @@ window.APP_DATA = {
         "feedback": "Neutral wording and removing the photos fix the most visible problems, but the report still describes only needs. Leaving out the committees, the school and the savings group means programs may still be designed for people instead of with them."
        },
        {
-        "text": "Describe needs alongside capacities like the committees and the school, use the terms people use for themselves and replace the photos with images people choose and agree to.",
+        "text": "Describe needs alongside capacities like the committees and the school, use people's own terms for themselves and use only photos people choose and agree to.",
         "scores": {
          "cq": 3,
          "bias": 3,
@@ -2482,6 +2601,16 @@ window.APP_DATA = {
      {
       "prompt": "A rumor that peacekeepers secretly protect an armed group is spreading through voice messages and social media, two days after an attack near a mission base killed eleven civilians. A colleague calls it \"obviously enemy propaganda that only uneducated people believe\" and drafts a strongly worded denial for immediate release in French and English. Community radio hosts tell you people are angry that the attack happened so close to the base. What is your first step?",
       "context": "Most residents get their news from local-language radio and voice messages. A youth group has called for a protest outside the base on Friday.",
+      "sources": [
+       {
+        "title": "UN Global Principles for Information Integrity (2024)",
+        "url": "https://www.un.org/en/information-integrity/global-principles"
+       },
+       {
+        "title": "DPO Policy on the Protection of Civilians in UN Peacekeeping (2023)",
+        "url": "https://peacekeeping.un.org/sites/default/files/2023_protection_of_civilians_policy.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Approve the denial for immediate release. Speed matters with disinformation, and every hour a false claim goes unanswered lets it harden into accepted fact.",
@@ -2555,6 +2684,12 @@ window.APP_DATA = {
      {
       "prompt": "The listening sessions reveal that the attack happened while the base's quick reaction force was deployed elsewhere, and that a community alert about the armed group reached the mission six hours before the attack but was not acted on. Leadership is preparing a town hall for Friday, the day of the planned protest. Your director wants the town hall to \"focus on the positive\" and leave out the late alert. How do you advise?",
       "context": "An internal review of how the alert was handled has begun. The residents who sent the alert have already told radio hosts about it.",
+      "sources": [
+       {
+        "title": "DPO Policy on the Protection of Civilians in UN Peacekeeping (2023)",
+        "url": "https://peacekeeping.un.org/sites/default/files/2023_protection_of_civilians_policy.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Follow the director's line. With an internal review under way, discussing the alert in public could prejudge its findings and expose the mission to legal risk.",
@@ -2623,6 +2758,16 @@ window.APP_DATA = {
      {
       "prompt": "The town hall will go ahead. Your director proposes a panel of the head of office, a representative of the force commander and the police commissioner, with questions submitted in writing in advance \"to keep it orderly\". Radio hosts warn that people want to speak directly, and that young men from the neighborhood near the attack feel they are always treated as suspects. Who should be on the panel, and how should it run?",
       "context": "The venue is a school hall that holds 300 people. Women's groups say many women will not attend an evening event.",
+      "sources": [
+       {
+        "title": "DPO Policy on the Protection of Civilians in UN Peacekeeping (2023)",
+        "url": "https://peacekeeping.un.org/sites/default/files/2023_protection_of_civilians_policy.pdf"
+       },
+       {
+        "title": "UN Global Principles for Information Integrity (2024)",
+        "url": "https://www.un.org/en/information-integrity/global-principles"
+       }
+      ],
       "choices": [
        {
         "text": "Pair mission leaders with youth, women's and faith representatives, hold an afternoon session with open questions in local languages and publish follow-up commitments.",
@@ -2676,7 +2821,7 @@ window.APP_DATA = {
         "feedback": "Security planning is legitimate, but singling out young men from one neighborhood treats a whole group as suspects, the very grievance they raised. It would likely turn the town hall into fresh evidence for the rumor."
        },
        {
-        "text": "Invite local youth and women's leaders to join the senior panel, but keep the evening time and the written questions to limit the risk of disruption.",
+        "text": "Invite local youth and women's leaders to join the senior panel, but keep the evening time and the written questions, to limit the risk of disruption on the day.",
         "scores": {
          "cq": 2,
          "bias": 2,
@@ -2739,7 +2884,16 @@ window.APP_DATA = {
     "steps": [
      {
       "prompt": "After a productive first meeting with a regional organization's delegation, your counterpart, a senior official, warmly invites you to a family dinner at her home on Saturday and presents a handcrafted brass lamp made in her home town. Your office expects to sign a cooperation agreement with her organization next month. A colleague whispers, \"Refuse both, now. It's the rules.\" How do you respond in the moment?",
-      "context": "Here, declining hospitality outright can be read as rejecting the relationship. UN rules generally don't let staff accept gifts personally, but some gifts can be accepted on behalf of the Organization and recorded.",
+      "context": "Here, declining hospitality outright can be read as rejecting the relationship. UN staff may not accept gifts from governments, or from other sources without approval, but an unexpected gift that can't be refused without embarrassment can be accepted on behalf of the Organization, then reported and handed over.",
+      "sources": [
+       {
+        "title": "UN Staff Regulation 1.2 (j)–(l) on gifts: UN Ethics Office fact sheet",
+        "url": "https://www.un.org/en/ethics/assets/pdfs/GIFTS%20POLICY%20FACTSHEET%202020_03_24.pdf"
+       },
+       {
+        "title": "ICSC Standards of Conduct for the International Civil Service (2013)"
+       }
+      ],
       "choices": [
        {
         "text": "Decline both on the spot, politely but clearly, explaining that UN rules forbid staff from accepting any gifts or private invitations from partner organizations.",
@@ -2759,7 +2913,7 @@ window.APP_DATA = {
         "feedback": "Integrity matters, but refusing both on the spot can feel like rejecting the relationship, however politely it is done. The rules are also more nuanced than a flat ban: some gifts can be accepted on behalf of the Organization, and hospitality depends on the circumstances."
        },
        {
-        "text": "Thank her warmly, accept the lamp on the office's behalf so it is recorded, and say you'd be honored to come after checking with your office.",
+        "text": "Thank her warmly, accept the lamp on behalf of the Organization, to be reported and handed over, and say you'd be honored to come once you've checked with your office.",
         "scores": {
          "cq": 3,
          "bias": 3,
@@ -2769,7 +2923,7 @@ window.APP_DATA = {
         "rating": "strong",
         "biasTags": [],
         "missed": [],
-        "feedback": "This honors the gesture while staying within the rules. The gift goes to the Organization and is recorded, and you don't commit to a private dinner before checking it against next month's agreement. Your ethics office can advise on the invitation."
+        "feedback": "This honors the gesture while staying within the rules. The lamp goes to the Organization, not to you, and is reported and handed over, and you don't commit to a private dinner before checking it against next month's agreement. The Ethics Office can advise on the invitation."
        },
        {
         "text": "Accept both personally and without fuss. Refusing a gift here would be seen as culturally insensitive, and she clearly expects you to take it home.",
@@ -2801,13 +2955,19 @@ window.APP_DATA = {
         "missed": [
          "position"
         ],
-        "feedback": "Disclosing afterward is better than not disclosing, but you would have committed to private hospitality from a counterpart a month before an agreement. If your office then says no, withdrawing is more awkward than a warm, conditional answer now."
+        "feedback": "Reporting is right, but the lamp should be accepted for the Organization and reported straight away, not kept until Monday, and you would have committed to private hospitality from a counterpart a month before an agreement. If your office then says no, withdrawing is more awkward than a warm, conditional answer now."
        }
       ]
      },
      {
-      "prompt": "Your ethics office advises that you may attend the dinner if it is a social occasion, no business is discussed and your supervisor is informed. At the dinner, your counterpart's brother mentions that his consulting firm plans to bid on a UN contract your office will evaluate, and asks whether you could \"put in a good word\". The family is warm and attentive, and other guests are listening. How do you respond?",
+      "prompt": "You check with the Ethics Office, inform your supervisor and go to the dinner. At the dinner, your counterpart's brother mentions that his consulting firm plans to bid on a UN contract your office will evaluate, and asks whether you could \"put in a good word\". The family is warm and attentive, and other guests are listening. How do you respond?",
       "context": "You sit on the evaluation panel for that contract. Refusing sharply in front of the guests would embarrass your hosts.",
+      "sources": [
+       {
+        "title": "UN Staff Regulation 1.2 (m) on conflicts of interest: UN Ethics Office fact sheet",
+        "url": "https://www.un.org/en/ethics/assets/pdfs/Factsheet_Conflicts-of-interest.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Promise to mention his firm to colleagues. It costs nothing, keeps a warm evening pleasant, and you will still evaluate his bid on its merits like any other.",
@@ -2845,7 +3005,7 @@ window.APP_DATA = {
         "feedback": "Your boundary is right, but a public rebuke embarrasses your hosts in their own home and turns a manageable moment into a confrontation. You can be firm without being harsh, and handle reporting through the proper channel."
        },
        {
-        "text": "Explain kindly that UN rules bar you from discussing contracts, point him to the open tender process, change the subject and tell your supervisor the next day.",
+        "text": "Explain kindly that you can't discuss a tender, point him to the open procurement process, change the subject and disclose the approach to your head of office.",
         "scores": {
          "cq": 3,
          "bias": 3,
@@ -2855,7 +3015,7 @@ window.APP_DATA = {
         "rating": "strong",
         "biasTags": [],
         "missed": [],
-        "feedback": "You protected the process without humiliating anyone: a kind, clear boundary in the moment, a pointer to the fair route open to every bidder and prompt disclosure, so your office can decide whether you should step back from the evaluation."
+        "feedback": "You protected the process without humiliating anyone: a kind, clear boundary, a pointer to the fair route open to every bidder and prompt disclosure. A possible conflict of interest must be disclosed to your head of office so it can be managed, here probably by your stepping back from the evaluation."
        },
        {
         "text": "Smile, avoid answering and steer the conversation elsewhere, then put the exchange behind you, since nothing was promised and no harm was done.",
@@ -2870,13 +3030,23 @@ window.APP_DATA = {
         "missed": [
          "position"
         ],
-        "feedback": "Deflecting gracefully keeps the evening pleasant, but saying nothing afterward leaves a hidden conflict of interest. You sit on the panel, so the approach needs to be disclosed even though nothing was promised."
+        "feedback": "Deflecting gracefully keeps the evening pleasant, but saying nothing afterward leaves a possible conflict of interest undisclosed. Staff must disclose actual and possible conflicts to their head of office, even when nothing was promised."
        }
       ]
      },
      {
       "prompt": "You disclose the conversation and step back from the evaluation panel. At the next team meeting, a colleague comments, \"That's just how business works in this region. Everyone is somebody's cousin. We should stop accepting invitations from partners altogether.\" Two colleagues nod. Your supervisor asks what the office should learn from the episode. What do you suggest?",
       "context": "The office works with partners from many countries in the region, and several team members are from the region. Your counterpart was not involved in her brother's request.",
+      "sources": [
+       {
+        "title": "UN Staff Regulation 1.2 (m) on conflicts of interest: UN Ethics Office fact sheet",
+        "url": "https://www.un.org/en/ethics/assets/pdfs/Factsheet_Conflicts-of-interest.pdf"
+       },
+       {
+        "title": "UN Values and Behaviours Framework (2021)",
+        "url": "https://hr.un.org/page/un-values-and-behaviours-framework-0"
+       }
+      ],
       "choices": [
        {
         "text": "Agree that partners here often mix family and business, and propose a simple blanket policy of declining all hospitality from partners anywhere in the region.",
@@ -2986,7 +3156,17 @@ window.APP_DATA = {
     "steps": [
      {
       "prompt": "At your first community meeting in the neighborhood, an older resident stands and lists harms that people here link to international actors over the years: a disease outbreak, cases of sexual exploitation and abuse, and promised jobs that never came. \"Why should we trust you?\" he asks. The room goes quiet. Your supervisor, sitting beside you, whispers that you should move on to the project briefing. What do you say?",
-      "context": "The UN has publicly acknowledged its responsibility for some past harms in contexts like this one. Several people in the room have direct experience of them.",
+      "context": "The UN has publicly apologized for its role in some past harms in contexts like this one. Several people in the room have direct experience of them.",
+      "sources": [
+       {
+        "title": "UN News: the Secretary-General apologizes to the people of Haiti (2016)",
+        "url": "https://news.un.org/en/story/2016/12/546732-uns-ban-apologizes-people-haiti-outlines-new-plan-fight-cholera-epidemic-and"
+       },
+       {
+        "title": "IASC Commitments on Accountability to Affected People and PSEA (2017)",
+        "url": "https://interagencystandingcommittee.org/sites/default/files/migrated/2020-11/IASC%20Revised%20AAP%20Commitments%20endorsed%20November%202017.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Acknowledge the harms and the anger without defensiveness, explain the reporting channels that exist now and ask what residents would need to see to rebuild trust.",
@@ -3059,7 +3239,21 @@ window.APP_DATA = {
      },
      {
       "prompt": "After the meeting, the same resident takes you aside. He says a staff member of a partner organization offered his granddaughter a job in exchange for \"a relationship\". The family doesn't want to give its name, fears losing its food assistance and asks you not to tell anyone in the neighborhood. Your partner focal point says he knows the staff member and \"can sort it out quietly\". What do you do?",
-      "context": "All UN and partner personnel must report suspected sexual exploitation and abuse through designated channels. The survivor's safety, consent and confidentiality guide everything that follows.",
+      "context": "All UN personnel must report suspected sexual exploitation and abuse through designated channels, and so must the humanitarian partners the UN works with. The safety, consent and confidentiality of the person harmed guide what follows.",
+      "sources": [
+       {
+        "title": "ST/SGB/2003/13: Special measures for protection from sexual exploitation and sexual abuse",
+        "url": "https://digitallibrary.un.org/record/504355"
+       },
+       {
+        "title": "IASC Six Core Principles Relating to Sexual Exploitation and Abuse (2019)",
+        "url": "https://interagencystandingcommittee.org/node/39533"
+       },
+       {
+        "title": "UN: How to report sexual exploitation and abuse",
+        "url": "https://www.un.org/preventing-sexual-exploitation-and-abuse/node/1767"
+       }
+      ],
       "choices": [
        {
         "text": "Let the partner focal point handle it quietly. He knows the staff member, it respects the family's wish for discretion, and a formal report could cost the family its assistance.",
@@ -3081,7 +3275,7 @@ window.APP_DATA = {
         "feedback": "An informal fix by someone who knows the accused protects the accused, not his granddaughter. Suspected sexual exploitation and abuse must be reported through designated channels, and aid must never depend on anyone staying silent."
        },
        {
-        "text": "Reassure him that aid can't be withdrawn for speaking up, explain the confidential support available to his granddaughter and report through the designated PSEA channel, sharing only what's needed.",
+        "text": "Reassure him that reporting won't affect the family's aid, explain the confidential support open to his granddaughter and report via the PSEA channel, sharing only what's needed.",
         "scores": {
          "cq": 3,
          "bias": 3,
@@ -3091,7 +3285,7 @@ window.APP_DATA = {
         "rating": "strong",
         "biasTags": [],
         "missed": [],
-        "feedback": "You corrected the fear that keeps people silent, offered support that depends on his granddaughter's consent and met your obligation to report through the confidential channel for protection from sexual exploitation and abuse (PSEA), sharing as little identifying detail as possible. Investigating is for specialists, not for you or the partner."
+        "feedback": "You corrected the fear that keeps people silent (aid is free, and reporting never affects it), offered support that depends on his granddaughter's consent and met your obligation to report through the designated channel for protection from sexual exploitation and abuse (PSEA), sharing as little identifying detail as possible. Investigating is for specialists, not for you or the partner."
        },
        {
         "text": "Write down his full account, including names, and file a formal complaint right away, even though he asked you not to, because protecting his granddaughter comes first.",
@@ -3131,6 +3325,16 @@ window.APP_DATA = {
      {
       "prompt": "Months later, residents ask for a simple way to raise concerns about any UN or partner personnel. The current system is an email address and a hotline answered in English and French during office hours. Many residents speak only the local language, few have reliable internet, and women say they can't call from home without being overheard. Headquarters offers to fund a reporting app. What do you propose?",
       "context": "A network of community groups, including women's associations and faith groups, already meets weekly across the neighborhood.",
+      "sources": [
+       {
+        "title": "IASC Best Practice Guide on Inter-Agency Community-Based Complaint Mechanisms (2016)",
+        "url": "https://psea.interagencystandingcommittee.org/sites/default/files/Best%20Practice%20Guide%20on%20inter-agency%20CBCMs.pdf"
+       },
+       {
+        "title": "IASC Commitments on Accountability to Affected People and PSEA (2017)",
+        "url": "https://interagencystandingcommittee.org/sites/default/files/migrated/2020-11/IASC%20Revised%20AAP%20Commitments%20endorsed%20November%202017.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Build the app, with reporting in the local language. It would be confidential, available around the clock, cheap to run and easy for headquarters to monitor.",
@@ -3178,7 +3382,7 @@ window.APP_DATA = {
         "rating": "strong",
         "biasTags": [],
         "missed": [],
-        "feedback": "Community-based complaint channels designed with residents, in their language and with safe options for women, are central to accountability to affected populations. Clear rules on how information is protected are what make people willing to use them."
+        "feedback": "Community-based complaint channels designed with residents, in their language and with safe options for women, are central to accountability to affected people. Clear rules on how information is protected are what make people willing to use them."
        },
        {
         "text": "Put locked complaint boxes in busy public places around the neighborhood, with simple forms in the local language, emptied every week by mission staff.",
@@ -3243,6 +3447,16 @@ window.APP_DATA = {
      {
       "prompt": "You are helping design a dialogue between people in the reintegration process and the host community about a shared farming project. The municipal official says host families \"will never sit with ex-combatants\" and proposes keeping the groups in separate meetings permanently. Last month, a meeting in a neighboring municipality ended in shouting, and the official doesn't want a repeat before local elections in three months. What do you do?",
       "context": "Some host community members want dialogue, especially about land and roads. Others fear stigma or reprisals. Indigenous and Afro-descendant authorities have their own decision-making structures and have not yet been consulted.",
+      "sources": [
+       {
+        "title": "UN Declaration on the Rights of Indigenous Peoples (2007), article 18",
+        "url": "https://www.un.org/esa/socdev/unpfii/documents/DRIPS_en.pdf"
+       },
+       {
+        "title": "UN Guidance for Effective Mediation (2012)",
+        "url": "https://peacemaker.un.org/sites/default/files/document/files/2022/08/guidanceeffectivemediationundpa2012english0_0.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Accept the official's assessment. Officials know their community, the election period is sensitive and pushing for joint meetings could cause exactly the incident everyone fears.",
@@ -3308,13 +3522,21 @@ window.APP_DATA = {
         "rating": "strong",
         "biasTags": [],
         "missed": [],
-        "feedback": "Phased, consent-based approaches respect safety concerns and test the official's assumption instead of accepting or overriding it. Consulting ethnic authorities through their own structures also respects collective rights."
+        "feedback": "Phased, consent-based approaches respect safety concerns and test the official's assumption instead of accepting or overriding it. Consulting ethnic authorities through their own structures respects their right to take part in decisions that affect them, which for Indigenous peoples is set out in UNDRIP article 18."
        }
       ]
      },
      {
       "prompt": "In the separate consultations, women in the reintegration process say the planned meeting times clash with childcare, and that a few male former commanders dominate decisions in their cooperative. A women's group from the host community says it would join a project on seeds and water if it isn't \"run by the same men\". A colleague suggests handling the women's issues later, \"once the main dialogue is working\". What do you do?",
       "context": "The peace agreement in this fictional context commits to a gender perspective in reintegration. The cooperative's board is elected by its members.",
+      "sources": [
+       {
+        "title": "IDDRS module 5.10: Women, Gender and DDR"
+       },
+       {
+        "title": "Security Council resolution 1325 (2000) on women, peace and security"
+       }
+      ],
       "choices": [
        {
         "text": "Design for women from the start: workable times, childcare, a joint women's group on seeds and water and support for women running for the board.",
@@ -3385,6 +3607,15 @@ window.APP_DATA = {
      {
       "prompt": "The joint project is about to launch. Your draft materials, a poster and a radio spot, describe participants only as \"ex-combatants\", and the poster shows a photo of men in uniform at the disarmament ceremony. A host farmer warns that the poster could make participants targets for armed groups still active nearby. The communications office says \"ex-combatant\" is the technical term used in the mandate. What do you change?",
       "context": "Many participants are now farmers, parents and cooperative members. Several were recruited as children.",
+      "sources": [
+       {
+        "title": "Paris Principles on children associated with armed forces or armed groups (2007)"
+       },
+       {
+        "title": "UN Principles on Personal Data Protection and Privacy (2018)",
+        "url": "https://unsceb.org/privacy-principles"
+       }
+      ],
       "choices": [
        {
         "text": "Keep the term and the photo. They are accurate, they match the mandate, and changing them could look as if the mission is hiding who the project is for.",
@@ -3503,6 +3734,14 @@ window.APP_DATA = {
      {
       "prompt": "Your draft weekly situation report uses the place names favored by the community you work with most, the names you learned on your first posting here. A national colleague from the other community notices and says quietly that people there will read the report as the mission taking sides. The report goes to headquarters and partners in two hours, and your supervisor has already cleared it. What do you do?",
       "context": "The mission has terminology guidance for this area. You haven't looked at it since your induction.",
+      "sources": [
+       {
+        "title": "ICSC Standards of Conduct for the International Civil Service (2013)"
+       },
+       {
+        "title": "UN map disclaimer: names and designations do not imply UN endorsement"
+       }
+      ],
       "choices": [
        {
         "text": "Keep the names for now, since the report is already cleared and the deadline is close, and look into the terminology question properly next week with your supervisor.",
@@ -3571,6 +3810,12 @@ window.APP_DATA = {
      {
       "prompt": "A week later, a community leader you trust sends you a long, emotional message about an incident at a checkpoint, using a loaded term for the other community's security forces. Your supervisor wants the incident in today's report and suggests quoting the message directly \"to show the community's perspective\". You haven't heard from the other community or from the mission's military observers. How do you report it?",
       "context": "The mission's guidance asks reports to attribute claims clearly and to avoid adopting either party's terminology in the mission's own voice.",
+      "sources": [
+       {
+        "title": "OHCHR Manual on Human Rights Monitoring (2011)",
+        "url": "https://ohchr.tind.io/record/4835?ln=en"
+       }
+      ],
       "choices": [
        {
         "text": "Quote the leader's message in full as the main account of the incident, since this leader has always been reliable and the community's perspective deserves to be heard.",
@@ -3639,6 +3884,15 @@ window.APP_DATA = {
      {
       "prompt": "The mission is preparing a public map of services for both communities. Under time pressure, the design team used one community's place names, because those are the names in the open mapping data they downloaded. A youth group from the other community has already posted a screenshot of the draft, calling it \"proof\" that the UN is biased. Your supervisor asks you to handle it. What do you do?",
       "context": "Residents of both communities use the services on the map. The approved terminology list covers most, but not all, of the places shown.",
+      "sources": [
+       {
+        "title": "UN map disclaimer: names and designations do not imply UN endorsement"
+       },
+       {
+        "title": "UN Global Principles for Information Integrity (2024)",
+        "url": "https://www.un.org/en/information-integrity/global-principles"
+       }
+      ],
       "choices": [
        {
         "text": "Correct the map to the approved terms, agree names for the missing places with colleagues from both communities and explain the change publicly and factually.",
@@ -3748,7 +4002,17 @@ window.APP_DATA = {
     "steps": [
      {
       "prompt": "Your patrol is moving slowly along a farm track at harvest time. A man in his twenties runs toward the lead vehicle from a field, waving both arms and shouting in a language no one in the vehicle speaks. The morning briefing warned of \"tensions with young men in the area\", and a member of your patrol raises a weapon and shouts at him to stop. He keeps coming, pointing at the track ahead. What do you do?",
-      "context": "Your language assistant is in the second vehicle, about 30 meters behind. The rules of engagement require any use of force to be necessary and proportionate, after other means have been tried.",
+      "context": "Your language assistant is in the second vehicle, about 30 meters behind. UN guidelines require any use of force to respect gradation, necessity and proportionality, and every reasonable effort to resolve a confrontation by other means.",
+      "sources": [
+       {
+        "title": "Guidelines on the Use of Force by Military Components in UN Peacekeeping Operations (2017)",
+        "url": "https://resourcehub01.blob.core.windows.net/$web/Policy%20and%20Guidance/corepeacekeepingguidance/Thematic%20Operational%20Activities/Military/2016.24%20Guidelines%20on%20Use%20of%20Force%20by%20Military%20Components%20in%20Peacekeeping%20Operations%20Jan2017.pdf"
+       },
+       {
+        "title": "DPO Policy on the Protection of Civilians in UN Peacekeeping (2023)",
+        "url": "https://peacekeeping.un.org/sites/default/files/2023_protection_of_civilians_policy.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Back up the soldier: order the man to stop and lie on the ground, and keep weapons on him until he complies, since the briefing flagged young men as a risk.",
@@ -3820,7 +4084,17 @@ window.APP_DATA = {
      },
      {
       "prompt": "Through the language assistant, the man explains that he found a metal object, which he thinks is a shell, half-buried in the track 200 meters ahead, on the route children take to the fields. He is shaken and angry that he was threatened. Villagers are gathering. The patrol is already late for a meeting with the village council, and your sergeant suggests pushing the object off the track with a vehicle so you can continue. What do you do?",
-      "context": "Mission procedure for explosive ordnance is to keep clear, mark the area if it is safe to do so and report it to the explosive ordnance disposal team. The nearest team is two hours away.",
+      "context": "Mission procedure: no one touches or moves the object, everyone keeps clear, and it is reported through the chain of command to the explosive ordnance disposal team, the nearest of which is two hours away.",
+      "sources": [
+       {
+        "title": "IMAS 12.10: Explosive Ordnance Risk Education (2020)",
+        "url": "https://www.mineactionstandards.org/standards/12-10/"
+       },
+       {
+        "title": "DPO Policy on the Protection of Civilians in UN Peacekeeping (2023)",
+        "url": "https://peacekeeping.un.org/sites/default/files/2023_protection_of_civilians_policy.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Have a vehicle push the object to the side of the track, so it's out of the children's way and the patrol can reach the council meeting on time.",
@@ -3839,7 +4113,7 @@ window.APP_DATA = {
         "feedback": "Moving explosive ordnance is extremely dangerous and is a task for trained specialists only. Doing it to keep to a schedule risks lives, including those of the villagers now gathering nearby."
        },
        {
-        "text": "Cordon off the area, report it to the disposal team and continue to the council meeting with most of the patrol, leaving two soldiers at the cordon.",
+        "text": "Cordon off the area, report it to the disposal team and continue to the council meeting with most of the patrol, leaving two soldiers behind at the cordon.",
         "scores": {
          "cq": 2,
          "bias": 1,
@@ -3855,7 +4129,7 @@ window.APP_DATA = {
         "feedback": "The safety steps are right, but rushing off without acknowledging the man who was threatened, or explaining to the villagers what is happening, misses a moment that will shape how the village sees the mission."
        },
        {
-        "text": "Keep everyone back, mark and report the object, warn villagers to keep children away, and thank the man, acknowledging that he was wrongly threatened.",
+        "text": "Keep everyone back, report the object up the chain of command, warn villagers to keep children away and thank the man, acknowledging he was wrongly threatened.",
         "scores": {
          "cq": 3,
          "bias": 3,
@@ -3868,7 +4142,7 @@ window.APP_DATA = {
         "feedback": "You followed the ordnance procedure, protected civilians and acknowledged the harm done by the earlier reaction. The council will understand a delay for this, if you tell them why. Respect and safety reinforce each other here."
        },
        {
-        "text": "Keep everyone clear and report the object, but hold the man for questioning until the disposal team confirms he had nothing to do with placing it.",
+        "text": "Keep everyone clear and report the object, but hold the man for questioning until the disposal team confirms that he had nothing to do with placing it there.",
         "scores": {
          "cq": 1,
          "bias": 0,
@@ -3891,6 +4165,16 @@ window.APP_DATA = {
      {
       "prompt": "The object was an unexploded mortar round, and the disposal team destroys it safely. That evening, you prepare the patrol report and the team debrief. Two soldiers are embarrassed about raising a weapon and would prefer the first minutes not be mentioned. The intelligence officer who wrote the morning briefing asks you to describe the man as a \"military-age male\" in the report. How do you handle the report and the debrief?",
       "context": "The village council has asked for a meeting about the incident. Children use several tracks in the area during the harvest.",
+      "sources": [
+       {
+        "title": "Guidelines on the Use of Force by Military Components in UN Peacekeeping Operations (2017)",
+        "url": "https://resourcehub01.blob.core.windows.net/$web/Policy%20and%20Guidance/corepeacekeepingguidance/Thematic%20Operational%20Activities/Military/2016.24%20Guidelines%20on%20Use%20of%20Force%20by%20Military%20Components%20in%20Peacekeeping%20Operations%20Jan2017.pdf"
+       },
+       {
+        "title": "DPO Policy on the Protection of Civilians in UN Peacekeeping (2023)",
+        "url": "https://peacekeeping.un.org/sites/default/files/2023_protection_of_civilians_policy.pdf"
+       }
+      ],
       "choices": [
        {
         "text": "Use the intelligence officer's wording and leave out the first minutes. Both are common practice, and dwelling on a mistake that caused no harm would only hurt morale.",
@@ -4003,6 +4287,12 @@ window.APP_DATA = {
      {
       "prompt": "In a coordination meeting, you present a new distribution schedule that has already been shared in draft with partners. Maya, a national staff member, notices that it overlaps with a local holiday when several community partners will be unavailable. She stays quiet in the meeting and raises it with you privately afterward. Later, a senior colleague who is giving input to Maya's performance review says she \"lacks leadership presence\" because she didn't speak up. How do you respond?",
       "context": "Contradicting a supervisor in front of the team can feel disrespectful; raising a concern privately can feel like the responsible thing to do. The distribution starts in eight days.",
+      "sources": [
+       {
+        "title": "UN Values and Behaviours Framework (2021)",
+        "url": "https://hr.un.org/page/un-values-and-behaviours-framework-0"
+       }
+      ],
       "choices": [
        {
         "text": "Fix the schedule, but agree that speaking up in meetings is part of leadership, and support noting it in her review as an area for development this year.",
@@ -4077,6 +4367,12 @@ window.APP_DATA = {
      {
       "prompt": "You decide to change how input is gathered. At the next coordination meeting, a senior international colleague dominates the discussion, two national staff members start to speak and are talked over, and the only partner joining by phone from a field site can barely hear. Afterward, three people send you useful points by message. Your deputy suggests simply asking everyone to \"be more assertive\". What do you change?",
       "context": "Meetings are held in English. Field partners join by phone on a poor connection, and the agenda is usually shared on the morning of the meeting.",
+      "sources": [
+       {
+        "title": "UN Values and Behaviours Framework (2021)",
+        "url": "https://hr.un.org/page/un-values-and-behaviours-framework-0"
+       }
+      ],
       "choices": [
        {
         "text": "Share the agenda a day ahead, open each item with a round that includes phone participants, accept written input and agree a norm against interrupting.",
@@ -4144,6 +4440,12 @@ window.APP_DATA = {
      {
       "prompt": "Three months later, you review the changes. Meetings feel calmer, but the notes show that most decisions still follow the points made by the same two senior colleagues. The written channel is used almost only by national staff, and their suggestions are summarized at the end of the notes under \"other comments\". A colleague says the system works because \"everyone has a channel now\". How do you respond?",
       "context": "No one has tracked which suggestions are adopted. The field partners have stopped joining by phone.",
+      "sources": [
+       {
+        "title": "UN Values and Behaviours Framework (2021)",
+        "url": "https://hr.un.org/page/un-values-and-behaviours-framework-0"
+       }
+      ],
       "choices": [
        {
         "text": "Agree that the changes are working, since everyone now has a channel and meetings feel calmer, and plan to review the format again in six months.",
