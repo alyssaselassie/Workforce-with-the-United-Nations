@@ -9,7 +9,7 @@ An interactive educational web application that helps United Nations personnel b
 | Page | What it does |
 | --- | --- |
 | `index.html` | Landing page: overview, live stats, competency framework, learning path |
-| `map.html` | Interactive world map of UN field missions (Leaflet), with filters, a table view, mandate scope, source links, verification status and pre-deployment reflection prompts |
+| `map.html` | Spinning 3D globe of UN field missions (D3). Selecting a mission, region or table row flies the globe to that area and highlights the countries in the mandate. Includes filters, a table view, mandate scope, source links, verification status, photos of each area and pre-deployment reflection prompts |
 | `scenarios.html` | Scenario library and branching player (11 scenarios). Each choice gets feedback, is scored on four competencies and shows which dimensions it overlooks. A results screen and saved reflection follow each scenario |
 | `toolkit.html` | Dimensions framework, bias library (14 biases), the PAUSE protocol, CQ capabilities, humanitarian principles and an assumption-check worksheet |
 | `collaboration.html` | Team Debrief: facilitated sessions with a perspective wall, a "who's missing" prompt, contributions tagged by dimension, a dimension check before voting, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
@@ -66,7 +66,7 @@ Option B: double-click `index.html`. Browsers block `fetch()` on `file://`, so t
 python3 tools/bundle_data.py
 ```
 
-An internet connection is needed for the CDN libraries (Bootstrap, Bootstrap Icons, Leaflet) and the map tiles. Without the map library, the map page still shows the full mission table.
+An internet connection is needed for the CDN libraries (Bootstrap, Bootstrap Icons, D3, TopoJSON), the world map data and the mission photos. Without them, the map page still shows the full mission table.
 
 ## Deploying to GitHub Pages
 
@@ -74,13 +74,18 @@ An internet connection is needed for the CDN libraries (Bootstrap, Bootstrap Ico
 2. Go to **Settings → Pages → Build and deployment**, and set Source to *Deploy from a branch*, Branch `main`, folder `/ (root)`.
 3. The site will be served at `https://<user>.github.io/<repo>/`. All paths are relative, so no configuration is needed.
 
-## Why Leaflet?
+## The mission globe
 
-[Leaflet](https://leafletjs.com/) 1.9.4 (BSD-2-Clause) is a ~40 KB, dependency-free, well-documented open-source mapping library. It works on static hosting with no API key, supports keyboard-accessible markers and touch, and uses free OpenStreetMap tiles. Heavier options (Mapbox GL, Google Maps) need API keys or billing, and a hand-drawn SVG map would be harder to keep accurate and to zoom. It is loaded from cdnjs, so no setup is needed. To self-host it, download `leaflet.js` and `leaflet.css` and change the two tags in `map.html`.
+The map page draws an orthographic (3D-looking) globe with [D3](https://d3js.org/) 7.9.0 and [topojson-client](https://github.com/topojson/topojson-client) 3.1.0, using Natural Earth country shapes from [world-atlas](https://github.com/topojson/world-atlas) 2.0.2. Everything is vector SVG, so there is no API key, tile server or WebGL requirement, and the libraries load from jsDelivr.
 
-Markers that would overlap on screen are merged into a numbered pin, and the merge is recalculated at every zoom level. Markers show headquarters or main offices, not full areas of operation.
+- **Spinning:** the globe turns slowly on its own. Hovering a marker, dragging or selecting a mission pauses it, and the play/pause button controls it. People who set "reduce motion" in their system settings get a still globe, and selections jump straight to the area instead of flying.
+- **Fly to an area:** selecting a mission, region chip or table row turns the globe to the area and zooms in so the mandate's countries fit the view. Those countries are highlighted in the mission type's color. Each mission's `mapIds` in `data/missions.json` lists Natural Earth country ids, or feature names for areas without an id (Kosovo, N. Cyprus, Somaliland). Scopes that are not countries, such as Golan, Abyei, the African Union or envoy regions, zoom to the office instead.
+- **Detail on demand:** the light 1:110m map is used for spinning. When the view zooms in past 2.2×, the 1:50m map loads once and replaces it.
+- **Markers** that would overlap on screen merge into a numbered marker and split apart as you zoom in. Markers on the far side of the globe are hidden.
 
-For production or heavy traffic, switch to a tile provider whose usage policy fits, because the public OpenStreetMap tile servers have [usage limits](https://operations.osmfoundation.org/policies/tiles/).
+### Photos of each area
+
+When a mission is selected, the panel loads photos from [Wikimedia Commons](https://commons.wikimedia.org/) through its public API. Commons hosts many official UN and mission photos under free licenses. The page searches each mission's `photoSearch` terms (the mission first, then its area) and shows official photos first. A photo counts as official when its credit or title names the UN or a mission. Logos, maps, documents, small images and images whose title or description suggests violence or injury are filtered out. Each photo shows the photographer credit, license and a link to its file page, all taken from the file's own Commons metadata. Photos load live in the visitor's browser, so they need an internet connection, and results can change as Commons changes.
 
 ## Data sources and verification
 
@@ -135,4 +140,4 @@ Semantic landmarks, a skip link, keyboard-operable map rows and markers, ARIA li
 
 ## License and attribution
 
-Map data © OpenStreetMap contributors. Leaflet © Volodymyr Agafonkin (BSD-2-Clause). Bootstrap (MIT). Boundaries and names on the map do not imply official endorsement or acceptance by the United Nations.
+Map data: Natural Earth (public domain), via world-atlas (ISC). D3 (ISC). topojson-client (ISC). Bootstrap (MIT). Mission photos: Wikimedia Commons, credited individually under each file's own license. Boundaries and names on the map do not imply official endorsement or acceptance by the United Nations.
