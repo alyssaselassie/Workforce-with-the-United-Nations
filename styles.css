@@ -262,6 +262,8 @@ body[data-page="progress"] .page-head { background: linear-gradient(115deg, #e2f
 .step-dots span.done { background: var(--brand); }
 .step-dots span.current { background: var(--accent); }
 .context-note { background: #f3f1fb; border-radius: .9rem; }
+.sources-line { color: var(--muted); overflow-wrap: anywhere; }
+.sources-line .bi { color: #0b6ea9; }
 
 /* ---------- toolkit ---------- */
 .bias-card h3 { font-size: 1.05rem; }

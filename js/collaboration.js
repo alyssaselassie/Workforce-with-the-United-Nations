@@ -351,6 +351,7 @@
           }).join('')}
           <button class="btn btn-sm ${revealed ? 'btn-outline-secondary' : 'btn-primary'} no-print" data-reveal="${si}">
             ${revealed ? 'Hide guidance' : 'Reveal guidance'}</button>
+          ${revealed ? App.sourcesHtml(st, 'mt-2 mb-0') : ''}
           ${revealed && total ? `<p class="small mt-2 mb-0"><strong>Discuss:</strong> where did the group's choice differ from the guidance, and what in your context might justify that, or reveal a shared blind spot?</p>` : ''}
         </div>`;
     }).join('');

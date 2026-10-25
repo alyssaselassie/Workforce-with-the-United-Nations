@@ -158,6 +158,14 @@
     return `<span class="dim-chip dim-${esc(id)} ${extraClass || ''}" title="${esc(d.description)}"><i class="bi ${esc(d.icon)}" aria-hidden="true"></i> ${esc(d.label)}</span>`;
   }
 
+  // The official UN policies and guidance a decision's feedback draws on.
+  function sourcesHtml(step, extraClass) {
+    const list = (step && step.sources) || [];
+    if (!list.length) return '';
+    const items = list.map((src) => (src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener">${esc(src.title)}</a>` : esc(src.title)));
+    return `<p class="small sources-line ${extraClass || ''}"><i class="bi bi-journal-bookmark" aria-hidden="true"></i> <strong>Sources:</strong> ${items.join('; ')}</p>`;
+  }
+
   // ---------- profile ----------
   const Profile = {
     get() {
@@ -333,6 +341,7 @@
     renderChrome,
     stepDimensions,
     dimChip,
+    sourcesHtml,
     loadMissions: () => loadJSON('missions'),
     loadScenarios: () => loadJSON('scenarios'),
     esc,

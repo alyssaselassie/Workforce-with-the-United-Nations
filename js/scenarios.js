@@ -158,7 +158,8 @@
               <ul class="small">${s.biasFocus.map((b) => `<li><strong>${esc(biasById[b].name)}</strong>: ${esc(biasById[b].definition)}</li>`).join('')}</ul>
               <p class="eyebrow mb-1">Dimensions in play</p>
               <div class="mb-1">${orderDims(s.dimensions).map((d) => App.dimChip(S, d)).join(' ')}</div>
-              <p class="small text-muted-2 mb-3">A person cannot be defined by a single dimension. <a href="toolkit.html#dimensions">About the dimensions</a></p>
+              <p class="small text-muted-2 mb-2">A person cannot be defined by a single dimension. <a href="toolkit.html#dimensions">About the dimensions</a></p>
+              <p class="small text-muted-2 mb-3"><i class="bi bi-journal-bookmark" aria-hidden="true"></i> The feedback names the UN policies and guidance it draws on. Rules can differ between UN entities and for uniformed personnel, so follow your own entity's policies.</p>
               <button class="btn btn-accent btn-lg" id="begin">Begin scenario <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
             </div>
           </div>
@@ -248,6 +249,7 @@
               : `this choice accounts for every dimension in play ${tested.map((d) => App.dimChip(S, d)).join(' ')}`}</p>` : ''}
           ${best !== i ? `<details class="small"><summary>See the strongest option</summary>
             <p class="mt-2 mb-0"><strong>${KEYS[best]}.</strong> ${esc(step.choices[best].feedback)}</p></details>` : ''}
+          ${App.sourcesHtml(step, 'mt-2 mb-0')}
         </div>
         <div class="text-end mt-3">
           <button class="btn btn-primary" id="next">${state.step + 1 < s.steps.length ? 'Next decision' : 'See results'} <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
