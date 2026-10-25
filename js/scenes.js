@@ -315,6 +315,10 @@
   // ---------- stage ----------
   // actors: [{ id, name, spec, x (percent), look, mood, anim }]; bubbles: [{ side: 'left' | 'right' | 'think', who, text, x }]
   function stage(o) {
+    // The scene as data, so the 3D view (js/world3d.js) can attach to it or keep its live scene.
+    const cfg = { theme: o.theme || 'village', prop: o.prop || '', sky: o.sky || '', actors: (o.actors || []).map(({ id, spec, mood, anim }) => ({ id, spec, mood: mood || '', anim: anim || '' })),
+      bubbles: (o.bubbles || []).map(({ side, text }) => ({ side, text })) };
+    const live = window.World3D && World3D.isLive(cfg) ? ' is-3d' : '';
     const actors = (o.actors || []).map((a) => `
       <div class="actor" style="--x:${a.x}%" data-actor="${a.id}">
         <div class="actor-body${a.anim ? ` is-${a.anim}` : ''}">${Avatar.svg(a.spec, { look: a.look, mood: a.mood })}</div>
@@ -325,7 +329,7 @@
         ${b.side === 'think' ? '' : `<span class="bubble-who">${esc(b.who)}</span>`}${esc(b.text)}
       </div>`).join('');
     return `
-      <figure class="stage theme-${esc(o.theme || 'village')}" id="stage">
+      <figure class="stage theme-${esc(o.theme || 'village')}${live}" id="stage" data-scene="${esc(JSON.stringify(cfg))}">
         <div class="stage-art">
           ${backdrop(o.theme, o.prop, o.sky)}
           <div class="stage-actors" aria-hidden="true">${actors}</div>
@@ -352,7 +356,7 @@
   function mentorTip(text) {
     return `
       <div class="mentor-tip">
-        <span class="mentor-head" aria-hidden="true">${Avatar.svg(Avatar.NPC.mentor, { view: 'head', look: 'right' })}</span>
+        <span class="mentor-head" aria-hidden="true"><img src="img/mentor-rio.png" alt="" width="52" height="52" loading="lazy"></span>
         <p class="tip-bubble mb-0"><strong>${esc(MENTOR.name)}:</strong> ${esc(text)}</p>
       </div>`;
   }
@@ -360,6 +364,19 @@
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-tip]').forEach((el) => { el.innerHTML = mentorTip(el.dataset.tip); });
   });
+
+  // Upgrades each story stage to 3D when the page includes js/world3d.js and WebGL is available.
+  const upgraded = new WeakSet();
+  function upgrade() {
+    if (!window.World3D) return;
+    document.querySelectorAll('.stage[data-scene]').forEach((el) => {
+      if (upgraded.has(el)) return;
+      upgraded.add(el);
+      World3D.attachStage(el, JSON.parse(el.dataset.scene));
+    });
+  }
+  new MutationObserver(upgrade).observe(document.documentElement, { childList: true, subtree: true });
+  document.addEventListener('DOMContentLoaded', upgrade);
 
   window.Scenes = { stage, backdrop, medal, reaction, mentorTip, MENTOR };
 })();

@@ -509,7 +509,8 @@ body.is-playing .page-head p { display: none; }
 
 /* Avatar heads stand in for a missing profile photo. */
 .avatar-agent { overflow: hidden; border-radius: 50%; background: radial-gradient(circle at 50% 30%, #f2f9ff, #d3e8fb); }
-.avatar-agent svg { width: 100%; height: 100%; display: block; }
+.avatar-agent svg, .avatar-agent img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.agent-mini .agent-portrait, .mentor-head img { width: 100%; height: 100%; display: block; object-fit: cover; }
 
 /* Avatar creator. */
 .agent-stage {
@@ -518,6 +519,11 @@ body.is-playing .page-head p { display: none; }
     radial-gradient(120% 80% at 30% 18%, #ffffff 0%, #eaf3fc 48%, #d3e5f5 100%);
 }
 .agent-preview svg { height: min(360px, 68vw); width: auto; display: block; }
+/* The 3D turntable fills the preview stage; drag to turn the avatar. */
+.agent-stage { position: relative; }
+.agent-preview.is-3d { position: absolute; inset: 0; }
+.turntable-3d { display: block; width: 100%; height: 100%; cursor: grab; touch-action: pan-y; }
+.turntable-3d:active { cursor: grabbing; }
 .agent-row { margin-bottom: .9rem; }
 .agent-row legend { font-size: .95rem; font-weight: 800; margin-bottom: .35rem; }
 .agent-opts { display: flex; flex-wrap: wrap; gap: .45rem; }
@@ -539,11 +545,15 @@ body.is-playing .page-head p { display: none; }
 
 /* Story stage: backdrop, characters and speech bubbles. */
 .stage { position: relative; margin: 0 0 1.25rem; }
-.stage-art { position: relative; aspect-ratio: 10 / 3; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: #dff3ff; box-shadow: var(--shadow); }
+.stage-art { position: relative; isolation: isolate; aspect-ratio: 10 / 3; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: #dff3ff; box-shadow: var(--shadow); }
 /* A taller stage on phones. (A min-height here would turn into a min-width through the aspect ratio.) */
 @media (max-width: 767.98px) { .stage-art { aspect-ratio: 16 / 9; } }
 .stage-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.stage-actors { position: absolute; inset: 0; }
+.stage-actors { position: absolute; inset: 0; z-index: 2; }
+/* The 3D view sits above the flat backdrop and below the labels; it fades in on its first frame. */
+.stage-3d { position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; opacity: 0; transition: opacity .6s ease; touch-action: pan-y; }
+.stage.is-3d .actor-body { visibility: hidden; }
+.stage-banner, .stage-label { z-index: 3; }
 .actor { position: absolute; bottom: 10%; left: var(--x); height: 64%; transform: translateX(-50%); }
 .actor-body { height: 100%; transform-origin: 50% 100%; animation: bob 4s ease-in-out infinite; }
 .actor:nth-child(2) .actor-body { animation-delay: -1.3s; }
