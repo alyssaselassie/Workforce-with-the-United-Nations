@@ -24,6 +24,7 @@
     rounds: 3,
     perfect: 30,
     pause: { some: 20, all: 50 },
+    avatar: 20,
     profile: { name: 20, photo: 10, goal: 10, mission: 10 },
     team: { start: 20, voices: 40, dimensions: 30, decided: 15, actions: 15 }
   };
@@ -41,7 +42,7 @@
 
   // The deployment path: one quest per step of the learner journey.
   const QUESTS = [
-    { id: 'profile', icon: 'bi-person-plus', title: 'Create your profile', text: 'Add your name, duty station and a learning goal.', href: 'profile.html?edit=1', xp: 25, test: (c) => Boolean(c.profile.name) },
+    { id: 'profile', icon: 'bi-person-plus', title: 'Create your field agent', text: 'Pick your look and name in the avatar creator.', href: 'index.html?agent=1', xp: 25, test: (c) => c.avatar || Boolean(c.profile.name) },
     { id: 'station', icon: 'bi-geo-alt', title: 'Visit a duty station', text: 'Open a mission on the globe and read its mandate.', href: 'map.html', xp: 25, test: (c) => c.stamps >= 1 },
     { id: 'decide', icon: 'bi-signpost-split', title: 'Make your first field decision', text: 'Complete any scenario.', href: 'scenarios.html', xp: 30, test: (c) => c.completed >= 1 },
     { id: 'spot', icon: 'bi-search', title: 'Spot 5 biases', text: 'Name 5 different biases in Bias Detective.', href: 'toolkit.html#detective', xp: 30, test: (c) => c.found >= 5 },
@@ -57,7 +58,7 @@
   function empty() {
     return {
       xp: 0, ledger: {}, log: [], stamps: {}, combo: { current: 0, best: 0 },
-      detective: { found: {}, rounds: 0, perfect: 0, best: 0 }, pause: 0, pauseAll: false, team: {}, seen: []
+      detective: { found: {}, rounds: 0, perfect: 0, best: 0 }, pause: 0, pauseAll: false, team: {}, seen: [], island: 'base'
     };
   }
   let cache = null;
@@ -115,6 +116,7 @@
     const totals = Progress.totals();
     const c = {
       profile: App.Profile.get(),
+      avatar: Boolean(window.Avatar && Avatar.isSet()),
       completed: done.length,
       mastered: done.filter((x) => overall(x.scores) >= 75).length,
       perfect: done.some((x) => COMPETENCIES.every((k) => App.pct(x.scores[k]) === 100)),
@@ -132,7 +134,11 @@
       totals: { scenarios: S.scenarios.length, missions: M.missions.length, regions: Object.keys(M.regions).length, biases: S.biases.length }
     };
     const quests = QUESTS.map((q) => Object.assign({}, q, { done: q.test(c) }));
-    return { xp: st.xp, level: levelFor(st.xp), quests, next: quests.find((q) => !q.done) || null, badges: badges(c), counts: c, log: st.log };
+    // One medallion per scenario island, its metal set by the stars earned.
+    const medals = {};
+    S.scenarios.forEach((sc) => { if (p.completed[sc.id]) medals[sc.id] = medal(stars(overall(p.completed[sc.id].scores))); });
+    c.medals = Object.keys(medals).length;
+    return { xp: st.xp, level: levelFor(st.xp), quests, next: quests.find((q) => !q.done) || null, badges: badges(c), counts: c, log: st.log, medals };
   }
 
   function badges(c) {
@@ -196,6 +202,9 @@
   }
   function stars(pct) {
     return pct >= 75 ? 3 : pct >= 50 ? 2 : 1;
+  }
+  function medal(n) {
+    return ['bronze', 'silver', 'gold'][n - 1];
   }
   // Most XP a scenario can give: strong decisions, completion, Proficient and a reflection.
   function potential(s) {
@@ -269,6 +278,11 @@
     save();
     if (!answered) return 0;
     return award('pause', st.pauseAll ? XP.pause.all : XP.pause.some, st.pauseAll ? 'Assumption check: all five steps' : 'Assumption check started', 'bi-pause-circle');
+  }
+
+  function onAvatar(pr) {
+    award('avatar', XP.avatar, 'Field agent created', 'bi-person-badge');
+    onProfile(pr);
   }
 
   function onProfile(pr) {
@@ -455,7 +469,9 @@
     LEVELS,
     QUESTS,
     levelFor,
+    currentLevel: () => levelFor(state().xp).number,
     summary,
+    medal,
     stars,
     starsHtml,
     potential,
@@ -472,7 +488,10 @@
     onDetectiveRound,
     onPauseCheck,
     onProfile,
+    onAvatar,
     onTeamGoals,
+    island: () => state().island,
+    setIsland: (id) => { state().island = id; save(); },
     chipHtml,
     levelHtml,
     questsHtml,
