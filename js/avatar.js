@@ -436,5 +436,7 @@
     if (App.param('agent') === '1') openCreator();
   });
 
-  window.Avatar = { svg, get, isSet, save, headHtml, openCreator, NPC, OPTIONS, UNLOCK, DEFAULT };
+  const PALETTE = { SKIN, LIPS, HAIR_COLORS, COLORS, TROUSERS, VEST, SHOE };
+
+  window.Avatar = { svg, get, isSet, save, headHtml, openCreator, NPC, OPTIONS, UNLOCK, DEFAULT, PALETTE };
 })();
