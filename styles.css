@@ -543,7 +543,11 @@ body.is-playing .page-head p { display: none; }
 /* A taller stage on phones. (A min-height here would turn into a min-width through the aspect ratio.) */
 @media (max-width: 767.98px) { .stage-art { aspect-ratio: 16 / 9; } }
 .stage-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.stage-actors { position: absolute; inset: 0; }
+.stage-actors { position: absolute; inset: 0; z-index: 2; }
+/* The 3D view sits above the flat backdrop and below the labels; it fades in on its first frame. */
+.stage-3d { position: absolute; inset: 0; z-index: 1; display: block; width: 100%; height: 100%; opacity: 0; transition: opacity .6s ease; touch-action: pan-y; }
+.stage.is-3d .actor-body { visibility: hidden; }
+.stage-banner, .stage-label { z-index: 3; }
 .actor { position: absolute; bottom: 10%; left: var(--x); height: 64%; transform: translateX(-50%); }
 .actor-body { height: 100%; transform-origin: 50% 100%; animation: bob 4s ease-in-out infinite; }
 .actor:nth-child(2) .actor-body { animation-delay: -1.3s; }
