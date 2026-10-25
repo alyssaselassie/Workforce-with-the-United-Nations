@@ -631,7 +631,7 @@ body.is-playing .page-head p { display: none; }
 .dest-pulse { fill: none; stroke: #ffd54f; stroke-width: 2.5; opacity: 0; transform-box: fill-box; transform-origin: center; }
 .dest.is-next .dest-pulse { animation: pin-pulse 1.8s ease-out infinite; }
 .dest-label { display: none; pointer-events: none; }
-.dest:hover .dest-label, .dest:focus-visible .dest-label, .dest.is-selected .dest-label { display: inline; }
+.dest:not(.is-selected):hover .dest-label, .dest:not(.is-selected):focus-visible .dest-label { display: inline; }
 .dest-label rect { fill: rgba(255, 255, 255, .97); stroke: var(--edge); }
 .dest-label text { font: 700 12px "Nunito", system-ui, sans-serif; fill: var(--ink); }
 .d-route { stroke: #ffd54f; stroke-width: 2.5; stroke-dasharray: 6 6; stroke-linecap: round; }
