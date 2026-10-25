@@ -46,6 +46,56 @@ window.APP_DATA = {
     "color": "#047857"
    }
   },
+  "regions": {
+   "Africa": {
+    "color": "#f59e0b",
+    "center": [
+     20,
+     4
+    ],
+    "zoom": 1.6
+   },
+   "Americas": {
+    "color": "#14b8a6",
+    "center": [
+     -74,
+     10
+    ],
+    "zoom": 2.2
+   },
+   "Asia and the Pacific": {
+    "color": "#8b5cf6",
+    "center": [
+     66,
+     36
+    ],
+    "zoom": 2.2
+   },
+   "Europe": {
+    "color": "#0ea5e9",
+    "center": [
+     27,
+     40
+    ],
+    "zoom": 2.8
+   },
+   "Middle East": {
+    "color": "#f43f5e",
+    "center": [
+     38,
+     30
+    ],
+    "zoom": 3.4
+   },
+   "Middle East and North Africa": {
+    "color": "#d946ef",
+    "center": [
+     16,
+     30
+    ],
+    "zoom": 2.6
+   }
+  },
   "missions": [
    {
     "id": "minurso",
@@ -69,6 +119,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://minurso.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "732"
+    ],
+    "photoSearch": [
+     "MINURSO",
+     "Laayoune"
+    ],
     "scenarioIds": [
      "sc-contested-names"
     ]
@@ -94,6 +151,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://minusca.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "140"
+    ],
+    "photoSearch": [
+     "MINUSCA",
+     "Bangui"
+    ],
     "scenarioIds": [
      "sc-community-consultation",
      "sc-rumour-response"
@@ -120,6 +184,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://monusco.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "180"
+    ],
+    "photoSearch": [
+     "MONUSCO",
+     "Kinshasa"
+    ],
     "scenarioIds": [
      "sc-rumour-response",
      "sc-national-staff-expertise"
@@ -147,6 +218,11 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://undof.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [],
+    "photoSearch": [
+     "UNDOF",
+     "Golan Heights"
+    ],
     "scenarioIds": [
      "sc-contested-names"
     ]
@@ -172,6 +248,14 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unficyp.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "196",
+     "N. Cyprus"
+    ],
+    "photoSearch": [
+     "UNFICYP",
+     "Nicosia"
+    ],
     "scenarioIds": [
      "sc-contested-names"
     ]
@@ -198,6 +282,13 @@ window.APP_DATA = {
     "statusNote": "Check the latest Security Council decisions on UNIFIL's mandate and drawdown timeline before a demo.",
     "sourceUrl": "https://unifil.unmissions.org/",
     "verification": "check-status",
+    "mapIds": [
+     "422"
+    ],
+    "photoSearch": [
+     "UNIFIL",
+     "Naqoura"
+    ],
     "scenarioIds": [
      "sc-patrol-encounter"
     ]
@@ -224,6 +315,11 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unisfa.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [],
+    "photoSearch": [
+     "UNISFA",
+     "Abyei"
+    ],
     "scenarioIds": [
      "sc-community-consultation",
      "sc-contested-names"
@@ -251,6 +347,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unmik.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "Kosovo"
+    ],
+    "photoSearch": [
+     "UNMIK",
+     "Pristina"
+    ],
     "scenarioIds": [
      "sc-contested-names"
     ]
@@ -276,6 +379,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unmiss.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "728"
+    ],
+    "photoSearch": [
+     "UNMISS",
+     "Juba"
+    ],
     "scenarioIds": [
      "sc-community-consultation",
      "sc-needs-assessment-data"
@@ -309,6 +419,14 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unmogip.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "356",
+     "586"
+    ],
+    "photoSearch": [
+     "UNMOGIP",
+     "Srinagar"
+    ],
     "scenarioIds": [
      "sc-contested-names"
     ]
@@ -339,6 +457,17 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://untso.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "818",
+     "376",
+     "400",
+     "422",
+     "760"
+    ],
+    "photoSearch": [
+     "UNTSO",
+     "Jerusalem"
+    ],
     "scenarioIds": [
      "sc-contested-names"
     ]
@@ -365,6 +494,15 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unsos.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "706",
+     "Somaliland"
+    ],
+    "photoSearch": [
+     "UNSOS",
+     "AMISOM",
+     "Mogadishu"
+    ],
     "scenarioIds": [
      "sc-needs-assessment-data",
      "sc-hospitality-integrity"
@@ -392,6 +530,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unsoh.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "332"
+    ],
+    "photoSearch": [
+     "UNSOH",
+     "Port-au-Prince"
+    ],
     "scenarioIds": [
      "sc-trust-deficit"
     ]
@@ -417,6 +562,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unama.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "004"
+    ],
+    "photoSearch": [
+     "UNAMA",
+     "Kabul"
+    ],
     "scenarioIds": [
      "sc-interpreter-reliance",
      "sc-national-staff-expertise"
@@ -443,6 +595,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://binuh.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "332"
+    ],
+    "photoSearch": [
+     "BINUH",
+     "Port-au-Prince"
+    ],
     "scenarioIds": [
      "sc-trust-deficit"
     ]
@@ -468,6 +627,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unsmil.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "434"
+    ],
+    "photoSearch": [
+     "UNSMIL",
+     "Tripoli"
+    ],
     "scenarioIds": [
      "sc-interpreter-reliance"
     ]
@@ -495,6 +661,15 @@ window.APP_DATA = {
     "statusNote": "Scheduled to cease operations on 31 October 2026.",
     "sourceUrl": "https://untmis.unmissions.org/",
     "verification": "check-status",
+    "mapIds": [
+     "706",
+     "Somaliland"
+    ],
+    "photoSearch": [
+     "UNTMIS",
+     "UNSOM",
+     "Mogadishu"
+    ],
     "scenarioIds": [
      "sc-needs-assessment-data"
     ]
@@ -522,6 +697,14 @@ window.APP_DATA = {
     "statusNote": "Resolution 2798 (2025) extended the mandate to 31 October 2026, and renewal and mandate revision were under Council discussion in October 2026.",
     "sourceUrl": "https://colombia.unmissions.org/",
     "verification": "check-status",
+    "mapIds": [
+     "170"
+    ],
+    "photoSearch": [
+     "Verification Mission in Colombia",
+     "Misión de Verificación ONU Colombia",
+     "Bogotá"
+    ],
     "scenarioIds": [
      "sc-reintegration-framing"
     ]
@@ -563,6 +746,28 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unowas.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "204",
+     "854",
+     "132",
+     "384",
+     "270",
+     "288",
+     "324",
+     "624",
+     "430",
+     "466",
+     "478",
+     "562",
+     "566",
+     "686",
+     "694",
+     "768"
+    ],
+    "photoSearch": [
+     "UNOWAS",
+     "Dakar"
+    ],
     "scenarioIds": [
      "sc-hospitality-integrity",
      "sc-national-staff-expertise"
@@ -600,6 +805,23 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unoca.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "024",
+     "108",
+     "120",
+     "140",
+     "148",
+     "178",
+     "180",
+     "226",
+     "266",
+     "646",
+     "678"
+    ],
+    "photoSearch": [
+     "UNOCA",
+     "Libreville"
+    ],
     "scenarioIds": [
      "sc-hospitality-integrity"
     ]
@@ -630,6 +852,17 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unrcca.unmissions.org/",
     "verification": "confirmed",
+    "mapIds": [
+     "398",
+     "417",
+     "762",
+     "795",
+     "860"
+    ],
+    "photoSearch": [
+     "UNRCCA",
+     "Ashgabat"
+    ],
     "scenarioIds": [
      "sc-hospitality-integrity"
     ]
@@ -656,6 +889,11 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unoau.unmissions.org/",
     "verification": "check-listing",
+    "mapIds": [],
+    "photoSearch": [
+     "United Nations Office to the African Union",
+     "African Union Addis Ababa"
+    ],
     "scenarioIds": [
      "sc-national-staff-expertise"
     ]
@@ -683,6 +921,14 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unsco.unmissions.org/",
     "verification": "check-listing",
+    "mapIds": [
+     "275",
+     "376"
+    ],
+    "photoSearch": [
+     "UNSCO",
+     "Jerusalem"
+    ],
     "scenarioIds": [
      "sc-contested-names",
      "sc-needs-assessment-data"
@@ -709,6 +955,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://unscol.unmissions.org/",
     "verification": "check-listing",
+    "mapIds": [
+     "422"
+    ],
+    "photoSearch": [
+     "UNSCOL",
+     "Beirut"
+    ],
     "scenarioIds": [
      "sc-patrol-encounter"
     ]
@@ -734,6 +987,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://specialenvoysyria.unmissions.org/",
     "verification": "check-listing",
+    "mapIds": [
+     "760"
+    ],
+    "photoSearch": [
+     "Special Envoy for Syria",
+     "Damascus"
+    ],
     "scenarioIds": [
      "sc-interpreter-reliance"
     ]
@@ -760,6 +1020,13 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://osesgy.unmissions.org/",
     "verification": "check-listing",
+    "mapIds": [
+     "887"
+    ],
+    "photoSearch": [
+     "Special Envoy for Yemen",
+     "Sanaa"
+    ],
     "scenarioIds": [
      "sc-interpreter-reliance",
      "sc-needs-assessment-data"
@@ -786,6 +1053,11 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://www.unmissions.org/en/united-nations-field-missions",
     "verification": "check-listing",
+    "mapIds": [],
+    "photoSearch": [
+     "Great Lakes Region United Nations",
+     "Lake Kivu"
+    ],
     "scenarioIds": [
      "sc-rumour-response"
     ]
@@ -811,6 +1083,11 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://www.unmissions.org/en/united-nations-field-missions",
     "verification": "check-listing",
+    "mapIds": [],
+    "photoSearch": [
+     "Horn of Africa United Nations",
+     "Nairobi"
+    ],
     "scenarioIds": [
      "sc-national-staff-expertise"
     ]
@@ -837,6 +1114,14 @@ window.APP_DATA = {
     "status": "active",
     "sourceUrl": "https://uncyprustalks.unmissions.org/",
     "verification": "check-listing",
+    "mapIds": [
+     "196",
+     "N. Cyprus"
+    ],
+    "photoSearch": [
+     "Cyprus talks United Nations",
+     "Nicosia"
+    ],
     "scenarioIds": [
      "sc-contested-names"
     ]
