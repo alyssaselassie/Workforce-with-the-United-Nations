@@ -1,0 +1,191 @@
+[[AdvancedFormat]]
+
+[[Block:Introduction]]
+
+[[Question:DB]]
+[[ID:INTRO]]
+Team Relief Map. This short survey (about 6 minutes) asks how you experience six everyday workplace settings. It helps your team see where people feel most included, and where things could improve.
+
+[[Question:DB]]
+[[ID:PRIVACY]]
+Your answers are anonymous. We do not ask for your name or staff ID, and the survey does not record your IP address or location. Every question is optional, and you can stop at any time. Results are shown only as team averages, and only for groups of at least 5 people. Individual answers are never shared with supervisors, and comments are summarized as themes, never quoted. By continuing, you agree to take part.
+
+[[PageBreak]]
+
+[[Block:Workplace settings]]
+
+[[Question:Matrix]]
+[[ID:TM]]
+Team meetings. Think about your team meetings, in person or online. How much do you agree with each statement?
+[[Choices]]
+I feel that I belong.
+It is safe to take a risk here.
+My skills and perspective are valued.
+I feel comfortable expressing a different opinion.
+I feel at ease.
+[[Answers]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+Does not apply to me
+
+[[PageBreak]]
+
+[[Question:Matrix]]
+[[ID:SUP]]
+One-on-ones with supervisor. Think about one-on-one conversations with your supervisor. How much do you agree with each statement?
+[[Choices]]
+I feel that I belong.
+It is safe to take a risk here.
+My skills and perspective are valued.
+I feel comfortable expressing a different opinion.
+I feel at ease.
+[[Answers]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+Does not apply to me
+
+[[PageBreak]]
+
+[[Question:Matrix]]
+[[ID:VIR]]
+Virtual and hybrid work. Think about virtual and hybrid collaboration: calls, chat and shared documents. How much do you agree with each statement?
+[[Choices]]
+I feel that I belong.
+It is safe to take a risk here.
+My skills and perspective are valued.
+I feel comfortable expressing a different opinion.
+I feel at ease.
+[[Answers]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+Does not apply to me
+
+[[PageBreak]]
+
+[[Question:Matrix]]
+[[ID:NET]]
+Informal and social spaces. Think about informal moments: breaks, lunches, social events and networking. How much do you agree with each statement?
+[[Choices]]
+I feel that I belong.
+It is safe to take a risk here.
+My skills and perspective are valued.
+I feel comfortable expressing a different opinion.
+I feel at ease.
+[[Answers]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+Does not apply to me
+
+[[PageBreak]]
+
+[[Question:Matrix]]
+[[ID:DEV]]
+Learning and development. Think about training, mentoring and opportunities to grow. How much do you agree with each statement?
+[[Choices]]
+I feel that I belong.
+It is safe to take a risk here.
+My skills and perspective are valued.
+I feel comfortable expressing a different opinion.
+I feel at ease.
+[[Answers]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+Does not apply to me
+
+[[PageBreak]]
+
+[[Question:Matrix]]
+[[ID:DEC]]
+Decision-making. Think about the spaces where priorities and resources are decided. How much do you agree with each statement?
+[[Choices]]
+I feel that I belong.
+It is safe to take a risk here.
+My skills and perspective are valued.
+I feel comfortable expressing a different opinion.
+I feel at ease.
+[[Answers]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+Does not apply to me
+
+[[PageBreak]]
+
+[[Block:About you]]
+
+[[Question:DB]]
+[[ID:ABOUT]]
+These optional questions let the team see whether experiences differ between groups. A group is shown only when at least 5 people are in it, and you can choose "Prefer not to say" for any question.
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:D_ROLE]]
+Which best describes your role?
+[[Choices]]
+National or local staff
+International staff
+Consultant, contractor, intern or volunteer
+Other
+Prefer not to say
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:D_GENDER]]
+How do you describe your gender?
+[[Choices]]
+Woman
+Man
+Non-binary or another gender
+Prefer not to say
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:D_AGE]]
+What is your age group?
+[[Choices]]
+Under 35
+35 to 49
+50 or older
+Prefer not to say
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:D_LANG]]
+Do you usually work in a language that is not your first language?
+[[Choices]]
+Yes
+No
+Prefer not to say
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:D_DISAB]]
+Do you identify as a person with a disability?
+[[Choices]]
+Yes
+No
+Prefer not to say
+
+[[PageBreak]]
+
+[[Block:Reflection]]
+
+[[Question:TE:Essay]]
+[[ID:REFLECT]]
+What is one enhancement that would make your team or workplace environment more collaborative and innovative? Please do not include names or details that could identify you or anyone else.
+
+[[Question:DB]]
+[[ID:THANKS]]
+Thank you. When you are ready, select the arrow to submit your answers.

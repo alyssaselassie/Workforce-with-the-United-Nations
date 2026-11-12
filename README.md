@@ -62,6 +62,24 @@ The game layer stays professional: plain language, a calm palette and no leaderb
 
 Design principles: XP rewards learning actions (exploring a context, deciding, reflecting, hearing every voice) and never speed. Each action pays once; replaying earns XP only for doing better. There are no leaderboards, so learners are only compared with their past selves, and XP is not a measure of anyone's bias. `js/game.js` holds the rules (`XP`, `LEVELS`, `QUESTS`, badges); a ledger stores the best award per action key.
 
+## Relief Map Tool (prototype)
+
+A complementary tool for the UN Transformative Spaces initiative, in `relief-map/`. A short, anonymous Qualtrics survey (about 6 minutes) becomes a **team Relief Map**: a line chart with six workplace settings (team meetings, one-on-ones with supervisor, virtual and hybrid work, informal and social spaces, learning and development, decision-making) along the bottom and average discomfort (1 = very comfortable, 5 = very uncomfortable) up the side. It is a workplace adaptation of Relief Maps (Rodó-Zárate, 2023) and the 2025 Relief Maps Tool from the NYU Intersectionality Lab: it shows team averages, not individual maps.
+
+| File | What it is |
+| --- | --- |
+| `relief-map/index.html` | The map: a fictional sample team of 48 people, comparisons by role category, gender, age group, working language or disability, a data table, a plain-language summary, inclusion opportunities, a pilot plan and the method. **Load a Qualtrics export** draws a real team's map in the browser; the file is never uploaded |
+| `relief-map/relief-map-survey.txt` | The survey in Qualtrics' Advanced Format. Import it with Tools → Import/Export → Import survey |
+| `relief-map/sample-qualtrics-export.csv` | The fictional sample in the layout of a Qualtrics CSV export, for testing the import |
+| `relief-map/relief-map.js` | Survey definitions, scoring, privacy rules, CSV parsing and the sample (works in the browser and in Node) |
+| `docs/Relief-Map-Qualtrics-Prototype.docx` | Two-page guide: survey and sources, sample map, interpretation, Qualtrics setup and pilot plan |
+
+**Survey:** five statements per setting (belonging, psychological safety, inclusion, voice and comfort, adapted from Edmondson, 1999, and informed by COPSOQ III, or newly written), rated Strongly disagree (1) to Strongly agree (5) or Does not apply to me; five optional identity questions with "Prefer not to say"; one reflection question. Export columns are fixed (`TM_1` … `DEC_5`, `D_ROLE`, `D_GENDER`, `D_AGE`, `D_LANG`, `D_DISAB`, `REFLECT`), so a CSV export with numeric values or choice text loads directly.
+
+**Scoring and privacy:** a person's setting score is 6 − their average agreement, from at least 3 of the 5 statements. Nothing is shown for fewer than 5 answers, and no group under the chosen minimum (5, 8 or 10) is shown. People in smaller groups and those who chose not to say are pooled; if that pool is smaller than the minimum, the comparison is hidden at that setting, so a small group's average can't be worked out from the others. Only one identity question is compared at a time, comments are never displayed, and files with IP addresses, locations or contact details trigger a warning. In Qualtrics, turn on Anonymize responses and use the anonymous link.
+
+**Changing the survey or sample:** edit `relief-map/relief-map.js`, then run `node tools/build_relief_map.js` to regenerate the import file and sample export.
+
 ## Project structure
 
 ```
