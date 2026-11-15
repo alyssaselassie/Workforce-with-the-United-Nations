@@ -69,7 +69,7 @@ Design principles: XP rewards learning actions (exploring a context, deciding, r
 
 | File | What it is |
 | --- | --- |
-| `relief-map/index.html` | The map for a fictional team of 40: three lines, or groups compared one identity question at a time, with a table, the five dimensions and the overall statements. **Load your Qualtrics export** draws a real team's map in the browser; the file is never uploaded |
+| `relief-map/index.html` | Uses the main site's menu and footer. The map for a fictional team of 40: three lines, or groups compared one identity question at a time, with a table, the five dimensions and the overall statements. **Load your Qualtrics export** draws a real team's map in the browser; the file is never uploaded |
 | `relief-map/survey.html` | A phone-friendly preview of the survey: consent first ("No" ends it), six setting pages of three statements, five overall statements, optional "About you" questions after an opt-in, two optional comment boxes. Nothing is saved |
 | `relief-map/relief-map-survey.txt` | The survey in Qualtrics' Advanced Format (Tools → Import/Export → Import survey) |
 | `relief-map/sample-qualtrics-export.csv` | The fictional team in the layout of a Qualtrics CSV export (numeric values) |
