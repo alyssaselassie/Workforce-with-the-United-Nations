@@ -271,6 +271,7 @@
 
   function renderChrome() {
     const current = document.body.dataset.page;
+    const root = document.body.dataset.root || ''; // '../' on pages in a subfolder, such as relief-map/
     const profile = Profile.get();
     const firstName = String(profile.name || '').trim().split(/\s+/)[0];
     const onProfile = current === 'profile' || current === 'progress';
@@ -280,7 +281,7 @@
         <a class="visually-hidden-focusable skip-link" href="#main">Skip to main content</a>
         <nav class="navbar navbar-expand-xl navbar-dark site-nav" aria-label="Main">
           <div class="container-xl">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="${root}index.html">
               <span class="brand-mark" aria-hidden="true"><i class="bi bi-compass"></i></span>
               <span><span class="fw-semibold">CQ &amp; Bias Navigator</span><span class="brand-sub d-none d-sm-block d-xl-none d-xxl-block">CQ = Cultural Quotient · UN fieldwork learning prototype</span></span>
             </a>
@@ -292,12 +293,12 @@
               <ul class="navbar-nav ms-auto">
                 ${NAV.map((n) => `
                   <li class="nav-item">
-                    <a class="nav-link${n.page === current ? ' active' : ''}" ${n.page === current ? 'aria-current="page"' : ''} href="${n.href}">
+                    <a class="nav-link${n.page === current ? ' active' : ''}" ${n.page === current ? 'aria-current="page"' : ''} href="${root}${n.href}">
                       <i class="bi ${n.icon}" aria-hidden="true"></i> ${n.label}
                     </a>
                   </li>`).join('')}
                 <li class="nav-item ms-xl-2">
-                  <a class="nav-link nav-profile${firstName ? '' : ' is-cta'}${onProfile ? ' active' : ''}" ${onProfile ? 'aria-current="page"' : ''} href="profile.html${firstName ? '' : '?edit=1'}" title="${firstName ? 'My profile and progress' : 'Create your profile'}">
+                  <a class="nav-link nav-profile${firstName ? '' : ' is-cta'}${onProfile ? ' active' : ''}" ${onProfile ? 'aria-current="page"' : ''} href="${root}profile.html${firstName ? '' : '?edit=1'}" title="${firstName ? 'My profile and progress' : 'Create your profile'}">
                     ${avatar(profile, 28)}<span class="ms-2">${firstName ? esc(firstName) : 'Create profile'}</span>
                   </a>
                 </li>
@@ -305,7 +306,7 @@
             </div>
           </div>
         </nav>
-        ${current === 'home' ? '' : '<div class="demo-banner no-print"><div class="container-xl"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <strong>Demo mode:</strong> your profile and progress reset when you refresh or reopen the site.</div></div>'}`;
+        ${current === 'home' || current === 'relief' ? '' : '<div class="demo-banner no-print"><div class="container-xl"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <strong>Demo mode:</strong> your profile and progress reset when you refresh or reopen the site.</div></div>'}`;
     }
 
     const footer = document.getElementById('site-footer');
@@ -316,7 +317,7 @@
             <div class="col-md-7">
               <p class="mb-1 fw-semibold">UN Cultural Intelligence &amp; Bias Navigator</p>
               <p class="small mb-0">An educational technology prototype. <strong>This is not an official United Nations product</strong> and is not endorsed by the UN. Scenarios are fictional composites. Check mission information against official sources.</p>
-              <p class="small mb-0 mt-2">Dimensions framework adapted from <a href="https://reliefmaps.upf.edu" target="_blank" rel="noopener">Relief Maps+</a> by Maria Rodó-Zárate and the INTERMAPS team, Universitat Pompeu Fabra. <a href="toolkit.html#dimensions">Full credit</a>.</p>
+              <p class="small mb-0 mt-2">Dimensions framework adapted from <a href="https://reliefmaps.upf.edu" target="_blank" rel="noopener">Relief Maps+</a> by Maria Rodó-Zárate and the INTERMAPS team, Universitat Pompeu Fabra. <a href="${root}toolkit.html#dimensions">Full credit</a>.</p>
             </div>
             <div class="col-md-5">
               <p class="small fw-semibold mb-1">Official sources</p>
