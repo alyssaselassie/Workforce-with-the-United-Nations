@@ -23,14 +23,8 @@ a { color: var(--sv-teal); }
 .sv-wrap { width: 100%; max-width: 680px; margin: 0 auto; padding: 0 16px; }
 
 .sv-preview-bar { background: var(--sv-lavender); color: var(--sv-navy); font-size: .92rem; border-bottom: 1px solid #d9d3f0; }
-.sv-preview-bar .sv-wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .25rem 1rem; padding-top: .55rem; padding-bottom: .55rem; }
+.sv-preview-bar .sv-wrap { padding-top: .55rem; padding-bottom: .55rem; }
 .sv-preview-note { margin: 0; }
-.sv-tools summary { cursor: pointer; font-weight: 600; color: var(--sv-navy); min-height: 32px; display: flex; align-items: center; }
-.sv-tools-body { padding: .5rem 0 .25rem; }
-.sv-switch { display: flex; gap: .5rem; align-items: flex-start; }
-.sv-switch input { width: 1.15rem; height: 1.15rem; margin-top: .2rem; accent-color: var(--sv-navy); }
-.sv-tools-links { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-top: .4rem; }
-.sv-link-btn { padding: 0; border: 0; background: none; color: var(--sv-teal); font: inherit; text-decoration: underline; cursor: pointer; }
 
 .sv-top { background: #fff; border-bottom: 1px solid #e3e1ee; }
 .sv-top .sv-wrap { padding-top: .8rem; padding-bottom: .9rem; }
@@ -53,7 +47,6 @@ main.sv-wrap { padding-top: 1rem; padding-bottom: 1.5rem; }
 .sv-q { margin: 0; padding: 0; border: 0; min-width: 0; }
 .sv-q-text { display: block; margin: 0 0 .6rem; padding: 0; font-size: 1.125rem; font-weight: 600; line-height: 1.35; color: var(--sv-ink); }
 .sv-req { display: inline-block; margin-left: .3rem; padding: .02rem .45rem; border-radius: 999px; background: #fdecea; color: var(--sv-error); font-size: .75rem; font-weight: 700; vertical-align: middle; }
-.sv-meta { margin: -.3rem 0 .6rem; color: var(--sv-muted); font-size: .88rem; }
 .sv-options { display: grid; gap: .5rem; }
 .sv-opt { position: relative; display: flex; align-items: center; gap: .75rem; min-height: 48px; padding: .6rem .9rem; border: 1.5px solid var(--sv-line); border-radius: 12px; background: #fff; cursor: pointer; }
 .sv-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
