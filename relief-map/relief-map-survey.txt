@@ -4,7 +4,7 @@
 
 [[Question:DB]]
 [[ID:INTRO]]
-Relief Maps: Workplace Experience Survey. This short survey asks how you feel in six everyday workplace settings, from team meetings to decision-making. Your answers are combined with your team's to make a Relief Map that shows where people feel safe, included and at ease. It takes about 5 minutes.
+Relief Maps: Workplace Experience Survey. This short survey asks how you feel in six everyday workplace settings, from team meetings to decision-making. Think about the past 3 months, or since you started if that is more recent. Your answers are combined with your team's to make a Relief Map that shows where people feel safe, included and at ease. It takes about 5 minutes.
 
 [[Question:DB]]
 [[ID:PRIVACY]]
@@ -21,217 +21,379 @@ No, I do not want to take part
 
 [[Question:DB]]
 [[ID:MEET_INTRO]]
-1 of 6: Team meetings. Think about your team meetings, in person or online. How much do you agree?
+1 of 6: Team meetings. Think about your team meetings, in person or online. Thinking about the past 3 months, how much do you agree?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:MEET_SAFE]]
 I feel comfortable expressing a different opinion during team meetings.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:MEET_BELONG]]
 My contributions in team meetings are taken seriously.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:MEET_COMFORT]]
 I feel at ease in team meetings.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[PageBreak]]
 
 [[Question:DB]]
 [[ID:SUPV_INTRO]]
-2 of 6: One-on-ones with your supervisor. Think about one-on-one conversations with your supervisor. How much do you agree?
+2 of 6: One-on-ones with your supervisor. Think about one-on-one conversations with your supervisor. Thinking about the past 3 months, how much do you agree?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:SUPV_SAFE]]
 I can ask my supervisor questions without worrying about negative consequences.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:SUPV_BELONG]]
 I can be myself in conversations with my supervisor.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:SUPV_COMFORT]]
 I feel at ease in one-on-one conversations with my supervisor.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[PageBreak]]
 
 [[Question:DB]]
 [[ID:ONLINE_INTRO]]
-3 of 6: Online and hybrid work. Think about online meetings, calls, chat and shared documents. How much do you agree?
+3 of 6: Online and hybrid work. Think about online meetings, calls, chat and shared documents. Thinking about the past 3 months, how much do you agree?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:ONLINE_SAFE]]
 In online meetings, I get a fair chance to speak.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:ONLINE_BELONG]]
 I feel included in the online conversations that affect my work.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:ONLINE_COMFORT]]
 I feel at ease when I work with colleagues online.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[PageBreak]]
 
 [[Question:DB]]
 [[ID:SOCIAL_INTRO]]
-4 of 6: Informal and social time. Think about breaks, lunches, social events and networking. How much do you agree?
+4 of 6: Informal and social time. Think about breaks, lunches, social events and networking. Thinking about the past 3 months, how much do you agree?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:SOCIAL_SAFE]]
 In informal settings at work, I am accepted for who I am.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:SOCIAL_BELONG]]
 I feel welcome when colleagues get together informally.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:SOCIAL_COMFORT]]
 I feel at ease in informal conversations with colleagues.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[PageBreak]]
 
 [[Question:DB]]
 [[ID:LEARN_INTRO]]
-5 of 6: Learning and development. Think about training, mentoring, feedback and chances to grow. How much do you agree?
+5 of 6: Learning and development. Think about training, mentoring, feedback and chances to grow. Thinking about the past 3 months, how much do you agree?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:LEARN_SAFE]]
 When I am learning something new at work, it is safe to make mistakes.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:LEARN_BELONG]]
 I have someone at work, such as a mentor, who supports my growth.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:LEARN_COMFORT]]
 I feel at ease when I receive feedback on my work.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[PageBreak]]
 
 [[Question:DB]]
 [[ID:DECIDE_INTRO]]
-6 of 6: Decision-making. Think about the meetings and conversations where decisions are made. How much do you agree?
+6 of 6: Decision-making. Think about the meetings and conversations where decisions are made. Thinking about the past 3 months, how much do you agree?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:DECIDE_SAFE]]
 I have opportunities to contribute to important workplace decisions.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:DECIDE_BELONG]]
 My perspective is considered when decisions that affect my work are made.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:DECIDE_COMFORT]]
 I feel at ease in meetings where decisions are made.
-[[Choices]]
+[[AdvancedChoices]]
+[[Choice:1]]
 Strongly disagree
+[[Choice:2]]
 Disagree
+[[Choice:3]]
 Neither agree nor disagree
+[[Choice:4]]
 Agree
+[[Choice:5]]
 Strongly agree
+[[Choice:97]]
+Not experienced in the past 3 months
+[[Choice:98]]
+Unable to judge
 
 [[Block:Overall]]
 

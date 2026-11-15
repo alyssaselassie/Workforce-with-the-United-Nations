@@ -8,6 +8,12 @@
 
   const SURVEY_TITLE = 'Relief Maps: Workplace Experience Survey';
   const SCALE = ['Strongly disagree', 'Disagree', 'Neither agree nor disagree', 'Agree', 'Strongly agree']; // 1 to 5
+  // Extra answers for the setting statements (same codes as the team's 25-item draft). They are
+  // never averaged; "Not experienced" is reported separately, because being left out of a
+  // setting (for example decision-making) is itself a finding.
+  const NOT_EXPERIENCED = { code: 97, label: 'Not experienced in the past 3 months' };
+  const UNABLE = { code: 98, label: 'Unable to judge' };
+  const EXTRA = [NOT_EXPERIENCED, UNABLE];
   const MIN_GROUP = 5; // nothing is shown for fewer than 5 answers or people
 
   // The three lines on the map. Each combines closely related dimensions from the brief.
@@ -110,9 +116,9 @@
   ];
 
   const TEXT = {
-    intro: 'This short survey asks how you feel in six everyday workplace settings, from team meetings to decision-making. Your answers are combined with your team\'s to make a Relief Map that shows where people feel safe, included and at ease. It takes about 5 minutes.',
+    intro: 'This short survey asks how you feel in six everyday workplace settings, from team meetings to decision-making. Think about the past 3 months, or since you started if that is more recent. Your answers are combined with your team\'s to make a Relief Map that shows where people feel safe, included and at ease. It takes about 5 minutes.',
     privacy: 'Taking part is voluntary, and you can skip any question. Your answers are anonymous: we do not collect your name, email, staff ID, IP address or location. Supervisors never see individual answers. Results are shared only as group averages, never for groups of fewer than 5 people. Questions: [team contact email].',
-    setting: (s, i) => `${i + 1} of ${SETTINGS.length}: ${s.label}. ${s.intro} How much do you agree?`,
+    setting: (s, i) => `${i + 1} of ${SETTINGS.length}: ${s.label}. ${s.intro} Thinking about the past 3 months, how much do you agree?`,
     overall: 'Your workplace overall. How much do you agree?',
     about: 'About you (optional). These questions show whether experiences differ between groups. Groups smaller than 5 are never shown, and you can always choose "Prefer not to answer".',
     ideas: 'Your ideas (optional). Please do not include names or details that could identify anyone.',
@@ -151,6 +157,17 @@
   }
 
   const overall = (people) => OVERALL.map((o) => Object.assign({ item: o }, stat(answers(people, o.id))));
+
+  // For each setting: the share of its answers that were "Not experienced in the past 3 months"
+  // and "Unable to judge" (out of every answer given, including these two).
+  function notExperienced(people) {
+    return SETTINGS.map((s) => {
+      const given = people.flatMap((p) => MEASURES.map((m) => p.items[`${s.id}_${m.id}`])).filter((v) => v != null);
+      const ne = given.filter((v) => v === NOT_EXPERIENCED.code).length;
+      const un = given.filter((v) => v === UNABLE.code).length;
+      return { answers: given.length, notExperienced: ne, unable: un, share: given.length ? ne / given.length : 0 };
+    });
+  }
 
   // Groups for one identity question. Privacy rules, for each setting:
   // a group needs at least 5 people; people in smaller groups or who did not say are pooled, and
@@ -243,11 +260,14 @@
     const col = (name) => head.indexOf(name);
     const statementIds = ITEMS.concat(OVERALL).map((it) => it.id);
     if (!statementIds.some((id) => col(id) >= 0)) throw new Error('This does not look like an export of the Relief Maps survey: columns such as MEET_SAFE are missing.');
+    // 1 to 5 for the scale; 97 and 98 kept as codes (never averaged); anything else is blank.
     const agreement = (raw) => {
       const v = String(raw == null ? '' : raw).trim();
-      if (/^\d$/.test(v)) return valid(Number(v));
+      if (/^\d+$/.test(v)) { const n = Number(v); return valid(n) || (EXTRA.some((e) => e.code === n) ? n : null); }
       const i = SCALE.findIndex((s) => norm(s) === norm(v));
-      return i >= 0 ? i + 1 : null;
+      if (i >= 0) return i + 1;
+      const e = EXTRA.find((x) => norm(x.label) === norm(v));
+      return e ? e.code : null;
     };
     const choice = (q, raw) => {
       const v = String(raw == null ? '' : raw).trim();
@@ -297,6 +317,8 @@
     overall: { OV_BELONG: 3.8, OV_SUPPORT: 3.4, OV_CONCERNS: 3.2, OV_RESPECT: 4.0, OV_COLLAB: 3.6 },
     effects: { 'GENDER-0': { SOCIAL: -0.45, DECIDE: -0.2 }, 'GENDER-2': { SOCIAL: -0.6 }, 'AGE_GROUP-0': { DECIDE: -0.55 }, 'AGE_GROUP-2': { LEARN: -0.5 },
       'DISABILITY-0': { SOCIAL: -0.55, MEET: -0.3 }, 'MINORITY-0': { SOCIAL: -0.45, DECIDE: -0.25 }, 'PARENT_DEGREE-1': { SOCIAL: -0.3, LEARN: -0.4 } },
+    // People (by position in the team) who have not been in a setting in the past 3 months.
+    notExperienced: { ONLINE: [4, 24, 31], DECIDE: [1, 16, 21, 26, 33], LEARN: [27] },
     comments: ['Share the agenda before meetings.', 'Explain how decisions are made.', 'Ask quieter colleagues for their views.', 'Hold social events during the day.', 'Open training to everyone.']
   };
 
@@ -316,7 +338,11 @@
       const personal = normal() * 0.35;
       const shift = (key) => IDENTITY.reduce((a, q) => a + (p.ident[q.id] == null ? 0 : (SAMPLE.effects[`${q.id}-${p.ident[q.id]}`] || {})[key] || 0), 0);
       const answer = (mu) => (rand() < 0.01 ? null : Math.min(5, Math.max(1, Math.round(mu + normal() * 0.6))));
-      SETTINGS.forEach((s) => MEASURES.forEach((m) => { p.items[`${s.id}_${m.id}`] = answer(SAMPLE.base[s.id][m.id] + personal + shift(s.id)); }));
+      SETTINGS.forEach((s) => MEASURES.forEach((m) => {
+        const id = `${s.id}_${m.id}`;
+        if ((SAMPLE.notExperienced[s.id] || []).includes(i)) { p.items[id] = NOT_EXPERIENCED.code; return; }
+        p.items[id] = rand() < 0.015 ? UNABLE.code : answer(SAMPLE.base[s.id][m.id] + personal + shift(s.id));
+      }));
       OVERALL.forEach((o) => { p.items[o.id] = answer(SAMPLE.overall[o.id] + personal); });
       REFLECTION.forEach((q) => { p.comments[q.id] = rand() < 0.4 ? SAMPLE.comments[Math.floor(rand() * SAMPLE.comments.length)] : ''; });
     });
@@ -333,9 +359,11 @@
       { id: 'PRIVACY', type: 'DB', block: 'Introduction', text: TEXT.privacy },
       { id: CONSENT.id, type: 'MC', block: 'Introduction', text: CONSENT.question, options: CONSENT.options }
     ];
+    const settingOptions = SCALE.concat(EXTRA.map((e) => e.label));
+    const settingCodes = SCALE.map((_, i) => i + 1).concat(EXTRA.map((e) => e.code));
     SETTINGS.forEach((s, i) => {
       list.push({ id: `${s.id}_INTRO`, type: 'DB', block: 'Workplace settings', text: TEXT.setting(s, i), pageBreakBefore: i > 0 });
-      MEASURES.forEach((m) => list.push({ id: `${s.id}_${m.id}`, type: 'MC', block: 'Workplace settings', text: STATEMENTS[s.id][m.id].text, options: SCALE }));
+      MEASURES.forEach((m) => list.push({ id: `${s.id}_${m.id}`, type: 'MC', block: 'Workplace settings', text: STATEMENTS[s.id][m.id].text, options: settingOptions, codes: settingCodes }));
     });
     list.push({ id: 'OV_INTRO', type: 'DB', block: 'Overall', text: TEXT.overall });
     OVERALL.forEach((o) => list.push({ id: o.id, type: 'MC', block: 'Overall', text: o.text, options: SCALE }));
@@ -356,7 +384,12 @@
       else if (q.pageBreakBefore) out.push('[[PageBreak]]', '');
       if (q.type === 'DB') out.push('[[Question:DB]]', `[[ID:${q.id}]]`, q.text, '');
       else if (q.type === 'TE') out.push('[[Question:TE:Essay]]', `[[ID:${q.id}]]`, q.text, '');
-      else out.push('[[Question:MC:SingleAnswer:Vertical]]', `[[ID:${q.id}]]`, q.text, '[[Choices]]', ...q.options, '');
+      else if (q.codes) {
+        // Advanced choices set the recode values, so the extra answers export as 97 and 98.
+        out.push('[[Question:MC:SingleAnswer:Vertical]]', `[[ID:${q.id}]]`, q.text, '[[AdvancedChoices]]');
+        q.options.forEach((o, i) => out.push(`[[Choice:${q.codes[i]}]]`, o));
+        out.push('');
+      } else out.push('[[Question:MC:SingleAnswer:Vertical]]', `[[ID:${q.id}]]`, q.text, '[[Choices]]', ...q.options, '');
     });
     return out.join('\n');
   }
@@ -387,6 +420,6 @@
     return lines.map((l) => l.map(cell).join(',')).join('\r\n') + '\r\n';
   }
 
-  return { SURVEY_TITLE, SCALE, MIN_GROUP, MEASURES, DIMENSIONS, SETTINGS, STATEMENTS, ITEMS, OVERALL, CONSENT, ABOUT_YOU, IDENTITY, REFLECTION, TEXT,
+  return { SURVEY_TITLE, SCALE, NOT_EXPERIENCED, UNABLE, EXTRA, MIN_GROUP, notExperienced, MEASURES, DIMENSIONS, SETTINGS, STATEMENTS, ITEMS, OVERALL, CONSENT, ABOUT_YOU, IDENTITY, REFLECTION, TEXT,
     settingScore, map, dimensionAverages, overall, groups, summary, groupSummary, parseCSV, readExport, sampleTeam, samplePeople, questions, qualtricsTxt, sampleCSV };
 });

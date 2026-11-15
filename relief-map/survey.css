@@ -52,6 +52,8 @@ main.sv-wrap { padding-top: 1rem; padding-bottom: 1.5rem; }
 .sv-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
 .sv-dot { flex: none; width: 22px; height: 22px; border: 2px solid #7d8497; border-radius: 50%; background: #fff; }
 .sv-opt:hover { border-color: var(--sv-navy-2); }
+.sv-opt-extra { min-height: 44px; color: var(--sv-muted); background: #fbfbfd; }
+.sv-opt-extra:not(.sv-opt-extra ~ .sv-opt-extra) { margin-top: .45rem; }
 .sv-opt:has(input:checked) { border: 2px solid var(--sv-navy); background: var(--sv-lavender-2); }
 .sv-opt input:checked + .sv-dot { border-color: var(--sv-navy); background: radial-gradient(circle, var(--sv-navy) 0 5px, #fff 5.5px); }
 .sv-opt:has(input:focus-visible) { outline: 3px solid var(--sv-teal); outline-offset: 2px; }

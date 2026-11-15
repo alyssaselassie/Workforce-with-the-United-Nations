@@ -10,14 +10,15 @@
   let answers = {}, history = [], current = 'welcome';
 
   const choice = (q, required) => ({ id: q.id, text: q.question, options: q.options, required });
-  const agree = (it) => ({ id: it.id, text: it.text, options: RM.SCALE });
+  // Setting statements add "Not experienced in the past 3 months" and "Unable to judge".
+  const agree = (it) => ({ id: it.id, text: it.text, options: it.setting ? RM.SCALE.concat(RM.EXTRA.map((e) => e.label)) : RM.SCALE });
 
   // The pages, in order. `show` is the display logic: the identity page only follows a "Yes".
   const PAGES = [
     { id: 'welcome', eyebrow: 'Welcome', title: RM.SURVEY_TITLE, body: [RM.TEXT.intro],
       facts: RM.TEXT.privacy.split(/\.\s+/).map((s, i, a) => (i < a.length - 1 ? `${s}.` : s)), questions: [choice(RM.CONSENT, true)] }
   ].concat(RM.SETTINGS.map((s, i) => ({
-    id: s.id, eyebrow: `${i + 1} of ${RM.SETTINGS.length}`, title: s.label, body: [`${s.intro} How much do you agree?`],
+    id: s.id, eyebrow: `${i + 1} of ${RM.SETTINGS.length}`, title: s.label, body: [`${s.intro} Thinking about the past 3 months, how much do you agree?`],
     questions: RM.MEASURES.map((m) => agree(RM.ITEMS.find((it) => it.id === `${s.id}_${m.id}`)))
   })), [
     { id: 'overall', eyebrow: 'Almost done', title: 'Your workplace overall', body: ['How much do you agree?'], questions: RM.OVERALL.map(agree) },
@@ -30,7 +31,7 @@
   function questionHtml(q) {
     if (q.essay) return `<div class="sv-q"><label class="sv-q-text" for="f-${q.id}">${esc(q.text)}</label><textarea id="f-${q.id}" name="${q.id}" rows="4">${esc(answers[q.id] || '')}</textarea></div>`;
     return `<fieldset class="sv-q" id="q-${q.id}"${q.required ? ' aria-required="true"' : ''}><legend class="sv-q-text">${esc(q.text)}${q.required ? ' <span class="sv-req">Required</span>' : ''}</legend>
-      <div class="sv-options">${q.options.map((o, i) => `<label class="sv-opt"><input type="radio" name="${q.id}" value="${i}"${answers[q.id] === i ? ' checked' : ''}${q.required ? ' required' : ''}><span class="sv-dot" aria-hidden="true"></span><span>${esc(o)}</span></label>`).join('')}</div></fieldset>`;
+      <div class="sv-options">${q.options.map((o, i) => `<label class="sv-opt${i >= RM.SCALE.length && q.options.length > RM.SCALE.length + 1 ? ' sv-opt-extra' : ''}"><input type="radio" name="${q.id}" value="${i}"${answers[q.id] === i ? ' checked' : ''}${q.required ? ' required' : ''}><span class="sv-dot" aria-hidden="true"></span><span>${esc(o)}</span></label>`).join('')}</div></fieldset>`;
   }
 
   function progress(pct) {
