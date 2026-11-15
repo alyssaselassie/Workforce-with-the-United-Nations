@@ -3,26 +3,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Team Relief Map · Prototype</title>
-  <meta name="description" content="A team-level Relief Map: see where people feel comfortable, included and heard across six workplace settings, from anonymous Qualtrics survey results.">
+  <title>Relief Maps Tool · Prototype</title>
+  <meta name="description" content="Relief Maps Tool: an anonymous, mobile-friendly Qualtrics survey and a team-level map of psychological safety, belonging, inclusion, voice and comfort across six workplace settings.">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link href="relief-map.css?v=20261112a" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="relief-map.css?v=20261115a" rel="stylesheet">
 </head>
 <body>
   <a class="visually-hidden-focusable skip-link" href="#map-h">Skip to the map</a>
 
   <header class="rm-header">
     <div class="container">
-      <p class="rm-eyebrow mb-1">UN Transformative Spaces · Prototype</p>
-      <h1 class="mb-2">Team Relief Map</h1>
-      <p class="rm-lead mb-3">See where your team feels comfortable, included and heard across six everyday workplace settings. Answers are anonymous, and only team averages are shown.</p>
-      <nav class="rm-links" aria-label="Downloads and links">
-        <a class="btn btn-light btn-sm" href="relief-map-survey.txt" download>Qualtrics survey file (TXT)</a>
-        <a class="btn btn-outline-light btn-sm" href="sample-qualtrics-export.csv" download>Fictional sample export (CSV)</a>
-        <a class="btn btn-outline-light btn-sm" href="../docs/Relief-Map-Qualtrics-Prototype.docx" download>Guide (Word)</a>
+      <p class="rm-eyebrow mb-2">UN Transformative Spaces · Research prototype</p>
+      <h1 class="mb-1">Relief Maps Tool</h1>
+      <p class="rm-subtitle mb-3">Visualizing well-being across work and learning spaces</p>
+      <p class="rm-lead mb-3">An anonymous, five-minute survey and a team-level map of where people feel safe, included, heard and at ease, across six everyday workplace settings.</p>
+      <nav class="rm-links" aria-label="Main links">
+        <a class="btn btn-light btn-sm" href="survey.html">Try the survey preview</a>
+        <a class="btn btn-outline-light btn-sm" href="#downloads">Downloads</a>
         <a class="btn btn-outline-light btn-sm" href="#how">How it works</a>
         <a class="btn btn-outline-light btn-sm" href="../index.html">CQ &amp; Bias Navigator</a>
       </nav>
@@ -35,7 +35,7 @@
       <div class="row g-3 align-items-start">
         <div class="col-lg-4">
           <p class="rm-label mb-1">Data</p>
-          <p class="mb-2" id="source-line"><strong>Fictional sample team</strong> (48 people)</p>
+          <p class="mb-2" id="source-line"><strong>Fictional sample team</strong></p>
           <label class="btn btn-sm btn-primary mb-1" for="csv-file">Load a Qualtrics export (CSV)</label>
           <input class="visually-hidden" type="file" id="csv-file" accept=".csv,text/csv">
           <button type="button" class="btn btn-sm btn-outline-secondary mb-1" id="use-sample" hidden>Back to the sample</button>
@@ -43,24 +43,37 @@
           <div id="file-msg" class="small mt-2" role="status"></div>
         </div>
         <div class="col-lg-5">
-          <p class="rm-label mb-1" id="compare-label">Compare</p>
-          <div class="rm-compare" role="group" aria-labelledby="compare-label" id="compare"></div>
+          <p class="rm-label mb-1" id="view-label">Lines show</p>
+          <div class="rm-seg mb-2" role="group" aria-labelledby="view-label" id="view">
+            <button type="button" class="btn btn-sm" data-view="dims" aria-pressed="true">Experience dimensions</button>
+            <button type="button" class="btn btn-sm" data-view="groups" aria-pressed="false">Groups</button>
+          </div>
+          <div class="row g-2" id="group-controls" hidden>
+            <div class="col-sm-6">
+              <label class="rm-label mb-1" for="group-q">Compare by</label>
+              <select class="form-select form-select-sm" id="group-q"></select>
+            </div>
+            <div class="col-sm-6">
+              <label class="rm-label mb-1" for="measure">Measure</label>
+              <select class="form-select form-select-sm" id="measure"></select>
+            </div>
+          </div>
         </div>
         <div class="col-lg-3">
           <label class="rm-label mb-1" for="min-group">Smallest group shown</label>
           <select class="form-select form-select-sm" id="min-group">
-            <option value="5" selected>5 people</option>
-            <option value="8">8 people</option>
-            <option value="10">10 people</option>
+            <option value="5" selected>5 answers</option>
+            <option value="8">8 answers</option>
+            <option value="10">10 answers</option>
           </select>
-          <p class="small text-secondary mt-1 mb-0">Smaller groups are hidden to protect anonymity.</p>
+          <p class="small text-secondary mt-1 mb-0">Anything based on fewer answers is hidden to protect anonymity.</p>
         </div>
       </div>
     </section>
 
     <section class="rm-card" aria-labelledby="map-h">
-      <h2 id="map-h" class="h4 mb-1">Relief Map: <span id="map-sub">everyone</span></h2>
-      <p class="small text-secondary mb-2">Higher points mean more discomfort (1 = very comfortable, 5 = very uncomfortable). <span id="data-tag" class="rm-tag">Fictional data</span></p>
+      <h2 id="map-h" class="h4 mb-1">Relief Map: <span id="map-sub">experience dimensions, everyone</span></h2>
+      <p class="small text-secondary mb-2" id="map-caption">Average agreement from 1 (strongly disagree) to 5 (strongly agree). Higher is more positive. <span id="data-tag" class="rm-tag">Fictional data</span></p>
       <div id="chart" class="rm-chart"></div>
       <ul id="legend" class="rm-legend" aria-label="Lines on the map"></ul>
       <div id="notes" class="rm-notes"></div>
@@ -71,9 +84,15 @@
       <h2 id="table-h" class="h5">The numbers</h2>
       <div class="table-responsive"><table class="table table-sm rm-table" id="data-table"></table></div>
       <details class="small">
-        <summary>Averages by statement, for everyone</summary>
-        <div class="table-responsive mt-2"><table class="table table-sm rm-table" id="item-table"></table></div>
+        <summary>All 30 statements: average, share who agree, answers and skips</summary>
+        <div class="table-responsive mt-2"><table class="table table-sm rm-table rm-table-wrap" id="item-table"></table></div>
       </details>
+    </section>
+
+    <section class="rm-card" aria-labelledby="overall-h">
+      <h2 id="overall-h" class="h5">Overall workplace experience</h2>
+      <p class="small text-secondary">Everyone sees these five statements. The bar shows the share who agree or strongly agree.</p>
+      <div id="overall"></div>
     </section>
 
     <section class="rm-card" aria-labelledby="insight-h">
@@ -82,19 +101,56 @@
     </section>
 
     <section class="rm-card" aria-labelledby="themes-h">
-      <h2 id="themes-h" class="h5">Suggestions from the team</h2>
+      <h2 id="themes-h" class="h5">Comment themes</h2>
       <div id="themes"></div>
+    </section>
+
+    <section class="rm-card" id="survey" aria-labelledby="survey-h">
+      <h2 id="survey-h" class="h5">The survey</h2>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <p>About 5 minutes on any phone. Every question is optional except consent, and nothing identifies the person answering.</p>
+          <ol class="rm-steps small">
+            <li><strong>Introduction and consent.</strong> Purpose, voluntary and anonymous participation, how results are reported. Choosing "No" ends the survey.</li>
+            <li><strong>Workplace experience.</strong> Six settings, one short page each. Every setting has five statements, one per dimension, and each person sees three of them, chosen at random.</li>
+            <li><strong>Overall workplace experience.</strong> Five statements: belonging, support, confidence to raise concerns, respect and collaboration.</li>
+            <li><strong>About you (optional).</strong> One question asks whether to show five identity questions, each with "Prefer not to answer".</li>
+            <li><strong>Your ideas (optional).</strong> Two open questions, with a reminder not to include names.</li>
+            <li><strong>Thank you.</strong> A closing message about how results will be shared.</li>
+          </ol>
+          <a class="btn btn-primary btn-sm" href="survey.html">Open the survey preview</a>
+        </div>
+        <div class="col-lg-6">
+          <h3 class="h6">Why each person sees 3 of the 5 statements</h3>
+          <p class="small">A complete map needs one statement for each dimension in every setting: 30 in all. Showing each person 3 per setting keeps the survey to about 5 minutes. Qualtrics picks the three at random and evenly, so across the team every statement is answered by about 60% of people, and each point on the map still averages many answers.</p>
+          <p class="small mb-2">The trade-off: each point rests on fewer answers, so the map works best for teams of 25 or more, and group comparisons for a single dimension are hidden more often.</p>
+          <h3 class="h6">The five dimensions</h3>
+          <ul class="small mb-0" id="dims-list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="rm-card" id="downloads" aria-labelledby="dl-h">
+      <h2 id="dl-h" class="h5">Downloads</h2>
+      <ul class="rm-downloads">
+        <li><a href="relief-map-survey.txt" download>Qualtrics survey file (TXT)</a><span>Import it in Qualtrics to create every block, question, answer and export tag.</span></li>
+        <li><a href="../docs/Relief-Map-Qualtrics-Prototype.docx" download>Implementation package (Word)</a><span>The full survey, sources, Qualtrics build steps, survey flow, scoring guide, sample map and pilot plan.</span></li>
+        <li><a href="relief-map-codebook.csv" download>Codebook (CSV)</a><span>Every variable, its wording, codes, construct and source.</span></li>
+        <li><a href="Relief-Map-Analysis-Template.xlsx" download>Analysis workbook (Excel)</a><span>Paste a Qualtrics export to get the scores, the privacy checks and the Relief Map chart.</span></li>
+        <li><a href="sample-qualtrics-export.csv" download>Fictional sample export (CSV)</a><span>A made-up team of 60 in the Qualtrics export layout, for practice.</span></li>
+      </ul>
     </section>
 
     <section class="rm-card" aria-labelledby="pilot-h">
       <h2 id="pilot-h" class="h5">Pilot plan: one team or department</h2>
       <ol class="rm-steps">
-        <li><strong>Choose a team</strong> of about 15 to 40 people with a leader who will act on the results. Smaller teams can take part, but group lines will stay hidden.</li>
-        <li><strong>Check privacy first.</strong> Confirm the organization's data protection rules, use the anonymous link, turn on "Anonymize responses" and agree that groups under 5 are never reported.</li>
-        <li><strong>Explain it to the team:</strong> why the survey matters, that it is voluntary and anonymous, who sees what, and that no individual results go to supervisors.</li>
-        <li><strong>Open the survey for two weeks</strong>, with one reminder. Aim for at least 60% of the team.</li>
-        <li><strong>Share the map with everyone at once</strong>, then hold a one-hour team debrief: what surprises us, what we can change, and two or three actions with owners.</li>
-        <li><strong>Learn and repeat:</strong> ask participants about clarity, length and how safe they felt answering, test on phones and with a screen reader, and run the survey again in three to six months.</li>
+        <li><strong>Choose a team</strong> of about 25 to 60 people whose leader will act on the results. Smaller teams can take part, but more points and group lines will stay hidden.</li>
+        <li><strong>Check privacy and ethics first.</strong> Confirm data protection rules and any ethics review, use only the anonymous link, turn on "Anonymize responses" and agree that groups under 5 are never reported.</li>
+        <li><strong>Test before launch.</strong> Five to eight volunteers take the survey on their phones and with a screen reader, then say what was unclear or felt too personal.</li>
+        <li><strong>Explain it to the team</strong>: why it matters, that it is voluntary and anonymous, who sees what, and that no individual results go to supervisors.</li>
+        <li><strong>Open the survey for two weeks</strong> with one reminder. Aim for at least 60% of the team.</li>
+        <li><strong>Share the map with everyone at once</strong>, then hold a one-hour debrief: what surprises us, what we can change, and two or three actions with owners.</li>
+        <li><strong>Learn and repeat:</strong> check completion time, skipped questions and how the statements hang together, adjust the wording, and run the survey again in three to six months.</li>
       </ol>
     </section>
 
@@ -102,46 +158,52 @@
       <h2 id="how-h" class="h5">How it works</h2>
       <div class="row g-4">
         <div class="col-lg-6">
-          <h3 class="h6">The survey (about 6 minutes, on any phone)</h3>
-          <p class="small">For each of six workplace settings, people rate five statements from <em>Strongly disagree</em> (1) to <em>Strongly agree</em> (5), or choose <em>Does not apply to me</em>. Five optional questions about role, gender, age group, working language and disability allow group comparisons, and one open question asks for an idea to improve the team.</p>
-          <ul class="small" id="settings-list"></ul>
-          <h3 class="h6">The statements and their sources</h3>
-          <ul class="small" id="items-list"></ul>
+          <h3 class="h6">Scoring</h3>
+          <ul class="small">
+            <li>Answers are scored 1 (strongly disagree) to 5 (strongly agree). Every statement is worded positively, so higher always means a more positive experience and nothing is reverse-scored.</li>
+            <li><strong>Each point on the map</strong> is the average of everyone who answered that statement (one dimension in one setting).</li>
+            <li><strong>A setting's score</strong> is first worked out for each person, as the average of the statements they answered there (at least 2 of the 3 they saw), then averaged across people.</li>
+            <li><strong>A dimension's average</strong> is the average of its six points.</li>
+            <li><strong>The overall index</strong> is each person's average of the five overall statements (at least 3 answered), averaged across people.</li>
+            <li>"% agree" is the share answering 4 or 5. As a guide: 4.0 or higher is strong, 3.0 to 3.9 is mixed, and below 3.0 means more disagreement than agreement.</li>
+          </ul>
+          <h3 class="h6">Missing answers</h3>
+          <ul class="small mb-0">
+            <li>Statements a person was not shown (the random three, or the virtual setting after "No") are blank in the export and are left out.</li>
+            <li>Statements a person saw but skipped are exported as -99 and are also left out, never counted as 0 or as neutral. The statement table reports how often each was skipped.</li>
+            <li>Partial responses count: each number uses the answers that exist, and the number of answers is always shown.</li>
+            <li>Responses without consent, Qualtrics previews and test responses are removed.</li>
+          </ul>
         </div>
         <div class="col-lg-6">
-          <h3 class="h6">Scoring</h3>
-          <p class="small">Each person's score for a setting is the average of the statements they answered (at least 3 of 5), turned around so that higher means more discomfort: discomfort = 6 − average agreement. The map shows the average across people.</p>
           <h3 class="h6">Privacy rules</h3>
           <ul class="small">
-            <li>No names, staff IDs, IP addresses or locations are collected, and every question is optional.</li>
-            <li>Nothing is shown for fewer than 5 answers, and no group smaller than the chosen minimum is ever shown.</li>
-            <li>People in small groups, and those who chose not to say, are pooled. If that pool is smaller than the minimum, the comparison is hidden, so no one can work out a small group's answers from the others.</li>
+            <li>No names, emails, staff IDs, IP addresses or locations are collected, and only consent is required.</li>
+            <li>No number is shown for fewer than 5 answers, and no group with fewer answers than the chosen minimum is ever shown.</li>
+            <li>People in small groups, and those who did not say, are pooled. If that pool is smaller than the minimum, the comparison is hidden, so no one can work out a small group's answers from the others.</li>
             <li>Only one identity question is compared at a time, so small intersections are never shown.</li>
-            <li>Comments are never shown word for word: summarize them as themes.</li>
+            <li>Comments are never shown. They are summarized as themes, and a theme is reported only if at least 3 people raised it.</li>
           </ul>
           <h3 class="h6">Use your own results</h3>
           <ol class="small">
-            <li>In Qualtrics, export the responses as a CSV file with numeric values.</li>
+            <li>In Qualtrics, export the responses as a CSV with <em>Use numeric values</em> and <em>Recode seen but unanswered questions as -99</em>.</li>
             <li>Select <em>Load a Qualtrics export</em> above. The map is drawn in your browser, and the file is never uploaded.</li>
           </ol>
           <h3 class="h6">Credits</h3>
-          <p class="small mb-0">A workplace adaptation of Relief Maps by Maria Rodó-Zárate (Rodó-Zárate, 2023), building on the Relief Maps Tool developed in 2025 by the NYU Intersectionality Lab (Prof. Raúl Sánchez, Prof. Kristine Rodriguez-Kerr and Pietro Bonfante). It maps team averages, not individual experiences. Statements adapted from Edmondson (1999) and informed by COPSOQ III (Burr et al., 2019).</p>
+          <p class="small mb-0">A workplace adaptation of Relief Maps by Maria Rodó-Zárate (Rodó-Zárate, 2023), building on the Relief Maps Tool developed in 2025 by the NYU Intersectionality Lab (Prof. Raúl Sánchez, Prof. Kristine Rodriguez-Kerr and Pietro Bonfante). The original method maps one person's emotional experience of places across their identities; this prototype keeps the link between identity, place and emotion but maps team averages, so it is not a reproduction of the original. Statements are adapted from Edmondson (1999), COPSOQ III (Burr et al., 2019) and Eisenberger et al. (1986), or newly written, as the implementation package details.</p>
         </div>
       </div>
       <h3 class="h6 mt-3">References</h3>
-      <ul class="small rm-refs mb-0">
-        <li>Burr, H., Berthelsen, H., Moncada, S., et al. (2019). The third version of the Copenhagen Psychosocial Questionnaire. <em>Safety and Health at Work, 10</em>(4), 482–503. <a href="https://doi.org/10.1016/j.shaw.2019.10.002">https://doi.org/10.1016/j.shaw.2019.10.002</a></li>
-        <li>Edmondson, A. (1999). Psychological safety and learning behavior in work teams. <em>Administrative Science Quarterly, 44</em>(2), 350–383. <a href="https://doi.org/10.2307/2666999">https://doi.org/10.2307/2666999</a></li>
-        <li>Rodó-Zárate, M. (2023). Intersectionality and the spatiality of emotions in feminist research. <em>The Professional Geographer, 75</em>(4), 676–681. <a href="https://doi.org/10.1080/00330124.2022.2075406">https://doi.org/10.1080/00330124.2022.2075406</a></li>
-      </ul>
+      <ul class="small rm-refs mb-0" id="refs"></ul>
     </section>
   </main>
 
   <footer class="rm-footer">
-    <div class="container small">Prototype for the UN Transformative Spaces initiative, built for academic purposes; not an official United Nations product. The sample team and its data are fictional.</div>
+    <div class="container small">Research prototype for the UN Transformative Spaces initiative, built for academic purposes; not an official United Nations product. The sample team and its data are fictional.</div>
   </footer>
 
-  <script src="relief-map.js?v=20261112a"></script>
-  <script src="app.js?v=20261112a"></script>
+  <div id="rm-tip" class="rm-tip" role="presentation" hidden></div>
+  <script src="relief-map.js?v=20261115a"></script>
+  <script src="app.js?v=20261115a"></script>
 </body>
 </html>

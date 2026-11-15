@@ -1,59 +1,41 @@
-// Team Relief Map page: chart, legend, tables, summaries and loading a Qualtrics export.
+// Relief Maps Tool page: the Relief Map (dimension lines or group lines), tables, the overall
+// panel, findings, comment themes and loading a Qualtrics export.
 (function () {
   'use strict';
   const RM = window.ReliefMap;
   const $ = (id) => document.getElementById(id);
   const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const fmt = (v) => v.toFixed(1);
+  const f1 = (v) => v.toFixed(1);
+  const pct = (v) => `${Math.round(v * 100)}%`;
+  const INK = '#1c2333', MUTED = '#5a6275';
 
-  // Ideas to discuss for the settings where discomfort is highest or groups differ most.
-  const OPPORTUNITIES = {
-    TM: 'Share agendas and documents a day ahead, open each item with a round so everyone speaks, and accept written input.',
-    SUP: 'Hold regular, protected check-ins with open questions, and agree on how feedback flows both ways.',
-    VIR: 'Share documents before calls, use captions and the chat, rotate meeting times across time zones and confirm decisions in writing.',
-    NET: 'Hold social and networking moments during working hours, vary the formats and make sure newcomers and consultants are invited.',
-    DEV: 'Publish training and stretch opportunities openly, with clear criteria, and include consultants and interns where the rules allow.',
-    DEC: 'Explain how decisions are made and who makes them, ask for input before decisions are final, and rotate who presents to decision-makers.'
-  };
-
-  // Line styles: colour (3:1 contrast or more on white), marker shape and dash, so lines differ without colour.
-  const STYLES = [
-    { color: '#0072b2', marker: 'square', dash: '' },
-    { color: '#d55e00', marker: 'triangle', dash: '8 4' },
-    { color: '#117733', marker: 'diamond', dash: '2 4' },
-    { color: '#aa3377', marker: 'circle', dash: '10 4 2 4' }
+  // Group lines: colours checked for colour-vision differences, each with its own marker shape.
+  const GROUP_STYLES = [
+    { color: '#0072b2', marker: 'square' },
+    { color: '#d55e00', marker: 'triangle' },
+    { color: '#009e73', marker: 'diamond' }
   ];
-  const TEAM_ALONE = { color: '#1f2a3c', marker: 'circle', dash: '', width: 3.5 };
-  const TEAM_REF = { color: '#7a8496', marker: 'circle', dash: '4 4', width: 2.5 };
+  const EVERYONE_REF = { color: '#8b90a0', marker: 'circle', ref: true };
+  // Axis labels, broken by hand so neighbours never collide.
+  const AXIS = { TM: ['Team meetings'], SUP: ['One-on-ones', 'with supervisor'], VIR: ['Virtual and', 'hybrid work'],
+    NET: ['Informal and', 'social spaces'], DEV: ['Learning and', 'development'], DEC: ['Decision-making'] };
 
   const params = new URLSearchParams(location.search);
+  const MEASURES = ['ALL'].concat(RM.DIMENSIONS.map((d) => d.id));
   const state = {
     source: 'sample',
     respondents: RM.sampleRespondents(),
-    comments: 0,
-    compare: RM.DIMENSIONS.some((d) => d.id === params.get('compare')) ? params.get('compare') : null,
+    comments: null,
+    view: params.get('view') === 'groups' ? 'groups' : 'dims',
+    q: RM.IDENTITY.some((d) => d.id === params.get('q')) ? params.get('q') : 'D_AGE',
+    measure: MEASURES.includes(params.get('m')) ? params.get('m') : 'ALL',
     k: [5, 8, 10].includes(Number(params.get('k'))) ? Number(params.get('k')) : 5,
     compact: false
   };
 
-  function styleFor(series, i, total) {
-    if (i === 0) return total > 1 ? TEAM_REF : TEAM_ALONE;
-    return Object.assign({ width: 3 }, STYLES[(i - 1) % STYLES.length]);
-  }
-
-  function marker(shape, x, y, color, size) {
-    const s = size || 5.5;
-    const common = `fill="${color}" stroke="#fff" stroke-width="1.5"`;
-    if (shape === 'square') return `<rect x="${x - s}" y="${y - s}" width="${2 * s}" height="${2 * s}" ${common}/>`;
-    if (shape === 'triangle') return `<path d="M${x} ${y - s - 1.5}L${x + s + 1.2} ${y + s}L${x - s - 1.2} ${y + s}Z" ${common}/>`;
-    if (shape === 'diamond') return `<path d="M${x} ${y - s - 1.5}L${x + s + 1.5} ${y}L${x} ${y + s + 1.5}L${x - s - 1.5} ${y}Z" ${common}/>`;
-    return `<circle cx="${x}" cy="${y}" r="${s}" ${common}/>`;
-  }
-
   function wrap(text, max) {
-    const words = text.split(' ');
     const lines = [''];
-    words.forEach((w) => {
+    text.split(' ').forEach((w) => {
       const cur = lines[lines.length - 1];
       if (cur && (cur + ' ' + w).length > max) lines.push(w);
       else lines[lines.length - 1] = cur ? cur + ' ' + w : w;
@@ -61,166 +43,264 @@
     return lines;
   }
 
-  function groupSize(series) {
-    if (series.key === 'all') return state.respondents.length;
-    const [dimId, gi] = series.key.split(/-(?=\d+$)/);
-    return state.respondents.filter((r) => r.dims[dimId] === Number(gi)).length;
+  function markerSvg(shape, x, y, color, r) {
+    r = r || 4.5;
+    const ring = 'stroke="#fff" stroke-width="2" stroke-linejoin="round"';
+    const p = (pts) => `<path d="M${pts.map((q) => `${q[0].toFixed(1)} ${q[1].toFixed(1)}`).join('L')}Z" fill="${color}" ${ring}/>`;
+    if (shape === 'square') return `<rect x="${x - r}" y="${y - r}" width="${2 * r}" height="${2 * r}" rx="1" fill="${color}" ${ring}/>`;
+    if (shape === 'triangle') { const h = r * 1.3; return p([[x, y - h], [x + h, y + r], [x - h, y + r]]); }
+    if (shape === 'triangle-down') { const h = r * 1.3; return p([[x, y + h], [x + h, y - r], [x - h, y - r]]); }
+    if (shape === 'diamond') { const h = r * 1.4; return p([[x, y - h], [x + h, y], [x, y + h], [x - h, y]]); }
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}" ${ring}/>`;
+  }
+
+  const swatch = (s) => `<svg width="30" height="14" aria-hidden="true" focusable="false"><line x1="1" x2="29" y1="7" y2="7" stroke="${s.color}" stroke-width="2"/>${markerSvg(s.marker, 15, 7, s.color, s.ref ? 3.5 : 4)}</svg>`;
+
+  // ---------- what to draw ----------
+  function currentSeries() {
+    if (state.view === 'dims') {
+      const map = RM.dimensionMap(state.respondents, state.k);
+      const series = map.series.map((s, i) => ({ key: s.key, label: s.label, color: s.dim.color, marker: s.dim.marker, values: s.values, avg: map.dimAverages[i] }));
+      return { kind: 'dims', map, series, notes: map.notes, summary: RM.summarizeMap(map) };
+    }
+    const agg = RM.groupMap(state.respondents, state.q, state.measure, state.k);
+    const series = agg.series.map((s, i) => Object.assign({ key: s.key, label: s.label, values: s.values, gi: s.gi },
+      i === 0 ? EVERYONE_REF : GROUP_STYLES[(i - 1) % GROUP_STYLES.length]));
+    return { kind: 'groups', agg, series, notes: agg.notes, summary: RM.summarizeGroups(agg) };
+  }
+
+  function measureLabel(m) {
+    return m === 'ALL' ? 'overall experience (all five dimensions)' : RM.DIMENSIONS.find((d) => d.id === m).label.toLowerCase();
   }
 
   // ---------- chart ----------
-  function chart(agg) {
+  function chartSvg(view) {
     const c = state.compact;
-    const W = c ? 360 : 880, H = c ? 330 : 400;
-    const m = c ? { l: 26, r: 26, t: 30, b: 58 } : { l: 176, r: 190, t: 30, b: 64 };
+    const series = view.series;
+    const W = c ? 360 : 1000, H = c ? 360 : 430;
+    const m = c ? { l: 30, r: 12, t: 16, b: 68 } : { l: 150, r: 220, t: 20, b: 66 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
-    const x = (i) => m.l + (i * pw) / (RM.SETTINGS.length - 1);
+    const n = RM.SETTINGS.length;
+    const x = (i) => m.l + ((i + 0.5) * pw) / n;
     const y = (v) => m.t + ((5 - v) / 4) * ph;
     const parts = [];
-    // Bands: comfortable (1 to 2.5), mixed (2.5 to 3.5), uncomfortable (3.5 to 5).
-    [[1, 2.5, '#eaf6ef'], [2.5, 3.5, '#f3f5f9'], [3.5, 5, '#fcefef']].forEach(([a, b, f]) => {
-      parts.push(`<rect x="${m.l - 12}" y="${y(b)}" width="${pw + 24}" height="${y(a) - y(b)}" fill="${f}"/>`);
-    });
-    const words = { 1: 'Very comfortable', 3: 'Neutral', 5: 'Very uncomfortable' };
+    parts.push(`<rect x="${m.l}" y="${y(3)}" width="${pw}" height="${y(1) - y(3)}" fill="#fbf3ee"/>`);
+    if (!c) parts.push(`<text x="${m.l + 10}" y="${y(1) - 10}" font-size="12" fill="#8a4b2f">Below 3: more disagreement than agreement</text>`);
+    const words = { 5: 'Strongly agree', 4: 'Agree', 3: 'Neutral', 2: 'Disagree', 1: 'Strongly disagree' };
     for (let v = 1; v <= 5; v += 1) {
-      parts.push(`<line x1="${m.l - 12}" x2="${m.l + pw + 12}" y1="${y(v)}" y2="${y(v)}" stroke="#d3d9e4" stroke-width="1"/>`);
-      parts.push(`<text x="${m.l - 16}" y="${y(v) + 4.5}" text-anchor="end" font-size="13" font-weight="700">${v}</text>`);
-      if (!c && words[v]) parts.push(`<text x="${m.l - 34}" y="${y(v) + 4.5}" text-anchor="end" font-size="12.5" fill="#5b6678">${words[v]}</text>`);
+      parts.push(`<line x1="${m.l}" x2="${m.l + pw}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 3 ? '#c4c9d6' : '#e4e7ee'}" stroke-width="1"/>`);
+      parts.push(`<text x="${m.l - 10}" y="${y(v) + 4.5}" text-anchor="end" font-size="13" font-weight="700" fill="${INK}">${v}</text>`);
+      if (!c) parts.push(`<text x="${m.l - 26}" y="${y(v) + 4.5}" text-anchor="end" font-size="12.5" fill="${MUTED}">${words[v]}</text>`);
     }
-    parts.push(`<text x="${m.l - 12}" y="${m.t - 12}" font-size="12" fill="#5b6678">↑ More discomfort</text>`);
     RM.SETTINGS.forEach((st, i) => {
-      // On small screens, short labels on two staggered rows so neighbours never collide.
-      const lines = c ? [st.short] : wrap(st.label, 15);
-      const top = m.t + ph + 22 + (c && i % 2 ? 17 : 0);
-      lines.forEach((ln, li) => parts.push(`<text x="${x(i)}" y="${top + li * 16}" text-anchor="middle" font-size="${c ? 12.5 : 13.5}" font-weight="700">${esc(ln)}</text>`));
+      const lines = c ? [st.short] : AXIS[st.id] || wrap(st.label, 15);
+      const top = m.t + ph + 22 + (c && i % 2 ? 18 : 0);
+      lines.forEach((ln, li) => parts.push(`<text x="${x(i).toFixed(1)}" y="${top + li * 16}" text-anchor="middle" font-size="${c ? 12.5 : 13.5}" font-weight="600" fill="${INK}">${esc(ln)}</text>`));
     });
-    const total = agg.series.length;
-    const labels = [];
-    agg.series.forEach((s, si) => {
-      const st = styleFor(s, si, total);
-      let d = '';
-      let pen = false;
+    parts.push(`<line class="rm-cross" x1="0" x2="0" y1="${m.t}" y2="${m.t + ph}" stroke="#9aa0ad" stroke-width="1" visibility="hidden"/>`);
+    series.forEach((s) => {
+      let d = '', pen = false;
       s.values.forEach((v, i) => {
         if (v.hidden) { pen = false; return; }
         d += `${pen ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v.mean).toFixed(1)}`;
         pen = true;
       });
-      if (d) parts.push(`<path d="${d}" fill="none" stroke="${st.color}" stroke-width="${st.width}" stroke-linejoin="round" stroke-linecap="round"${st.dash ? ` stroke-dasharray="${st.dash}"` : ''}/>`);
-      s.values.forEach((v, i) => {
-        if (v.hidden) return;
-        const tip = `${s.label}, ${RM.SETTINGS[i].label}: ${fmt(v.mean)} (${v.n} answers)`;
-        parts.push(`<g class="rm-pt"><title>${esc(tip)}</title>${marker(st.marker, x(i), y(v.mean), st.color, si === 0 && total > 1 ? 4.5 : 5.5)}</g>`);
-      });
-      const last = s.values[s.values.length - 1];
-      if (!c && !last.hidden && !(si === 0 && total > 1)) labels.push({ y: y(last.mean), text: s.label, color: st.color });
+      if (d) parts.push(`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`);
     });
-    // Direct labels beside the last point, nudged apart so they never overlap.
-    labels.sort((a, b) => a.y - b.y);
-    for (let i = 1; i < labels.length; i += 1) labels[i].y = Math.max(labels[i].y, labels[i - 1].y + 17);
-    const overflow = labels.length ? labels[labels.length - 1].y - (m.t + ph + 8) : 0;
-    if (overflow > 0) labels.forEach((l) => { l.y -= overflow; });
-    labels.forEach((l) => parts.push(`<text x="${m.l + pw + 18}" y="${l.y + 4.5}" font-size="13.5" font-weight="800" fill="${l.color}">${esc(l.text)}</text>`));
+    series.forEach((s) => s.values.forEach((v, i) => { if (!v.hidden) parts.push(markerSvg(s.marker, x(i), y(v.mean), s.color, s.ref ? 3.5 : 4.5)); }));
 
-    const title = `Relief Map: average discomfort in six workplace settings, ${agg.dimension ? `by ${agg.dimension.label.toLowerCase()}` : 'for everyone'}`;
-    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-labelledby="rm-title rm-desc" xmlns="http://www.w3.org/2000/svg">
-      <title id="rm-title">${esc(title)}</title><desc id="rm-desc">${esc(RM.summarize(agg).join(' '))} The table below lists every value.</desc>${parts.join('')}</svg>`;
+    // Direct labels at the right, joined to each line's last point by a thin leader line.
+    if (!c) {
+      const labels = series.map((s) => {
+        let li = -1;
+        s.values.forEach((v, i) => { if (!v.hidden) li = i; });
+        return li < 0 ? null : { s, x0: x(li), y0: y(s.values[li].mean), y: y(s.values[li].mean) };
+      }).filter(Boolean).sort((a, b) => a.y - b.y);
+      const gap = 19;
+      for (let i = 1; i < labels.length; i += 1) labels[i].y = Math.max(labels[i].y, labels[i - 1].y + gap);
+      const over = labels.length ? labels[labels.length - 1].y - (m.t + ph) : 0;
+      if (over > 0) {
+        labels[labels.length - 1].y -= over;
+        for (let i = labels.length - 2; i >= 0; i -= 1) labels[i].y = Math.min(labels[i].y, labels[i + 1].y - gap);
+      }
+      const lx = m.l + pw + 24;
+      labels.forEach((l) => {
+        parts.push(`<path d="M${(l.x0 + 8).toFixed(1)} ${l.y0.toFixed(1)}L${(m.l + pw + 6).toFixed(1)} ${l.y0.toFixed(1)}L${lx - 4} ${l.y.toFixed(1)}" fill="none" stroke="#b9bdc8" stroke-width="1"/>`);
+        parts.push(markerSvg(l.s.marker, lx + 4, l.y, l.s.color, l.s.ref ? 3.5 : 4));
+        parts.push(`<text x="${lx + 14}" y="${(l.y + 4.5).toFixed(1)}" font-size="13" font-weight="${l.s.ref ? 600 : 700}" fill="${l.s.ref ? MUTED : INK}">${esc(l.s.label)}</text>`);
+      });
+    }
+    // Hover and keyboard layer: one target per setting.
+    RM.SETTINGS.forEach((st, i) => {
+      parts.push(`<rect class="rm-hit" data-i="${i}" x="${(m.l + (i * pw) / n).toFixed(1)}" y="${m.t}" width="${(pw / n).toFixed(1)}" height="${ph}" fill="transparent" tabindex="0" focusable="true" aria-label="${esc(columnText(view, i))}"/>`);
+    });
+    const title = view.kind === 'dims'
+      ? 'Relief Map: average agreement on five experience dimensions in six workplace settings, everyone'
+      : `Relief Map: ${measureLabel(view.agg.measure)} by ${view.agg.question.label.toLowerCase()}`;
+    return `<svg viewBox="0 0 ${W} ${H}" role="group" aria-labelledby="rm-title rm-desc" xmlns="http://www.w3.org/2000/svg" data-x0="${m.l}" data-pw="${pw}" data-n="${n}" data-w="${W}">
+      <title id="rm-title">${esc(title)}</title><desc id="rm-desc">${esc(view.summary.join(' '))} Move through the settings with the Tab key to hear each value; the table below lists every value.</desc>${parts.join('')}</svg>`;
   }
 
-  function legend(agg) {
-    const total = agg.series.length;
-    return agg.series.map((s, si) => {
-      const st = styleFor(s, si, total);
-      const sw = `<svg width="34" height="14" aria-hidden="true"><line x1="1" x2="33" y1="7" y2="7" stroke="${st.color}" stroke-width="${st.width}"${st.dash ? ` stroke-dasharray="${st.dash}"` : ''}/>${marker(st.marker, 17, 7, st.color, 4.5)}</svg>`;
-      const label = si === 0 && total > 1 ? 'Everyone (team average)' : s.label;
-      return `<li>${sw}<span>${esc(label)} <span class="text-secondary">(${groupSize(s)} people)</span></span></li>`;
+  function valueText(v) { return v.hidden ? 'hidden' : `${f1(v.mean)} (${v.n} answers)`; }
+  function columnText(view, i) {
+    return `${RM.SETTINGS[i].label}: ${view.series.map((s) => `${s.label} ${valueText(s.values[i])}`).join('; ')}`;
+  }
+
+  function tipHtml(view, i) {
+    const rows = view.series.map((s) => ({ s, v: s.values[i] })).sort((a, b) => (b.v.hidden ? -9 : b.v.mean) - (a.v.hidden ? -9 : a.v.mean));
+    return `<p class="rm-tip-h">${esc(RM.SETTINGS[i].label)}</p><ul>${rows.map((r) => `<li>${swatch(r.s)}<span>${esc(r.s.label)}</span><strong>${r.v.hidden ? 'Hidden' : f1(r.v.mean)}</strong><em>${r.v.hidden ? '' : `${r.v.n}`}</em></li>`).join('')}</ul><p class="rm-tip-n">Number of answers in grey.</p>`;
+  }
+
+  function bindHover(view) {
+    const svg = $('chart').querySelector('svg');
+    const tip = $('rm-tip');
+    const cross = svg.querySelector('.rm-cross');
+    const show = (rect) => {
+      const i = Number(rect.dataset.i);
+      const box = svg.getBoundingClientRect();
+      const scale = box.width / Number(svg.dataset.w);
+      const cx = Number(svg.dataset.x0) + ((i + 0.5) * Number(svg.dataset.pw)) / Number(svg.dataset.n);
+      cross.setAttribute('x1', cx); cross.setAttribute('x2', cx); cross.setAttribute('visibility', 'visible');
+      tip.innerHTML = tipHtml(view, i);
+      tip.hidden = false;
+      const tw = tip.offsetWidth, th = tip.offsetHeight;
+      let left = box.left + window.scrollX + cx * scale + 14;
+      if (left + tw > window.scrollX + document.documentElement.clientWidth - 8) left = box.left + window.scrollX + cx * scale - tw - 14;
+      left = Math.max(window.scrollX + 8, left);
+      const top = box.top + window.scrollY + Math.max(8, (box.height - th) / 2);
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+    };
+    const hide = () => { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); };
+    svg.querySelectorAll('.rm-hit').forEach((r) => {
+      r.addEventListener('mouseenter', () => show(r));
+      r.addEventListener('focus', () => show(r));
+      r.addEventListener('click', () => show(r));
+      r.addEventListener('mouseleave', hide);
+      r.addEventListener('blur', hide);
+    });
+    svg.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+  }
+
+  // ---------- legend, tables ----------
+  function groupSize(s) {
+    if (s.key === 'all') return state.respondents.length;
+    return state.respondents.filter((r) => r.ident[state.q] === s.gi).length;
+  }
+
+  function legendHtml(view) {
+    return view.series.map((s) => {
+      const extra = view.kind === 'dims'
+        ? (s.avg.hidden ? '' : `average ${f1(s.avg.mean)}`)
+        : `${groupSize(s)} people`;
+      const label = s.key === 'all' ? 'Everyone (team average)' : s.label;
+      return `<li>${swatch(s)}<span>${esc(label)}${extra ? ` <span class="text-secondary">(${extra})</span>` : ''}</span></li>`;
     }).join('');
   }
 
-  function table(agg) {
-    const head = `<caption>Average discomfort by setting (1 = very comfortable, 5 = very uncomfortable), with the number of answers.</caption>
-      <thead><tr><th scope="col">Group</th>${RM.SETTINGS.map((s) => `<th scope="col">${esc(s.label)}</th>`).join('')}</tr></thead>`;
-    const rows = agg.series.map((s) => `<tr><th scope="row">${esc(s.label)}</th>${s.values.map((v) => (v.hidden
-      ? '<td class="is-hidden">Hidden</td>'
-      : `<td>${fmt(v.mean)} <span class="rm-n">n ${v.n}</span></td>`)).join('')}</tr>`).join('');
-    return `${head}<tbody>${rows}</tbody>`;
-  }
+  const cell = (v) => (v.hidden ? '<td class="is-hidden">Hidden</td>' : `<td>${f1(v.mean)} <span class="rm-n">n ${v.n}</span></td>`);
 
-  function itemTable() {
-    const avg = RM.itemAverages(state.respondents, state.k);
-    const head = `<caption>Average discomfort by statement, for everyone (higher = less agreement).</caption>
-      <thead><tr><th scope="col">Setting</th>${RM.ITEMS.map((it) => `<th scope="col">${esc(it.label)}</th>`).join('')}</tr></thead>`;
-    const rows = RM.SETTINGS.map((st, si) => `<tr><th scope="row">${esc(st.label)}</th>${avg[si].map((v) => (v.hidden
-      ? '<td class="is-hidden">Hidden</td>' : `<td>${fmt(v.mean)}</td>`)).join('')}</tr>`).join('');
-    return `${head}<tbody>${rows}</tbody>`;
-  }
-
-  // ---------- what the map suggests ----------
-  function insights() {
-    const everyone = RM.aggregate(state.respondents, null, state.k);
-    const shown = RM.SETTINGS.map((st, i) => ({ st, v: everyone.series[0].values[i] })).filter((x) => !x.v.hidden);
-    if (!shown.length) return `<p class="mb-0">Not enough responses yet: insights appear once at least ${state.k} people have answered.</p>`;
-    const top = shown.slice().sort((a, b) => b.v.mean - a.v.mean).slice(0, 2);
-    const bullets = [`Across the team, <strong>${esc(top[0].st.label.toLowerCase())}</strong> (${fmt(top[0].v.mean)}) and <strong>${esc(top[1].st.label.toLowerCase())}</strong> (${fmt(top[1].v.mean)}) feel the least comfortable.`];
-    const focus = top.map((t) => t.st.id);
-    const gaps = [];
-    RM.DIMENSIONS.forEach((d) => {
-      const agg = RM.aggregate(state.respondents, d.id, state.k);
-      const groups = agg.series.slice(1);
-      RM.SETTINGS.forEach((st, i) => {
-        const pts = groups.map((g) => ({ g, v: g.values[i] })).filter((p) => !p.v.hidden).sort((a, b) => b.v.mean - a.v.mean);
-        if (pts.length >= 2) gaps.push({ st, hi: pts[0], lo: pts[pts.length - 1], gap: pts[0].v.mean - pts[pts.length - 1].v.mean, dim: d });
-      });
-    });
-    gaps.sort((a, b) => b.gap - a.gap);
-    const seenDims = new Set();
-    gaps.filter((g) => g.gap >= 0.5).forEach((g) => {
-      if (seenDims.has(g.dim.id) || seenDims.size >= 4) return;
-      seenDims.add(g.dim.id);
-      bullets.push(`In <strong>${esc(g.st.label.toLowerCase())}</strong>, ${esc(g.hi.g.noun)} report more discomfort (${fmt(g.hi.v.mean)}) than ${esc(g.lo.g.noun)} (${fmt(g.lo.v.mean)}).`);
-      if (!focus.includes(g.st.id)) focus.push(g.st.id);
-    });
-    if (!seenDims.size) bullets.push('Where groups can be compared, they report similar levels of comfort.');
-    const ideas = focus.slice(0, 4).map((id) => `<li><strong>${esc(RM.SETTINGS.find((s) => s.id === id).label)}:</strong> ${esc(OPPORTUNITIES[id])}</li>`).join('');
-    return `<p class="small text-secondary mb-2">${state.source === 'sample' ? 'Based on the fictional sample team.' : 'Based on your loaded results.'} Hidden groups are left out.</p>
-      <h3 class="h6">What stands out</h3><ul class="rm-insights">${bullets.map((b) => `<li>${b}</li>`).join('')}</ul>
-      <h3 class="h6">Inclusion opportunities to discuss</h3><ul class="rm-insights">${ideas}</ul>
-      <p class="small mb-0"><strong>Read it with care:</strong> the map shows how people experience a setting, not what any group is like. Discuss it with the whole team before acting, never try to identify who answered, and let the team choose its own actions.</p>`;
-  }
-
-  function themes() {
-    if (state.source === 'sample') {
-      return `<p class="small text-secondary">Themes from the fictional sample team's answers to "${esc(RM.REFLECTION.question)}" Individual comments are never shown.</p>
-        <ul class="mb-0">${RM.SAMPLE.themes.map(([t, n]) => `<li>${esc(t)} <span class="text-secondary">(${n} mentions)</span></li>`).join('')}</ul>`;
+  function tableHtml(view) {
+    const heads = RM.SETTINGS.map((s) => `<th scope="col">${esc(s.label)}</th>`).join('');
+    if (view.kind === 'dims') {
+      const map = view.map;
+      const visibleSettings = map.settings.filter((v) => !v.hidden);
+      const rows = view.series.map((s) => `<tr><th scope="row">${esc(s.label)}</th>${s.values.map(cell).join('')}<td>${s.avg.hidden ? '<span class="is-hidden">Hidden</span>' : `<strong>${f1(s.avg.mean)}</strong>`}</td></tr>`).join('');
+      const total = `<tr class="rm-total"><th scope="row">All five dimensions (setting score)</th>${map.settings.map(cell).join('')}<td>${visibleSettings.length ? `<strong>${f1(visibleSettings.reduce((a, v) => a + v.mean, 0) / visibleSettings.length)}</strong>` : ''}</td></tr>`;
+      return `<caption>Average agreement (1 to 5, higher is more positive) by dimension and setting, with the number of answers (n).</caption>
+        <thead><tr><th scope="col">Dimension</th>${heads}<th scope="col">Average across settings</th></tr></thead><tbody>${rows}${total}</tbody>`;
     }
-    return `<p class="mb-0">${state.comments} ${state.comments === 1 ? 'person' : 'people'} left a suggestion. To protect anonymity, this page never shows comments. Read them privately in Qualtrics, group them into themes, and share only the themes with the team.</p>`;
+    const agg = view.agg;
+    const all = [agg.series[0]].concat(agg.allGroups);
+    const rows = all.map((s) => `<tr><th scope="row">${esc(s.key === 'all' ? 'Everyone' : s.label)}</th>${s.values.map(cell).join('')}</tr>`).join('');
+    return `<caption>${esc(measureLabel(agg.measure).replace(/^./, (ch) => ch.toUpperCase()))} by ${esc(agg.question.label.toLowerCase())} (1 to 5, higher is more positive), with the number of answers (n). Hidden = protected for anonymity.</caption>
+      <thead><tr><th scope="col">Group</th>${heads}</tr></thead><tbody>${rows}</tbody>`;
+  }
+
+  function itemTableHtml() {
+    const stats = RM.itemStats(state.respondents, state.k);
+    const rows = RM.ITEMS.map((it) => {
+      const s = stats[it.id];
+      const st = RM.SETTINGS.find((x) => x.id === it.setting), d = RM.DIMENSIONS.find((x) => x.id === it.dim);
+      return `<tr><td>${esc(st.label)}</td><td>${esc(d.label)}</td><td class="rm-wrap">${esc(it.text)}</td>${s.hidden ? '<td class="is-hidden">Hidden</td><td></td>' : `<td>${f1(s.mean)}</td><td>${pct(s.agree)}</td>`}<td>${s.n}</td><td>${s.skipped}</td></tr>`;
+    }).join('');
+    return `<caption>Each statement: average (1 to 5), share who agree or strongly agree, number of answers and number who saw it but skipped it.</caption>
+      <thead><tr><th scope="col">Setting</th><th scope="col">Dimension</th><th scope="col">Statement</th><th scope="col">Average</th><th scope="col">% agree</th><th scope="col">Answers</th><th scope="col">Skipped</th></tr></thead><tbody>${rows}</tbody>`;
+  }
+
+  function overallHtml() {
+    const ov = RM.overallStats(state.respondents, state.k);
+    const rows = ov.items.map((o) => `<li class="rm-bar-row">
+        <p class="mb-1">${esc(o.item.text)} <span class="rm-n">${esc(o.item.construct)}</span></p>
+        ${o.hidden ? '<p class="small is-hidden mb-0">Hidden: fewer answers than the minimum.</p>' : `<div class="rm-bar" aria-hidden="true"><span style="width:${(o.agree * 100).toFixed(1)}%"></span></div>
+        <p class="small text-secondary mb-0"><strong class="text-body">${pct(o.agree)} agree</strong> · average ${f1(o.mean)} · ${o.n} answers</p>`}
+      </li>`).join('');
+    const idx = ov.index.hidden ? 'Hidden' : `${f1(ov.index.mean)} (${ov.index.n} people)`;
+    return `<ul class="rm-bars">${rows}</ul><p class="small mb-0"><strong>Overall index</strong> (each person's average of the five, at least 3 answered): ${idx}.</p>`;
+  }
+
+  // ---------- findings and themes ----------
+  function insightsHtml() {
+    const ins = RM.insights(state.respondents, state.k);
+    const list = (arr) => `<ul class="rm-insights">${arr.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>`;
+    const ideas = ins.opportunities.map((o) => `<li><strong>${esc(o.setting.label)}:</strong> ${esc(o.text)}</li>`).join('');
+    return `<p class="small text-secondary mb-2">${state.source === 'sample' ? 'Based on the fictional sample team.' : 'Based on your loaded results.'} Hidden groups and points are left out.</p>
+      <h3 class="h6">Across the map</h3>${list(ins.map)}
+      <h3 class="h6">Differences between groups (overall experience)</h3>${list(ins.groups)}
+      ${ins.overall.length ? `<h3 class="h6">Overall workplace experience</h3>${list(ins.overall)}` : ''}
+      ${ideas ? `<h3 class="h6">Ideas to discuss for these settings</h3><ul class="rm-insights">${ideas}</ul>` : ''}
+      <p class="small mb-0"><strong>Read it with care:</strong> the map shows how people experience a setting, not what any group is like. Gaps point to barriers to remove, not to people to fix. Discuss the map with the whole team before acting, never try to work out who answered, and let the team choose its own actions.</p>`;
+  }
+
+  function themesHtml() {
+    if (state.source === 'sample') {
+      return RM.REFLECTION.map((q) => {
+        const all = RM.SAMPLE.themes[q.id];
+        const shown = all.filter((t) => t[1] >= RM.MIN_THEME);
+        const hidden = all.length - shown.length;
+        return `<h3 class="h6">${esc(q.question)}</h3>
+          <ul class="mb-1">${shown.map(([t, n]) => `<li>${esc(t)} <span class="text-secondary">(${n} people)</span></li>`).join('')}</ul>
+          <p class="small text-secondary">${hidden ? `${hidden} ${hidden === 1 ? 'theme' : 'themes'} raised by fewer than ${RM.MIN_THEME} people ${hidden === 1 ? 'is' : 'are'} not shown. ` : ''}Themes from the fictional sample team; individual comments are never shown.</p>`;
+      }).join('');
+    }
+    const c = state.comments || { REFLECT_1: 0, REFLECT_2: 0 };
+    return `<p class="mb-0">${c.REFLECT_1} ${c.REFLECT_1 === 1 ? 'person' : 'people'} answered the first open question and ${c.REFLECT_2} the second. To protect anonymity, this page never shows comments. Read them privately in Qualtrics, group them into themes, and report only themes raised by at least ${RM.MIN_THEME} people.</p>`;
   }
 
   // ---------- page ----------
-  function renderCompare() {
-    const opts = [{ id: '', label: 'Everyone' }].concat(RM.DIMENSIONS.map((d) => ({ id: d.id, label: d.label })));
-    $('compare').innerHTML = opts.map((o) => `<button type="button" class="btn btn-sm btn-outline-primary" data-dim="${o.id}" aria-pressed="${(state.compare || '') === o.id}">${esc(o.label)}</button>`).join('');
+  function syncUrl() {
+    const p = new URLSearchParams();
+    if (state.view === 'groups') { p.set('view', 'groups'); p.set('q', state.q); p.set('m', state.measure); }
+    if (state.k !== 5) p.set('k', String(state.k));
+    const qs = p.toString();
+    history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
   }
 
   function render() {
-    state.compact = $('chart').clientWidth < 560;
-    const agg = RM.aggregate(state.respondents, state.compare, state.k);
-    $('map-sub').textContent = agg.dimension ? `by ${agg.dimension.label.toLowerCase()}` : 'everyone';
-    $('chart').innerHTML = chart(agg);
-    $('legend').innerHTML = legend(agg);
-    $('notes').innerHTML = agg.notes.map((n) => `<p>${esc(n)}</p>`).join('');
-    $('summary').innerHTML = RM.summarize(agg).map((s) => `<p>${esc(s)}</p>`).join('');
-    $('data-table').innerHTML = table(agg);
-    $('item-table').innerHTML = itemTable();
-    $('insights').innerHTML = insights();
-    $('themes').innerHTML = themes();
-    document.querySelectorAll('#compare button').forEach((b) => b.setAttribute('aria-pressed', String((state.compare || '') === b.dataset.dim)));
+    state.compact = $('chart').clientWidth < 600;
+    const view = currentSeries();
+    $('map-sub').textContent = view.kind === 'dims' ? 'experience dimensions, everyone' : `${measureLabel(state.measure)} by ${view.agg.question.label.toLowerCase()}`;
+    $('chart').innerHTML = chartSvg(view);
+    bindHover(view);
+    $('legend').innerHTML = legendHtml(view);
+    $('notes').innerHTML = view.notes.map((t) => `<p>${esc(t)}</p>`).join('');
+    $('summary').innerHTML = view.summary.map((t) => `<p>${esc(t)}</p>`).join('');
+    $('data-table').innerHTML = tableHtml(view);
+    $('item-table').innerHTML = itemTableHtml();
+    $('overall').innerHTML = overallHtml();
+    $('insights').innerHTML = insightsHtml();
+    $('themes').innerHTML = themesHtml();
+    document.querySelectorAll('#view button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === state.view)));
+    $('group-controls').hidden = state.view !== 'groups';
+    syncUrl();
   }
 
   function setSource(kind, data) {
     state.source = kind;
     state.respondents = data.respondents;
-    state.comments = data.comments || 0;
+    state.comments = data.comments || null;
     $('source-line').innerHTML = kind === 'sample'
-      ? '<strong>Fictional sample team</strong> (48 people)'
+      ? `<strong>Fictional sample team</strong> (${data.respondents.length} people)`
       : `<strong>Your Qualtrics export</strong> (${data.respondents.length} responses)`;
     $('data-tag').textContent = kind === 'sample' ? 'Fictional data' : 'Your data';
     $('data-tag').classList.toggle('is-real', kind !== 'sample');
@@ -229,17 +309,23 @@
   }
 
   function init() {
-    $('settings-list').innerHTML = RM.SETTINGS.map((s) => `<li><strong>${esc(s.label)}:</strong> ${esc(s.prompt.replace(/^Think about /, '').replace(/^./, (ch) => ch.toUpperCase()))}</li>`).join('');
-    $('items-list').innerHTML = RM.ITEMS.map((it) => `<li><strong>${esc(it.label)}:</strong> "${esc(it.text)}" ${esc(it.source)}</li>`).join('');
+    $('group-q').innerHTML = RM.IDENTITY.map((q) => `<option value="${q.id}">${esc(q.label)}</option>`).join('');
+    $('measure').innerHTML = MEASURES.map((m) => `<option value="${m}">${m === 'ALL' ? 'Overall experience (all five)' : esc(RM.DIMENSIONS.find((d) => d.id === m).label)}</option>`).join('');
+    $('group-q').value = state.q;
+    $('measure').value = state.measure;
     $('min-group').value = String(state.k);
-    renderCompare();
+    $('dims-list').innerHTML = RM.DIMENSIONS.map((d) => `<li><strong>${esc(d.label)}:</strong> ${esc(d.definition)} <span class="text-secondary">(${esc(d.basis)})</span></li>`).join('');
+    $('refs').innerHTML = Object.values(RM.REFS).map((r) => `<li>${esc(r.full)} <a href="${esc(r.url)}">${esc(r.url)}</a></li>`).join('');
+    $('source-line').innerHTML = `<strong>Fictional sample team</strong> (${state.respondents.length} people)`;
     render();
-    $('compare').addEventListener('click', (e) => {
-      const b = e.target.closest('button[data-dim]');
+    $('view').addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-view]');
       if (!b) return;
-      state.compare = b.dataset.dim || null;
+      state.view = b.dataset.view;
       render();
     });
+    $('group-q').addEventListener('change', (e) => { state.q = e.target.value; render(); });
+    $('measure').addEventListener('change', (e) => { state.measure = e.target.value; render(); });
     $('min-group').addEventListener('change', (e) => { state.k = Number(e.target.value); render(); });
     $('csv-file').addEventListener('change', (e) => {
       const file = e.target.files[0];
@@ -249,13 +335,20 @@
         const msg = $('file-msg');
         try {
           const data = RM.fromQualtrics(reader.result);
-          if (!data.respondents.length) throw new Error('The file has no usable responses yet.');
+          if (!data.respondents.length) throw new Error('The file has no usable responses yet: no consenting response has any answers.');
           setSource('file', data);
+          const left = [];
+          if (data.declined) left.push(`${data.declined} who chose not to take part`);
+          if (data.noConsent) left.push(`${data.noConsent} without a consent answer`);
+          if (data.previews) left.push(`${data.previews} previews or tests`);
           msg.className = 'small mt-2 text-success';
-          msg.textContent = `Loaded ${data.respondents.length} responses${data.skipped ? `, leaving out ${data.skipped} previews or tests` : ''}.`;
+          msg.textContent = `Loaded ${data.respondents.length} responses${left.length ? `, leaving out ${left.join(', ')}` : ''}.`;
+          if (data.missing.length) msg.textContent += ` ${data.missing.length} survey columns are missing from the file, so some points stay empty.`;
           if (data.identifying) {
             msg.className = 'small mt-2 text-danger';
             msg.textContent += ' Warning: this file includes identifying fields such as IP addresses, locations or contact details. Turn on "Anonymize responses" in Qualtrics, export again and delete this copy.';
+          } else if (data.timestamps) {
+            msg.textContent += ' Tip: delete the date and time columns before sharing the file; they are not needed and could help identify people.';
           }
         } catch (err) {
           msg.className = 'small mt-2 text-danger';
@@ -271,8 +364,9 @@
     });
     let wasCompact = state.compact;
     window.addEventListener('resize', () => {
-      const now = $('chart').clientWidth < 560;
+      const now = $('chart').clientWidth < 600;
       if (now !== wasCompact) { wasCompact = now; render(); }
+      $('rm-tip').hidden = true;
     });
   }
 
