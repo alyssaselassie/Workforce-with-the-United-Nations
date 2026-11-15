@@ -1,5 +1,5 @@
 // Relief Maps Tool page: the map (three measure lines, or group lines), tables and loading a
-// Qualtrics export.
+// Qualtrics export. The plain-language summary lives in the chart's accessible description.
 (function () {
   'use strict';
   const RM = window.ReliefMap;
@@ -44,7 +44,6 @@
     const x = (i) => m.l + ((i + 0.5) * pw) / n;
     const y = (val) => m.t + ((5 - val) / 4) * ph;
     const out = [`<rect x="${m.l}" y="${y(3)}" width="${pw}" height="${y(1) - y(3)}" fill="#fbf3ee"/>`];
-    if (!small) out.push(`<text x="${m.l + 10}" y="${y(1) - 10}" font-size="12" fill="#8a4b2f">Below 3: more people disagree than agree</text>`);
     const words = { 5: 'Strongly agree', 4: 'Agree', 3: 'Neutral', 2: 'Disagree', 1: 'Strongly disagree' };
     for (let s = 1; s <= 5; s += 1) {
       out.push(`<line x1="${m.l}" x2="${m.l + pw}" y1="${y(s)}" y2="${y(s)}" stroke="${s === 3 ? '#c4c9d6' : '#e4e7ee'}" stroke-width="1"/>`);
@@ -90,7 +89,7 @@
     });
     const title = state.compare ? `Relief Map by ${RM.IDENTITY.find((q) => q.id === state.compare).label.toLowerCase()}` : 'Relief Map: three measures in six workplace settings';
     return `<svg viewBox="0 0 ${W} ${H}" role="group" aria-labelledby="rm-title rm-desc" xmlns="http://www.w3.org/2000/svg" data-x0="${m.l}" data-pw="${pw}" data-n="${n}" data-w="${W}">
-      <title id="rm-title">${esc(title)}</title><desc id="rm-desc">${esc(v.summary.join(' '))} The table below lists every value.</desc>${out.join('')}</svg>`;
+      <title id="rm-title">${esc(title)}</title><desc id="rm-desc">${esc(v.summary.join(' '))} Every value is also in The numbers.</desc>${out.join('')}</svg>`;
   }
 
   function bindTips(v) {
@@ -130,32 +129,30 @@
       return `<li>${swatch(l)}<span>${esc(l.label)}${size != null ? ` <span class="text-secondary">(${size} people)</span>` : ''}</span></li>`;
     }).join('');
     $('notes').innerHTML = v.notes.map((t) => `<p>${esc(t)}</p>`).join('');
-    $('summary').innerHTML = v.summary.map((t) => `<p>${esc(t)}</p>`).join('');
     // Table: settings down the side, lines across.
-    const extra = v.map ? '<th scope="col">Setting average</th>' : '';
-    $('data-table').innerHTML = `<caption>Average answer (1 to 5) in each setting.${v.map ? ' Setting average = each person\'s average of the 3 statements, averaged across people.' : ''} Hidden = fewer than ${RM.MIN_GROUP} people.</caption>
+    const extra = v.map ? '<th scope="col">Average</th>' : '';
+    $('data-table').innerHTML = `<caption class="visually-hidden">Average answer (1 to 5) in each setting</caption>
       <thead><tr><th scope="col">Setting</th>${v.lines.map((l) => `<th scope="col">${esc(l.label)}</th>`).join('')}${extra}</tr></thead>
       <tbody>${RM.SETTINGS.map((s, i) => `<tr><th scope="row">${esc(s.label)}</th>${v.lines.map((l) => cell(l.values[i])).join('')}${v.map ? cell(v.map.settings[i]) : ''}</tr>`).join('')}</tbody>`;
-    $('dims-table').innerHTML = `<caption>Each statement measures one of the five dimensions. Average of all answers to that dimension's statements.</caption>
-      <thead><tr><th scope="col">Dimension</th><th scope="col">Average</th><th scope="col">Statements</th></tr></thead>
-      <tbody>${RM.dimensionAverages(state.people).map((d) => `<tr><th scope="row">${esc(d.dim.label)}</th>${cell(d)}<td>${d.statements}</td></tr>`).join('')}</tbody>`;
+    $('dims-table').innerHTML = `<caption class="visually-hidden">Average answer for each of the five dimensions</caption>
+      <thead><tr><th scope="col">Dimension</th><th scope="col">Average</th></tr></thead>
+      <tbody>${RM.dimensionAverages(state.people).map((d) => `<tr><th scope="row">${esc(d.dim.label)}</th>${cell(d)}</tr>`).join('')}</tbody>`;
     $('overall').innerHTML = `<ul class="rm-bars">${RM.overall(state.people).map((o) => `<li class="rm-bar-row"><p class="mb-1">${esc(o.item.text)}</p>${o.hidden
-      ? '<p class="small is-hidden mb-0">Hidden: fewer than 5 answers.</p>'
-      : `<div class="rm-bar" aria-hidden="true"><span style="width:${(o.agree * 100).toFixed(1)}%"></span></div><p class="small text-secondary mb-0"><strong class="text-body">${Math.round(o.agree * 100)}% agree</strong> · average ${f1(o.mean)}</p>`}</li>`).join('')}</ul>`;
+      ? '<p class="small is-hidden mb-0">Hidden (fewer than 5 answers)</p>'
+      : `<div class="rm-bar" aria-hidden="true"><span style="width:${(o.agree * 100).toFixed(1)}%"></span></div><p class="small text-secondary mb-0">${Math.round(o.agree * 100)}% agree</p>`}</li>`).join('')}</ul>`;
   }
 
   function setSource(kind, data) {
     state.source = kind;
     state.people = data.people;
-    $('source-line').innerHTML = kind === 'sample' ? `<strong>Fictional sample team</strong> (${data.people.length} people)` : `<strong>Your Qualtrics export</strong> (${data.people.length} people)`;
-    $('data-tag').textContent = kind === 'sample' ? 'Fictional data' : 'Your data';
+    $('data-tag').textContent = kind === 'sample' ? `Fictional team of ${data.people.length}` : `Your data: ${data.people.length} people`;
     $('data-tag').classList.toggle('is-real', kind !== 'sample');
     $('use-sample').hidden = kind === 'sample';
     render();
   }
 
   function init() {
-    $('compare').innerHTML = '<option value="">The three measures</option>' + RM.IDENTITY.map((q) => `<option value="${q.id}">Groups: ${esc(q.label.toLowerCase())}</option>`).join('');
+    $('compare').innerHTML = '<option value="">Three measures</option>' + RM.IDENTITY.map((q) => `<option value="${q.id}">By ${esc(q.label.toLowerCase())}</option>`).join('');
     setSource('sample', { people: state.people });
     $('compare').addEventListener('change', (e) => { state.compare = e.target.value; render(); });
     $('csv-file').addEventListener('change', (e) => {
@@ -170,10 +167,10 @@
           setSource('file', data);
           const left = [data.declined ? `${data.declined} who said no` : '', data.tests ? `${data.tests} tests or previews` : ''].filter(Boolean);
           msg.className = 'small mt-2 text-success';
-          msg.textContent = `Loaded ${data.people.length} people${left.length ? ` (left out: ${left.join(', ')})` : ''}. Comments are never shown here.`;
+          msg.textContent = `Loaded ${data.people.length} people${left.length ? ` (left out: ${left.join(', ')})` : ''}.`;
           if (data.identifying) {
             msg.className = 'small mt-2 text-danger';
-            msg.textContent += ' Warning: this file has IP addresses, locations or contact details. Turn on "Anonymize responses" in Qualtrics, export again and delete this file.';
+            msg.textContent += ' Warning: this file has identifying details. Turn on "Anonymize responses" in Qualtrics and export again.';
           }
         } catch (err) {
           msg.className = 'small mt-2 text-danger';

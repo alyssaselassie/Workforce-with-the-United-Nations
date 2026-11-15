@@ -4,122 +4,75 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Relief Maps Tool · Prototype</title>
-  <meta name="description" content="Relief Maps Tool: a short, anonymous survey and a team map of where people feel safe, included and at ease across six workplace settings.">
+  <meta name="description" content="Relief Maps Tool: where a team feels safe, included and at ease, from a short anonymous survey.">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-  <link href="relief-map.css?v=20261115s" rel="stylesheet">
+  <link href="relief-map.css?v=20261115t" rel="stylesheet">
 </head>
 <body>
-  <a class="visually-hidden-focusable skip-link" href="#map-h">Skip to the map</a>
-
   <header class="rm-header">
     <div class="container">
-      <p class="rm-eyebrow mb-2">UN Transformative Spaces · Research prototype</p>
       <h1 class="mb-1">Relief Maps Tool</h1>
-      <p class="rm-subtitle mb-3">Visualizing well-being across work and learning spaces</p>
-      <p class="rm-lead mb-3">A 5-minute anonymous survey, and a map of where a team feels safe, included and at ease in six everyday workplace settings.</p>
+      <p class="rm-subtitle mb-3">Where your team feels safe, included and at ease</p>
       <nav class="rm-links" aria-label="Main links">
         <a class="btn btn-light btn-sm" href="survey.html">Try the survey</a>
-        <a class="btn btn-outline-light btn-sm" href="#how">How it works</a>
-        <a class="btn btn-outline-light btn-sm" href="../index.html">CQ &amp; Bias Navigator</a>
+        <a class="btn btn-outline-light btn-sm" href="#downloads">Downloads</a>
       </nav>
     </div>
   </header>
 
   <main class="container rm-main">
-    <section class="rm-card rm-controls" aria-labelledby="controls-h">
-      <h2 id="controls-h" class="visually-hidden">Map options</h2>
-      <div class="row g-3 align-items-start">
-        <div class="col-md-7">
-          <p class="rm-label mb-1">Data</p>
-          <p class="mb-2" id="source-line"><strong>Fictional sample team</strong></p>
-          <label class="btn btn-sm btn-primary mb-1" for="csv-file">Load your Qualtrics export (CSV)</label>
+    <section class="rm-card" aria-labelledby="map-h">
+      <div class="rm-bar-top">
+        <h2 id="map-h" class="h4 mb-0">Relief Map <span id="data-tag" class="rm-tag">Fictional data</span></h2>
+        <div class="rm-controls">
+          <label class="visually-hidden" for="compare">Lines show</label>
+          <select class="form-select form-select-sm" id="compare"></select>
+          <label class="btn btn-sm btn-primary mb-0" for="csv-file">Load Qualtrics file</label>
           <input class="visually-hidden" type="file" id="csv-file" accept=".csv,text/csv">
-          <button type="button" class="btn btn-sm btn-outline-secondary mb-1" id="use-sample" hidden>Back to the sample</button>
-          <p class="small text-secondary mb-0">The file stays in your browser. It is never uploaded.</p>
-          <div id="file-msg" class="small mt-2" role="status"></div>
-        </div>
-        <div class="col-md-5">
-          <label class="rm-label mb-1" for="compare">Lines show</label>
-          <select class="form-select" id="compare"></select>
-          <p class="small text-secondary mt-1 mb-0">Groups of fewer than 5 people are never shown.</p>
+          <button type="button" class="btn btn-sm btn-outline-secondary" id="use-sample" hidden>Back to sample</button>
         </div>
       </div>
-    </section>
-
-    <section class="rm-card" aria-labelledby="map-h">
-      <h2 id="map-h" class="h4 mb-1">Relief Map</h2>
-      <p class="small text-secondary mb-2">Average answer from 1 (strongly disagree) to 5 (strongly agree). Higher is more positive. <span id="data-tag" class="rm-tag">Fictional data</span></p>
+      <div id="file-msg" class="small" role="status"></div>
+      <p class="small text-secondary mb-2">1 = strongly disagree, 5 = strongly agree</p>
       <div id="chart" class="rm-chart"></div>
       <ul id="legend" class="rm-legend" aria-label="Lines on the map"></ul>
       <div id="notes" class="rm-notes"></div>
-      <div id="summary" class="rm-summary" aria-live="polite"></div>
     </section>
 
-    <section class="rm-card" aria-labelledby="table-h">
-      <h2 id="table-h" class="h5">The numbers</h2>
-      <div class="table-responsive"><table class="table table-sm rm-table" id="data-table"></table></div>
-      <h3 class="h6 mt-3">The five dimensions</h3>
+    <details class="rm-card rm-more">
+      <summary><h2 class="h5 d-inline">The numbers</h2></summary>
+      <div class="table-responsive mt-3"><table class="table table-sm rm-table" id="data-table"></table></div>
       <div class="table-responsive"><table class="table table-sm rm-table" id="dims-table"></table></div>
-    </section>
+    </details>
 
-    <section class="rm-card" aria-labelledby="overall-h">
-      <h2 id="overall-h" class="h5">Workplace overall</h2>
-      <p class="small text-secondary">The bar shows the share who agree or strongly agree.</p>
-      <div id="overall"></div>
-    </section>
+    <details class="rm-card rm-more">
+      <summary><h2 class="h5 d-inline">Workplace overall</h2></summary>
+      <div id="overall" class="mt-3"></div>
+    </details>
 
-    <section class="rm-card" id="how" aria-labelledby="how-h">
-      <h2 id="how-h" class="h5">How it works</h2>
-      <div class="row g-4">
-        <div class="col-lg-6">
-          <h3 class="h6">The survey</h3>
-          <ol class="small">
-            <li><strong>Welcome and consent.</strong> "No" ends the survey.</li>
-            <li><strong>Six workplace settings,</strong> one page each, with 3 statements: one for each line on the map.</li>
-            <li><strong>Workplace overall:</strong> 5 statements.</li>
-            <li><strong>About you (optional):</strong> 5 questions, each with "Prefer not to answer".</li>
-            <li><strong>Your ideas (optional):</strong> 2 open questions.</li>
-            <li><strong>Thank you.</strong></li>
-          </ol>
-          <h3 class="h6">Scoring</h3>
-          <ul class="small">
-            <li>Answers count 1 (strongly disagree) to 5 (strongly agree). All statements are positive, so higher is always better.</li>
-            <li>Each point on the map is the average answer to one statement.</li>
-            <li>Skipped questions are left out, never counted as 0 or 3.</li>
-          </ul>
-          <h3 class="h6">Use your own results</h3>
-          <p class="small mb-0">In Qualtrics, export the responses as a CSV file with <em>Use numeric values</em>, then choose <em>Load your Qualtrics export</em> above.</p>
-        </div>
-        <div class="col-lg-6">
-          <h3 class="h6">Privacy</h3>
-          <ul class="small">
-            <li>No names, emails, staff IDs, IP addresses or locations.</li>
-            <li>Nothing is shown for fewer than 5 people.</li>
-            <li>Groups are compared one question at a time. If the people left out of a comparison number 1 to 4, it is hidden too.</li>
-            <li>Comments are never shown.</li>
-          </ul>
-          <h3 class="h6">Downloads</h3>
-          <ul class="small">
-            <li><a href="relief-map-survey.txt" download>Qualtrics survey file (TXT)</a>: import it to create the survey.</li>
-            <li><a href="../docs/Relief-Map-Qualtrics-Prototype.docx" download>Guide (Word)</a>: every question, the build steps and the scoring.</li>
-            <li><a href="sample-qualtrics-export.csv" download>Fictional sample export (CSV)</a>: for practice.</li>
-          </ul>
-          <h3 class="h6">Credits</h3>
-          <p class="small mb-0">A workplace adaptation of Relief Maps by Maria Rodó-Zárate (Rodó-Zárate, 2023) and the 2025 Relief Maps Tool from the NYU Intersectionality Lab. It shows team averages, not individual maps, so it is not a copy of the original method. Statements are adapted from Edmondson (1999), COPSOQ III (Burr et al., 2019) and Eisenberger et al. (1986), or newly written.</p>
-        </div>
-      </div>
+    <section class="rm-card" id="downloads" aria-labelledby="dl-h">
+      <h2 id="dl-h" class="h5">Downloads</h2>
+      <ul class="rm-dl">
+        <li><a href="relief-map-survey.txt" download>Qualtrics survey file</a></li>
+        <li><a href="../docs/Relief-Map-Qualtrics-Prototype.docx" download>Guide (Word)</a></li>
+        <li><a href="sample-qualtrics-export.csv" download>Sample data (CSV)</a></li>
+      </ul>
     </section>
   </main>
 
   <footer class="rm-footer">
-    <div class="container small">Research prototype for the UN Transformative Spaces initiative, built for academic purposes; not an official United Nations product. The sample team is fictional.</div>
+    <div class="container small">
+      <p class="mb-1">Anonymous: groups under 5 people are never shown, and uploaded files stay in your browser.</p>
+      <p class="mb-1">Adapted from Relief Maps by Maria Rodó-Zárate and the NYU Intersectionality Lab's Relief Maps Tool.</p>
+      <p class="mb-0">Prototype, not an official UN product. Sample data are fictional. <a href="../index.html">CQ &amp; Bias Navigator</a></p>
+    </div>
   </footer>
 
   <div id="rm-tip" class="rm-tip" role="presentation" hidden></div>
-  <script src="relief-map.js?v=20261115s"></script>
-  <script src="app.js?v=20261115s"></script>
+  <script src="relief-map.js?v=20261115t"></script>
+  <script src="app.js?v=20261115t"></script>
 </body>
 </html>
