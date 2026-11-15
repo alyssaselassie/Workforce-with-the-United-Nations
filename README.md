@@ -15,6 +15,7 @@ An interactive educational web application that helps United Nations personnel b
 | `collaboration.html` | Team Debrief: four cooperative team goals (every voice heard, every dimension discussed, decide together, agree on actions), facilitated sessions with a perspective wall, a "who's missing" prompt, contributions tagged by dimension, a dimension check before voting, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
 | `progress.html` | Game hub (level, recent XP, quests and the full XP rules), then the competency profile, completed scenarios with stars, recurring biases, reflections, export and reset |
 | `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus your avatar (shown when there is no photo), medals, level, competencies, missions explored, the dimensions the learner most often misses, 18 badges with progress, recent activity and backup/restore of profile, progress and XP |
+| `relief-map/` | Relief Maps Tool: a 5-minute anonymous team survey and a map of where people feel safe, included and at ease (see [Relief Maps Tool](#relief-maps-tool-prototype) below). Linked from the main menu and as module 6 on the home page |
 
 ### Scoring
 
