@@ -8,71 +8,78 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-  <link href="relief-map.css?v=20261115t" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+  <link href="relief-map.css?v=20261115u" rel="stylesheet">
 </head>
 <body>
-  <header class="rm-header">
-    <div class="container">
-      <h1 class="mb-1">Relief Maps Tool</h1>
-      <p class="rm-subtitle mb-3">Where your team feels safe, included and at ease</p>
-      <nav class="rm-links" aria-label="Main links">
-        <a class="btn btn-light btn-sm" href="survey.html">Try the survey</a>
-        <a class="btn btn-outline-light btn-sm" href="#downloads">Downloads</a>
-      </nav>
+  <header class="rm-hero">
+    <svg class="rm-contours" viewBox="0 0 1200 300" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false"><path d="M1004 150C1005 152 1004 155 1003 157C1002 160 1000 162 998 164C996 166 993 167 991 169C988 171 986 172 983 173C980 174 977 175 974 176C971 176 968 176 965 176C961 176 959 175 956 175C953 175 950 175 947 175C943 175 939 175 936 174C933 173 929 172 927 171C924 169 923 166 922 164C921 161 922 159 922 156C923 154 924 152 924 150C924 148 924 146 924 144C924 142 924 139 925 137C926 135 927 133 929 131C931 129 934 128 936 126C939 125 942 124 945 123C948 122 951 121 955 120C958 120 962 119 965 120C969 121 972 122 974 124C977 125 979 128 980 129C982 131 983 133 985 135C987 136 989 137 991 139C994 140 997 141 999 143C1001 145 1003 148 1004 150Z"/><path d="M1047 150C1048 155 1046 160 1044 164C1042 169 1037 173 1032 176C1028 180 1023 183 1018 186C1014 189 1009 192 1004 194C998 196 993 198 987 199C981 200 975 200 969 200C963 200 957 199 952 199C946 198 940 198 934 198C927 198 920 198 914 197C907 195 900 193 896 190C891 186 888 181 887 177C885 172 887 167 888 162C888 158 890 154 891 150C891 146 890 142 891 138C891 134 890 129 891 125C893 121 895 116 899 113C903 109 908 106 914 103C919 101 925 99 931 97C937 96 944 94 950 93C957 93 964 92 970 93C976 95 982 97 987 100C992 103 996 107 999 111C1003 114 1005 117 1008 120C1012 123 1017 125 1021 128C1026 130 1033 133 1037 137C1041 141 1046 145 1047 150Z"/><path d="M1095 150C1097 157 1094 166 1090 172C1086 179 1077 185 1070 190C1063 195 1055 200 1048 204C1040 208 1033 212 1025 216C1017 219 1009 222 1001 224C992 226 982 226 973 227C964 227 956 226 947 225C938 225 929 225 920 224C910 224 899 224 889 221C879 219 868 216 862 211C855 205 850 198 848 191C846 184 848 176 849 169C850 162 853 156 854 150C855 144 854 138 854 132C854 125 852 118 854 111C856 105 860 97 865 92C871 86 880 82 888 78C897 74 907 72 916 70C926 68 935 66 945 65C955 64 965 64 975 65C984 67 994 71 1001 75C1009 79 1014 85 1020 90C1025 95 1029 100 1035 104C1041 108 1048 111 1056 115C1063 119 1074 124 1080 129C1087 135 1093 143 1095 150Z"/><path d="M1148 150C1150 160 1146 172 1140 181C1134 190 1121 198 1110 205C1100 212 1088 217 1078 223C1067 228 1058 234 1048 238C1037 243 1027 248 1015 251C1004 254 991 256 979 256C966 257 954 256 942 255C929 255 917 255 904 253C890 252 875 252 862 249C849 245 834 240 825 233C815 226 809 216 806 206C803 197 806 185 808 176C809 167 813 159 814 150C815 141 814 134 813 125C813 116 811 106 813 96C815 87 820 77 828 69C836 61 849 55 861 50C873 45 887 42 900 40C913 38 927 36 940 35C953 35 967 34 980 36C993 38 1005 42 1016 48C1026 53 1035 60 1043 67C1051 73 1057 79 1065 85C1074 91 1084 95 1095 101C1105 107 1120 113 1129 121C1138 129 1147 140 1148 150Z" class="rm-ring-accent"/><path d="M1207 150C1209 163 1202 178 1193 190C1184 202 1167 212 1153 220C1139 229 1123 235 1109 242C1095 249 1084 256 1071 262C1058 268 1045 276 1031 280C1017 285 1000 288 984 289C968 291 952 290 936 289C919 289 903 288 886 286C869 284 849 283 833 278C816 274 797 267 785 258C773 249 764 235 761 223C757 210 761 196 762 184C764 172 770 161 771 150C772 139 770 129 770 117C769 106 765 92 768 80C771 68 777 54 787 44C798 34 814 25 830 19C846 14 865 11 883 8C900 6 917 5 935 4C952 4 969 3 985 6C1001 8 1018 12 1032 18C1046 24 1057 33 1069 41C1080 48 1088 57 1100 64C1111 71 1125 77 1138 85C1152 93 1171 101 1182 112C1194 123 1205 137 1207 150Z"/><path d="M1269 150C1270 166 1262 185 1250 200C1238 214 1215 226 1197 236C1179 247 1158 253 1141 262C1124 270 1111 278 1095 286C1080 295 1066 305 1048 311C1031 318 1011 324 991 326C971 329 950 328 929 327C908 327 888 325 866 322C845 319 821 317 801 310C780 304 757 296 743 284C728 272 717 256 712 240C707 225 712 207 714 192C716 177 723 164 724 150C726 136 723 124 722 109C722 95 716 78 720 62C723 47 730 29 743 17C756 4 778 -6 798 -13C818 -20 843 -22 865 -25C886 -27 908 -28 929 -28C950 -28 971 -29 991 -26C1011 -24 1031 -20 1049 -14C1067 -7 1082 3 1097 12C1112 21 1124 31 1139 40C1154 49 1170 57 1187 67C1204 77 1227 88 1240 102C1254 116 1267 134 1269 150Z"/><path d="M1334 150C1335 170 1324 193 1308 210C1293 227 1264 241 1242 253C1219 265 1194 272 1174 282C1154 292 1139 302 1121 312C1103 323 1087 336 1067 345C1046 355 1022 363 998 367C974 371 947 371 922 370C896 369 870 366 845 361C819 357 791 353 767 344C742 336 716 326 698 311C680 297 667 277 661 259C655 241 660 219 662 201C664 183 673 167 674 150C676 133 673 118 672 101C671 83 664 62 668 43C672 25 680 3 696 -13C712 -28 738 -40 763 -48C788 -56 819 -58 845 -60C872 -62 898 -62 923 -62C948 -62 973 -62 997 -60C1021 -58 1046 -55 1068 -48C1090 -41 1110 -31 1130 -21C1149 -11 1164 2 1183 13C1201 24 1221 34 1241 47C1261 60 1287 74 1303 91C1318 108 1333 130 1334 150Z"/><path d="M1401 150C1401 173 1387 200 1368 220C1349 240 1315 256 1288 270C1261 283 1232 291 1208 303C1185 315 1168 326 1148 339C1128 353 1111 370 1087 383C1063 395 1035 407 1006 413C977 419 944 419 913 418C882 416 852 410 821 404C791 398 759 391 731 380C703 370 672 357 652 340C631 323 615 300 608 278C600 257 605 232 607 210C609 189 619 170 620 150C622 130 619 112 618 91C616 70 608 46 613 23C617 1 627 -25 646 -44C664 -62 696 -77 726 -85C756 -94 793 -95 825 -97C857 -99 887 -97 917 -97C947 -97 974 -98 1003 -96C1032 -94 1061 -92 1089 -86C1116 -79 1142 -68 1166 -57C1189 -46 1209 -31 1232 -17C1254 -3 1277 10 1300 26C1323 42 1351 59 1368 80C1385 101 1401 127 1401 150Z"/><path d="M1469 150C1468 177 1451 207 1429 230C1406 253 1366 271 1336 287C1305 303 1271 311 1244 325C1218 339 1200 353 1178 369C1155 385 1136 408 1109 423C1082 439 1049 456 1015 463C981 471 941 472 904 470C868 468 831 459 796 451C761 442 726 432 694 418C662 404 628 389 605 369C581 349 562 323 553 298C544 274 548 245 549 220C551 196 561 173 563 150C564 127 561 106 560 81C558 57 549 28 554 2C560 -24 570 -55 592 -76C615 -97 652 -115 687 -125C722 -135 766 -135 804 -137C841 -138 876 -134 910 -134C945 -134 976 -135 1010 -134C1043 -133 1078 -133 1111 -126C1143 -120 1176 -110 1205 -97C1234 -84 1259 -67 1286 -51C1312 -34 1338 -17 1363 3C1388 23 1418 44 1436 68C1454 93 1470 123 1469 150Z"/><path d="M1537 150C1535 181 1515 215 1490 241C1465 267 1419 287 1385 305C1350 323 1312 333 1283 349C1254 365 1234 381 1210 401C1185 421 1165 449 1134 468C1103 488 1064 510 1025 519C985 529 937 530 894 527C852 524 809 512 769 500C729 488 691 474 655 457C620 440 583 421 557 398C530 375 508 347 497 319C485 291 487 259 488 231C489 203 499 177 501 150C503 123 499 99 498 71C496 42 486 10 492 -21C499 -51 511 -87 536 -111C562 -135 605 -155 646 -166C687 -178 738 -177 781 -178C824 -179 864 -174 904 -173C943 -173 978 -175 1017 -175C1055 -174 1096 -176 1135 -171C1174 -165 1214 -155 1249 -141C1284 -127 1314 -107 1344 -87C1375 -67 1403 -45 1429 -21C1456 3 1487 28 1505 57C1523 85 1540 119 1537 150Z"/><path d="M1605 150C1601 184 1580 222 1552 251C1524 280 1474 303 1436 324C1398 344 1356 356 1325 374C1293 393 1272 413 1245 437C1218 461 1196 494 1161 518C1126 542 1081 569 1035 580C989 592 932 594 883 589C834 584 785 567 741 552C696 536 655 517 616 496C578 475 538 454 509 428C479 402 453 371 439 340C425 309 425 274 424 242C423 210 433 180 435 150C436 120 433 92 431 59C430 27 419 -10 427 -44C434 -79 448 -120 477 -147C506 -175 556 -198 602 -210C649 -223 708 -221 757 -222C806 -223 852 -216 896 -215C941 -214 980 -217 1024 -218C1068 -218 1116 -223 1161 -218C1206 -213 1255 -204 1296 -188C1337 -173 1374 -149 1408 -126C1441 -102 1471 -75 1499 -47C1527 -18 1558 12 1576 45C1593 77 1609 116 1605 150Z"/></svg>
+    <div class="container rm-wrap">
+      <p class="rm-kicker">Research prototype</p>
+      <h1>Relief Maps Tool</h1>
+      <p class="rm-sub">Where your team feels safe, included and at ease</p>
+      <div class="rm-actions">
+        <a class="rm-btn rm-btn-light" href="survey.html">Try the survey</a>
+        <a class="rm-btn rm-btn-ghost" href="#downloads">Downloads</a>
+      </div>
     </div>
   </header>
 
-  <main class="container rm-main">
-    <section class="rm-card" aria-labelledby="map-h">
-      <div class="rm-bar-top">
-        <h2 id="map-h" class="h4 mb-0">Relief Map <span id="data-tag" class="rm-tag">Fictional data</span></h2>
+  <main class="container rm-wrap rm-main">
+    <section class="rm-figure" aria-labelledby="map-h">
+      <div class="rm-figure-head">
+        <div>
+          <h2 id="map-h">Relief Map <span id="data-tag" class="rm-tag">Fictional team of 40</span></h2>
+          <p class="rm-scale">1 = strongly disagree · 5 = strongly agree</p>
+        </div>
         <div class="rm-controls">
           <label class="visually-hidden" for="compare">Lines show</label>
-          <select class="form-select form-select-sm" id="compare"></select>
-          <label class="btn btn-sm btn-primary mb-0" for="csv-file">Load Qualtrics file</label>
+          <select class="rm-select" id="compare"></select>
+          <label class="rm-btn rm-btn-outline" for="csv-file">Load Qualtrics file</label>
           <input class="visually-hidden" type="file" id="csv-file" accept=".csv,text/csv">
-          <button type="button" class="btn btn-sm btn-outline-secondary" id="use-sample" hidden>Back to sample</button>
+          <button type="button" class="rm-btn rm-btn-text" id="use-sample" hidden>Back to sample</button>
         </div>
       </div>
-      <div id="file-msg" class="small" role="status"></div>
-      <p class="small text-secondary mb-2">1 = strongly disagree, 5 = strongly agree</p>
+      <div id="file-msg" class="rm-msg" role="status"></div>
       <div id="chart" class="rm-chart"></div>
       <ul id="legend" class="rm-legend" aria-label="Lines on the map"></ul>
       <div id="notes" class="rm-notes"></div>
     </section>
 
-    <details class="rm-card rm-more">
-      <summary><h2 class="h5 d-inline">The numbers</h2></summary>
-      <div class="table-responsive mt-3"><table class="table table-sm rm-table" id="data-table"></table></div>
-      <div class="table-responsive"><table class="table table-sm rm-table" id="dims-table"></table></div>
-    </details>
+    <div class="rm-acc">
+      <details>
+        <summary><h2>The numbers</h2></summary>
+        <div class="rm-acc-body">
+          <div class="table-responsive"><table class="rm-table" id="data-table"></table></div>
+          <div class="table-responsive"><table class="rm-table rm-table-narrow" id="dims-table"></table></div>
+        </div>
+      </details>
+      <details>
+        <summary><h2>Workplace overall</h2></summary>
+        <div class="rm-acc-body"><div id="overall"></div></div>
+      </details>
+    </div>
 
-    <details class="rm-card rm-more">
-      <summary><h2 class="h5 d-inline">Workplace overall</h2></summary>
-      <div id="overall" class="mt-3"></div>
-    </details>
-
-    <section class="rm-card" id="downloads" aria-labelledby="dl-h">
-      <h2 id="dl-h" class="h5">Downloads</h2>
-      <ul class="rm-dl">
-        <li><a href="relief-map-survey.txt" download>Qualtrics survey file</a></li>
-        <li><a href="../docs/Relief-Map-Qualtrics-Prototype.docx" download>Guide (Word)</a></li>
-        <li><a href="sample-qualtrics-export.csv" download>Sample data (CSV)</a></li>
+    <section id="downloads" aria-labelledby="dl-h">
+      <h2 id="dl-h" class="rm-label">Downloads</h2>
+      <ul class="rm-files">
+        <li><a href="relief-map-survey.txt" download><span class="rm-ext">TXT</span><span>Qualtrics survey file</span></a></li>
+        <li><a href="../docs/Relief-Map-Qualtrics-Prototype.docx" download><span class="rm-ext">DOCX</span><span>Guide</span></a></li>
+        <li><a href="sample-qualtrics-export.csv" download><span class="rm-ext">CSV</span><span>Sample data</span></a></li>
       </ul>
     </section>
   </main>
 
   <footer class="rm-footer">
-    <div class="container small">
-      <p class="mb-1">Anonymous: groups under 5 people are never shown, and uploaded files stay in your browser.</p>
-      <p class="mb-1">Adapted from Relief Maps by Maria Rodó-Zárate and the NYU Intersectionality Lab's Relief Maps Tool.</p>
-      <p class="mb-0">Prototype, not an official UN product. Sample data are fictional. <a href="../index.html">CQ &amp; Bias Navigator</a></p>
+    <div class="container rm-wrap">
+      <p>Anonymous: groups under 5 people are never shown, and uploaded files stay in your browser.</p>
+      <p>Adapted from Relief Maps by Maria Rodó-Zárate and the NYU Intersectionality Lab's Relief Maps Tool.</p>
+      <p>Prototype, not an official UN product. Sample data are fictional. <a href="../index.html">CQ &amp; Bias Navigator</a></p>
     </div>
   </footer>
 
   <div id="rm-tip" class="rm-tip" role="presentation" hidden></div>
-  <script src="relief-map.js?v=20261115t"></script>
-  <script src="app.js?v=20261115t"></script>
+  <script src="relief-map.js?v=20261115u"></script>
+  <script src="app.js?v=20261115u"></script>
 </body>
 </html>
