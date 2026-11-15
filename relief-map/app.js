@@ -43,17 +43,17 @@
     const pw = W - m.l - m.r, ph = H - m.t - m.b, n = RM.SETTINGS.length;
     const x = (i) => m.l + ((i + 0.5) * pw) / n;
     const y = (val) => m.t + ((5 - val) / 4) * ph;
-    const out = [`<rect x="${m.l}" y="${y(3)}" width="${pw}" height="${y(1) - y(3)}" fill="#fbf3ee"/>`];
+    const out = [`<rect x="${m.l}" y="${y(3)}" width="${pw}" height="${y(1) - y(3)}" fill="#faf6f3"/>`];
     const words = { 5: 'Strongly agree', 4: 'Agree', 3: 'Neutral', 2: 'Disagree', 1: 'Strongly disagree' };
     for (let s = 1; s <= 5; s += 1) {
-      out.push(`<line x1="${m.l}" x2="${m.l + pw}" y1="${y(s)}" y2="${y(s)}" stroke="${s === 3 ? '#c4c9d6' : '#e4e7ee'}" stroke-width="1"/>`);
+      out.push(`<line x1="${m.l}" x2="${m.l + pw}" y1="${y(s)}" y2="${y(s)}" stroke="${s === 3 ? '#cfd2dd' : '#ecebf2'}" stroke-width="1"/>`);
       out.push(`<text x="${m.l - 10}" y="${y(s) + 4.5}" text-anchor="end" font-size="13" font-weight="700" fill="${INK}">${s}</text>`);
       if (!small) out.push(`<text x="${m.l - 26}" y="${y(s) + 4.5}" text-anchor="end" font-size="12.5" fill="${MUTED}">${words[s]}</text>`);
     }
     RM.SETTINGS.forEach((st, i) => {
       const lines = small ? [st.short] : AXIS[st.id];
       const top = m.t + ph + 22 + (small && i % 2 ? 18 : 0);
-      lines.forEach((t, li) => out.push(`<text x="${x(i).toFixed(1)}" y="${top + li * 16}" text-anchor="middle" font-size="${small ? 12.5 : 13.5}" font-weight="600" fill="${INK}">${esc(t)}</text>`));
+      lines.forEach((t, li) => out.push(`<text x="${x(i).toFixed(1)}" y="${top + li * 16}" text-anchor="middle" font-size="${small ? 12.5 : 13}" font-weight="600" fill="${INK}">${esc(t)}</text>`));
     });
     out.push(`<line class="rm-cross" x1="0" x2="0" y1="${m.t}" y2="${m.t + ph}" stroke="#9aa0ad" stroke-width="1" visibility="hidden"/>`);
     v.lines.forEach((l) => {
@@ -137,9 +137,9 @@
     $('dims-table').innerHTML = `<caption class="visually-hidden">Average answer for each of the five dimensions</caption>
       <thead><tr><th scope="col">Dimension</th><th scope="col">Average</th></tr></thead>
       <tbody>${RM.dimensionAverages(state.people).map((d) => `<tr><th scope="row">${esc(d.dim.label)}</th>${cell(d)}</tr>`).join('')}</tbody>`;
-    $('overall').innerHTML = `<ul class="rm-bars">${RM.overall(state.people).map((o) => `<li class="rm-bar-row"><p class="mb-1">${esc(o.item.text)}</p>${o.hidden
-      ? '<p class="small is-hidden mb-0">Hidden (fewer than 5 answers)</p>'
-      : `<div class="rm-bar" aria-hidden="true"><span style="width:${(o.agree * 100).toFixed(1)}%"></span></div><p class="small text-secondary mb-0">${Math.round(o.agree * 100)}% agree</p>`}</li>`).join('')}</ul>`;
+    $('overall').innerHTML = `<ul class="rm-bars">${RM.overall(state.people).map((o) => `<li class="rm-bar-row"><div class="rm-bar-line"><span>${esc(o.item.text)}</span>${o.hidden
+      ? '<span class="is-hidden">Hidden</span></div>'
+      : `<span class="rm-bar-pct">${Math.round(o.agree * 100)}% agree</span></div><div class="rm-bar" aria-hidden="true"><span style="width:${(o.agree * 100).toFixed(1)}%"></span></div>`}</li>`).join('')}</ul>`;
   }
 
   function setSource(kind, data) {
@@ -166,14 +166,14 @@
           if (!data.people.length) throw new Error('The file has no answers yet.');
           setSource('file', data);
           const left = [data.declined ? `${data.declined} who said no` : '', data.tests ? `${data.tests} tests or previews` : ''].filter(Boolean);
-          msg.className = 'small mt-2 text-success';
+          msg.className = 'rm-msg text-success';
           msg.textContent = `Loaded ${data.people.length} people${left.length ? ` (left out: ${left.join(', ')})` : ''}.`;
           if (data.identifying) {
-            msg.className = 'small mt-2 text-danger';
+            msg.className = 'rm-msg text-danger';
             msg.textContent += ' Warning: this file has identifying details. Turn on "Anonymize responses" in Qualtrics and export again.';
           }
         } catch (err) {
-          msg.className = 'small mt-2 text-danger';
+          msg.className = 'rm-msg text-danger';
           msg.textContent = err.message;
         }
         e.target.value = '';
