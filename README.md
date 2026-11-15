@@ -76,7 +76,7 @@ Design principles: XP rewards learning actions (exploring a context, deciding, r
 | `relief-map/relief-map.js` | Every question, its source label, the scoring and privacy rules, the export reader and the sample |
 | `docs/Relief-Map-Qualtrics-Prototype.docx` | Short guide: every question (type, answers, required or optional, what it measures, source), build steps, survey flow, scoring, sample map, privacy and a pilot plan |
 
-**Scoring and privacy:** each point is the average answer to one statement (1 to 5); skipped questions are left out, never counted as 0 or 3. Nothing is shown for fewer than 5 people. Groups are compared one identity question at a time; if the people left out of a comparison (smaller groups and "Prefer not to answer") number 1 to 4, it is hidden. Comments are never shown.
+**Scoring and privacy:** people answer about the past 3 months. Each point is the average answer to one statement (1 to 5); skipped questions, "Not experienced in the past 3 months" (97) and "Unable to judge" (98) are left out, never counted as 0 or 3, and the share of "Not experienced" answers is reported for each setting (the time frame and these two answers come from the team's 25-item draft). Nothing is shown for fewer than 5 people. Groups are compared one identity question at a time; if the people left out of a comparison (smaller groups and "Prefer not to answer") number 1 to 4, it is hidden. Comments are never shown.
 
 **Changing the survey:** edit `relief-map/relief-map.js`, then run `node tools/build_relief_map.js` to regenerate the Qualtrics file and the sample export.
 

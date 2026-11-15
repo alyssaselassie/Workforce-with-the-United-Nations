@@ -130,10 +130,11 @@
     }).join('');
     $('notes').innerHTML = v.notes.map((t) => `<p>${esc(t)}</p>`).join('');
     // Table: settings down the side, lines across.
-    const extra = v.map ? '<th scope="col">Average</th>' : '';
+    const extra = v.map ? '<th scope="col">Average</th><th scope="col">Not experienced</th>' : '';
+    const ne = RM.notExperienced(state.people);
     $('data-table').innerHTML = `<caption class="visually-hidden">Average answer (1 to 5) in each setting</caption>
       <thead><tr><th scope="col">Setting</th>${v.lines.map((l) => `<th scope="col">${esc(l.label)}</th>`).join('')}${extra}</tr></thead>
-      <tbody>${RM.SETTINGS.map((s, i) => `<tr><th scope="row">${esc(s.label)}</th>${v.lines.map((l) => cell(l.values[i])).join('')}${v.map ? cell(v.map.settings[i]) : ''}</tr>`).join('')}</tbody>`;
+      <tbody>${RM.SETTINGS.map((s, i) => `<tr><th scope="row">${esc(s.label)}</th>${v.lines.map((l) => cell(l.values[i])).join('')}${v.map ? `${cell(v.map.settings[i])}<td>${Math.round(ne[i].share * 100)}%</td>` : ''}</tr>`).join('')}</tbody>`;
     $('dims-table').innerHTML = `<caption class="visually-hidden">Average answer for each of the five dimensions</caption>
       <thead><tr><th scope="col">Dimension</th><th scope="col">Average</th></tr></thead>
       <tbody>${RM.dimensionAverages(state.people).map((d) => `<tr><th scope="row">${esc(d.dim.label)}</th>${cell(d)}</tr>`).join('')}</tbody>`;
