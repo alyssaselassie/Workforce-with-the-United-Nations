@@ -4,154 +4,438 @@
 
 [[Question:DB]]
 [[ID:INTRO]]
-Team Relief Map. This short survey (about 6 minutes) asks how you experience six everyday workplace settings. It helps your team see where people feel most included, and where things could improve.
+Relief Maps: Workplace Experience Survey. This short survey asks how comfortable, included and heard you feel in six everyday workplace settings, such as team meetings, online work and decision-making. Answers from the whole team are combined into a Relief Map that shows where people feel at ease and where there may be barriers. It takes about 5 minutes.
 
 [[Question:DB]]
 [[ID:PRIVACY]]
-Your answers are anonymous. We do not ask for your name or staff ID, and the survey does not record your IP address or location. Every question is optional, and you can stop at any time. Results are shown only as team averages, and only for groups of at least 5 people. Individual answers are never shared with supervisors, and comments are summarized as themes, never quoted. By continuing, you agree to take part.
+Taking part is voluntary: you can skip any question and stop at any time. The survey is anonymous: it does not ask for your name, email or staff ID, and it does not record your IP address or location. Individual answers are never shared with supervisors or anyone else in the organization. Results are reported only as group averages, and never for groups of fewer than 5 people. Questions about the survey: [research team email].
 
-[[PageBreak]]
-
-[[Block:Workplace settings]]
-
-[[Question:Matrix]]
-[[ID:TM]]
-Team meetings. Think about your team meetings, in person or online. How much do you agree with each statement?
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:CONSENT]]
+I have read the information above and understand that taking part is voluntary and anonymous. Do you agree to take part?
 [[Choices]]
-I feel that I belong.
-It is safe to take a risk here.
-My skills and perspective are valued.
-I feel comfortable expressing a different opinion.
-I feel at ease.
-[[Answers]]
+Yes, I agree to take part
+No, I do not want to take part
+
+[[Block:Team meetings]]
+
+[[Question:DB]]
+[[ID:TM_INTRO]]
+Setting 1 of 6: Team meetings. Think about your team meetings, in person or online. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:TM_PS]]
+In team meetings, I can admit a mistake without it being held against me.
+[[Choices]]
 Strongly disagree
 Disagree
 Neither agree nor disagree
 Agree
 Strongly agree
-Does not apply to me
 
-[[PageBreak]]
-
-[[Question:Matrix]]
-[[ID:SUP]]
-One-on-ones with supervisor. Think about one-on-one conversations with your supervisor. How much do you agree with each statement?
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:TM_BEL]]
+In team meetings, I feel part of the group.
 [[Choices]]
-I feel that I belong.
-It is safe to take a risk here.
-My skills and perspective are valued.
-I feel comfortable expressing a different opinion.
-I feel at ease.
-[[Answers]]
 Strongly disagree
 Disagree
 Neither agree nor disagree
 Agree
 Strongly agree
-Does not apply to me
 
-[[PageBreak]]
-
-[[Question:Matrix]]
-[[ID:VIR]]
-Virtual and hybrid work. Think about virtual and hybrid collaboration: calls, chat and shared documents. How much do you agree with each statement?
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:TM_INC]]
+My contributions in team meetings are taken seriously.
 [[Choices]]
-I feel that I belong.
-It is safe to take a risk here.
-My skills and perspective are valued.
-I feel comfortable expressing a different opinion.
-I feel at ease.
-[[Answers]]
 Strongly disagree
 Disagree
 Neither agree nor disagree
 Agree
 Strongly agree
-Does not apply to me
 
-[[PageBreak]]
-
-[[Question:Matrix]]
-[[ID:NET]]
-Informal and social spaces. Think about informal moments: breaks, lunches, social events and networking. How much do you agree with each statement?
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:TM_VOI]]
+I feel comfortable expressing a different opinion during team meetings.
 [[Choices]]
-I feel that I belong.
-It is safe to take a risk here.
-My skills and perspective are valued.
-I feel comfortable expressing a different opinion.
-I feel at ease.
-[[Answers]]
 Strongly disagree
 Disagree
 Neither agree nor disagree
 Agree
 Strongly agree
-Does not apply to me
 
-[[PageBreak]]
-
-[[Question:Matrix]]
-[[ID:DEV]]
-Learning and development. Think about training, mentoring and opportunities to grow. How much do you agree with each statement?
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:TM_COM]]
+I feel at ease in team meetings.
 [[Choices]]
-I feel that I belong.
-It is safe to take a risk here.
-My skills and perspective are valued.
-I feel comfortable expressing a different opinion.
-I feel at ease.
-[[Answers]]
 Strongly disagree
 Disagree
 Neither agree nor disagree
 Agree
 Strongly agree
-Does not apply to me
 
-[[PageBreak]]
+[[Block:One-on-ones with supervisor]]
 
-[[Question:Matrix]]
-[[ID:DEC]]
-Decision-making. Think about the spaces where priorities and resources are decided. How much do you agree with each statement?
+[[Question:DB]]
+[[ID:SUP_INTRO]]
+Setting 2 of 6: One-on-ones with supervisor. Think about one-on-one conversations with your supervisor, in person or online. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:SUP_PS]]
+I can ask my supervisor questions without worrying about negative consequences.
 [[Choices]]
-I feel that I belong.
-It is safe to take a risk here.
-My skills and perspective are valued.
-I feel comfortable expressing a different opinion.
-I feel at ease.
-[[Answers]]
 Strongly disagree
 Disagree
 Neither agree nor disagree
 Agree
 Strongly agree
-Does not apply to me
 
-[[PageBreak]]
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:SUP_BEL]]
+I can be myself in conversations with my supervisor.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:SUP_INC]]
+The feedback I get from my supervisor is fair.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:SUP_VOI]]
+My supervisor listens when I raise a concern.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:SUP_COM]]
+I feel at ease in one-on-one conversations with my supervisor.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Block:Virtual screener]]
+
+[[Question:DB]]
+[[ID:VIR_SCREEN]]
+Setting 3 of 6: Virtual and hybrid work.
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:VIR_USE]]
+In your current role, do you take part in online meetings, calls or other remote collaboration?
+[[Choices]]
+Yes
+No
+
+[[Block:Virtual and hybrid work]]
+
+[[Question:DB]]
+[[ID:VIR_INTRO]]
+Setting 3 of 6: Virtual and hybrid work. Think about online meetings, calls, chat and shared documents. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:VIR_PS]]
+In online meetings, I can ask for clarification without feeling judged.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:VIR_BEL]]
+I feel connected to my colleagues when we work remotely.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:VIR_INC]]
+I am included in the online conversations that matter for my work.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:VIR_VOI]]
+In online and hybrid meetings, I get a fair chance to speak.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:VIR_COM]]
+I feel at ease when I collaborate online.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Block:Informal and social spaces]]
+
+[[Question:DB]]
+[[ID:NET_INTRO]]
+Setting 4 of 6: Informal and social spaces. Think about breaks, lunches, social events and networking with colleagues. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:NET_PS]]
+In informal settings at work, I am accepted for who I am.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:NET_BEL]]
+I feel welcome when colleagues get together informally.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:NET_INC]]
+I have opportunities to build professional relationships at work.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:NET_VOI]]
+I can take part in social activities at work as much as I would like.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:NET_COM]]
+I feel at ease in informal conversations with colleagues.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Block:Learning and development]]
+
+[[Question:DB]]
+[[ID:DEV_INTRO]]
+Setting 5 of 6: Learning and development. Think about training, mentoring, feedback and chances to grow. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEV_PS]]
+When I am learning something new at work, it is safe to make mistakes.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEV_BEL]]
+I have someone at work, such as a mentor, who supports my growth.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEV_INC]]
+I have fair access to learning and development opportunities.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEV_VOI]]
+I have a say in my own learning and development.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEV_COM]]
+I feel at ease when I receive feedback on my work.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Block:Decision-making]]
+
+[[Question:DB]]
+[[ID:DEC_INTRO]]
+Setting 6 of 6: Decision-making. Think about the meetings and conversations where priorities, plans and resources are decided. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEC_PS]]
+It is safe for me to question a decision.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEC_BEL]]
+When decisions are discussed, I feel like a full member of the team.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEC_INC]]
+My perspective is considered when decisions that affect my work are made.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEC_VOI]]
+I have opportunities to contribute to important workplace decisions.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:DEC_COM]]
+I feel at ease in meetings where decisions are made.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Block:Overall]]
+
+[[Question:DB]]
+[[ID:OV_INTRO]]
+Your workplace overall. These statements are about your workplace as a whole. How much do you agree with each one?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OV_BEL]]
+Overall, I feel a sense of belonging in my workplace.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OV_SUP]]
+My organization cares about my well-being.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OV_CON]]
+I feel confident raising a concern at work without fear of negative consequences.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OV_RES]]
+I am treated with respect at work.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OV_COL]]
+My team's ways of working encourage collaboration.
+[[Choices]]
+Strongly disagree
+Disagree
+Neither agree nor disagree
+Agree
+Strongly agree
 
 [[Block:About you]]
 
 [[Question:DB]]
 [[ID:ABOUT]]
-These optional questions let the team see whether experiences differ between groups. A group is shown only when at least 5 people are in it, and you can choose "Prefer not to say" for any question.
+About you (optional). These questions help us see whether experiences differ between groups, so that barriers can be found and removed. Groups of fewer than 5 people are never shown, and only one question is compared at a time. You can skip any question or choose "Prefer not to answer".
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:D_ROLE]]
-Which best describes your role?
+[[ID:ID_OPTIN]]
+Would you like to answer these optional questions?
 [[Choices]]
-National or local staff
-International staff
-Consultant, contractor, intern or volunteer
-Other
-Prefer not to say
+Yes, show me the questions
+No, skip this part
 
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:D_GENDER]]
-How do you describe your gender?
-[[Choices]]
-Woman
-Man
-Non-binary or another gender
-Prefer not to say
+[[PageBreak]]
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:D_AGE]]
@@ -160,32 +444,53 @@ What is your age group?
 Under 35
 35 to 49
 50 or older
-Prefer not to say
+Prefer not to answer
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:D_LANG]]
-Do you usually work in a language that is not your first language?
+[[ID:D_GENDER]]
+How do you describe your gender?
 [[Choices]]
-Yes
-No
-Prefer not to say
+Woman
+Man
+Non-binary or another gender identity
+Prefer not to answer
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:D_DISAB]]
-Do you identify as a person with a disability?
+Do you identify as having a disability, a long-term health condition or an accessibility need?
 [[Choices]]
 Yes
 No
-Prefer not to say
+Prefer not to answer
 
-[[PageBreak]]
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:D_ETHN]]
+Do you identify as a member of a racial or ethnic minority in your workplace?
+[[Choices]]
+Yes
+No
+Not sure
+Prefer not to answer
 
-[[Block:Reflection]]
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:D_SES]]
+When you were about 14, did either of your parents or guardians have a university degree (or equivalent)?
+[[Choices]]
+Yes
+No
+I don't know
+Prefer not to answer
 
-[[Question:TE:Essay]]
-[[ID:REFLECT]]
-What is one enhancement that would make your team or workplace environment more collaborative and innovative? Please do not include names or details that could identify you or anyone else.
+[[Block:Your ideas]]
 
 [[Question:DB]]
-[[ID:THANKS]]
-Thank you. When you are ready, select the arrow to submit your answers.
+[[ID:REFLECT_INTRO]]
+Your ideas (optional). Please do not include names or details that could identify you or anyone else. Comments are read only by the research team and are reported as themes, never word for word.
+
+[[Question:TE:Essay]]
+[[ID:REFLECT_1]]
+Is there a particular workplace environment where you feel especially comfortable, included or supported? What contributes to that experience?
+
+[[Question:TE:Essay]]
+[[ID:REFLECT_2]]
+What is one change that would make your team or workplace environment more collaborative, inclusive and innovative?

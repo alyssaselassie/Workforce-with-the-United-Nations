@@ -1,0 +1,90 @@
+/* Relief Maps survey preview: mobile-first, high-contrast, large touch targets.
+   Colours: navy #1b2a4e, soft lavender #ece8f7, muted teal #1f7a75, white. */
+:root {
+  --sv-ink: #1c2333;
+  --sv-muted: #545c6e;
+  --sv-navy: #1b2a4e;
+  --sv-navy-2: #2a3c70;
+  --sv-lavender: #ece8f7;
+  --sv-lavender-2: #f5f3fc;
+  --sv-teal: #1f7a75;
+  --sv-line: #cfd3e1;
+  --sv-bg: #f5f4fa;
+  --sv-error: #b42318;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--sv-bg); color: var(--sv-ink); font-family: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 1.0625rem; line-height: 1.5; }
+a { color: var(--sv-teal); }
+:focus-visible { outline: 3px solid var(--sv-teal); outline-offset: 2px; }
+.sv-skip { position: absolute; left: -999px; top: .5rem; z-index: 10; padding: .5rem .8rem; background: #fff; border-radius: .5rem; }
+.sv-skip:focus { left: 1rem; }
+.sv-wrap { width: 100%; max-width: 680px; margin: 0 auto; padding: 0 16px; }
+
+.sv-preview-bar { background: var(--sv-lavender); color: var(--sv-navy); font-size: .92rem; border-bottom: 1px solid #d9d3f0; }
+.sv-preview-bar .sv-wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .25rem 1rem; padding-top: .55rem; padding-bottom: .55rem; }
+.sv-preview-note { margin: 0; }
+.sv-tools summary { cursor: pointer; font-weight: 600; color: var(--sv-navy); min-height: 32px; display: flex; align-items: center; }
+.sv-tools-body { padding: .5rem 0 .25rem; }
+.sv-switch { display: flex; gap: .5rem; align-items: flex-start; }
+.sv-switch input { width: 1.15rem; height: 1.15rem; margin-top: .2rem; accent-color: var(--sv-navy); }
+.sv-tools-links { display: flex; flex-wrap: wrap; gap: .25rem 1rem; margin-top: .4rem; }
+.sv-link-btn { padding: 0; border: 0; background: none; color: var(--sv-teal); font: inherit; text-decoration: underline; cursor: pointer; }
+
+.sv-top { background: #fff; border-bottom: 1px solid #e3e1ee; }
+.sv-top .sv-wrap { padding-top: .8rem; padding-bottom: .9rem; }
+.sv-brand { margin: 0 0 .55rem; font-weight: 700; color: var(--sv-navy); letter-spacing: .01em; }
+.sv-progress { height: 8px; border-radius: 4px; background: #e6e3f3; overflow: hidden; }
+.sv-progress span { display: block; width: 0; height: 100%; border-radius: 4px; background: var(--sv-teal); transition: width .25s ease; }
+
+main.sv-wrap { padding-top: 1rem; padding-bottom: 1.5rem; }
+.sv-card { padding: 1.35rem 1.15rem 1.2rem; border: 1px solid #e3e1ee; border-radius: 16px; background: #fff; box-shadow: 0 6px 20px rgba(27, 42, 78, .06); }
+.sv-eyebrow { display: inline-block; margin: 0 0 .6rem; padding: .15rem .6rem; border-radius: 999px; background: var(--sv-lavender); color: var(--sv-navy); font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.sv-title { margin: 0 0 .5rem; color: var(--sv-navy); font-size: 1.55rem; line-height: 1.2; font-weight: 700; }
+.sv-title:focus { outline: none; }
+.sv-lead { margin: 0 0 .75rem; color: var(--sv-muted); }
+.sv-facts { margin: 0 0 1rem; padding: .75rem .9rem .75rem 2rem; border-radius: 12px; background: var(--sv-lavender-2); }
+.sv-facts li { margin-bottom: .3rem; }
+.sv-facts li:last-child { margin-bottom: 0; }
+.sv-note { margin: 0 0 .9rem; padding: .5rem .75rem; border-left: 3px solid var(--sv-teal); background: #eef6f5; font-size: .95rem; }
+
+.sv-questions { display: grid; gap: 1.35rem; margin-top: 1rem; }
+.sv-q { margin: 0; padding: 0; border: 0; min-width: 0; }
+.sv-q-text { display: block; margin: 0 0 .6rem; padding: 0; font-size: 1.125rem; font-weight: 600; line-height: 1.35; color: var(--sv-ink); }
+.sv-req { display: inline-block; margin-left: .3rem; padding: .02rem .45rem; border-radius: 999px; background: #fdecea; color: var(--sv-error); font-size: .75rem; font-weight: 700; vertical-align: middle; }
+.sv-meta { margin: -.3rem 0 .6rem; color: var(--sv-muted); font-size: .88rem; }
+.sv-options { display: grid; gap: .5rem; }
+.sv-opt { position: relative; display: flex; align-items: center; gap: .75rem; min-height: 48px; padding: .6rem .9rem; border: 1.5px solid var(--sv-line); border-radius: 12px; background: #fff; cursor: pointer; }
+.sv-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+.sv-dot { flex: none; width: 22px; height: 22px; border: 2px solid #7d8497; border-radius: 50%; background: #fff; }
+.sv-opt:hover { border-color: var(--sv-navy-2); }
+.sv-opt:has(input:checked) { border: 2px solid var(--sv-navy); background: var(--sv-lavender-2); }
+.sv-opt input:checked + .sv-dot { border-color: var(--sv-navy); background: radial-gradient(circle, var(--sv-navy) 0 5px, #fff 5.5px); }
+.sv-opt:has(input:focus-visible) { outline: 3px solid var(--sv-teal); outline-offset: 2px; }
+.sv-q[aria-invalid="true"] .sv-opt { border-color: var(--sv-error); }
+textarea { width: 100%; min-height: 120px; padding: .75rem .85rem; border: 1.5px solid var(--sv-line); border-radius: 12px; font: inherit; color: inherit; resize: vertical; }
+textarea:focus-visible { border-color: var(--sv-navy); }
+
+.sv-error { margin: 1rem 0 0; padding: .55rem .8rem; border-radius: 10px; background: #fdecea; color: var(--sv-error); font-weight: 600; }
+.sv-nav, .sv-end-links { display: flex; gap: .75rem; margin-top: 1.5rem; }
+.sv-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: .6rem 1.4rem; border-radius: 12px; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.sv-next { flex: 1; border: 2px solid var(--sv-navy); background: var(--sv-navy); color: #fff; }
+.sv-next:hover { background: var(--sv-navy-2); border-color: var(--sv-navy-2); color: #fff; }
+.sv-back { border: 2px solid var(--sv-line); background: #fff; color: var(--sv-navy); }
+.sv-back:hover { border-color: var(--sv-navy); }
+.sv-foot { margin: 1rem 0 0; color: var(--sv-muted); font-size: .85rem; text-align: center; }
+
+@media (min-width: 600px) {
+  main.sv-wrap { padding-top: 1.75rem; }
+  .sv-card { padding: 2rem 2rem 1.6rem; }
+  .sv-title { font-size: 1.8rem; }
+  .sv-next { flex: 0 1 auto; min-width: 9rem; margin-left: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sv-progress span { transition: none; }
+}
+@media (forced-colors: active) {
+  .sv-opt input { position: static; opacity: 1; width: auto; height: auto; }
+  .sv-dot { display: none; }
+}
