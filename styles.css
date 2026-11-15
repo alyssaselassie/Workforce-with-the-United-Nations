@@ -71,6 +71,11 @@ h1, h2, h3, .h1, .h2, .h3, .h4, .h5, .navbar-brand { font-weight: 800; letter-sp
 .site-nav { background: linear-gradient(100deg, #12406f 0%, #1f56ad 100%); box-shadow: 0 2px 14px rgba(18, 64, 111, .18); }
 .site-nav .nav-link { color: rgba(255,255,255,.88); border-radius: 999px; padding-left: .7rem !important; padding-right: .7rem !important; font-weight: 600; white-space: nowrap; }
 @media (max-width: 1199.98px) { .site-nav .navbar-collapse { padding: .5rem 0; } }
+/* Laptop widths: hide the link icons and tighten the gaps so all seven items fit on one line. */
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+  .site-nav .navbar-nav .nav-link:not(.nav-profile) .bi { display: none; }
+  .site-nav .nav-link { padding-left: .6rem !important; padding-right: .6rem !important; }
+}
 .site-nav .nav-link:hover, .site-nav .nav-link:focus-visible { color: #fff; background: rgba(255,255,255,.1); }
 .site-nav .nav-link.active { color: #12406f; background: #fff; }
 .brand-mark { display: inline-grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 50%; background: linear-gradient(135deg, #7fd6f5, #38b6e8 55%, #6d8cf0); color: #fff; font-size: 1.15rem; box-shadow: inset 0 -2px 0 rgba(0,0,0,.08); }

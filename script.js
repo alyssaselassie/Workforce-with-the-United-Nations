@@ -265,7 +265,8 @@
     { href: 'map.html', page: 'map', label: 'Mission Map', icon: 'bi-globe-americas' },
     { href: 'scenarios.html', page: 'scenarios', label: 'Scenarios', icon: 'bi-signpost-split' },
     { href: 'toolkit.html', page: 'toolkit', label: 'Bias Toolkit', icon: 'bi-lightbulb' },
-    { href: 'collaboration.html', page: 'collaboration', label: 'Team Debrief', icon: 'bi-people' }
+    { href: 'collaboration.html', page: 'collaboration', label: 'Team Debrief', icon: 'bi-people' },
+    { href: 'relief-map/', page: 'relief', label: 'Relief Maps', icon: 'bi-graph-up' }
   ];
 
   function renderChrome() {
