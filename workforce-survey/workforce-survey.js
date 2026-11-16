@@ -17,7 +17,10 @@
     // How submissions are grouped into reporting periods. Only the period is stored, never the date.
     period: 'quarter',
     // Browser storage for the website prototype (responses submitted on this device only).
-    storageKey: 'un-workforce-survey.responses.v1' // not 'uncq.': the site's demo-mode cleanup removes those keys on every page load
+    storageKey: 'un-workforce-survey.responses.v1', // not 'uncq.': the site's demo-mode cleanup removes those keys on every page load
+    // Live demo: answers given in demo mode (survey.html?demo=1) join the demonstration data on this
+    // device only. They are kept apart from real responses and labelled as demonstration data.
+    demoStorageKey: 'un-workforce-survey.demo-responses.v1'
   };
 
   const SURVEY_TITLE = 'UN Workforce Experience Survey';
@@ -568,8 +571,9 @@
   }
 
   // Group sizes per entity and function in the latest demonstration period. They are invented, and
-  // set so the dashboard shows every case: groups that are shown, groups still collecting, and a
-  // group withheld to protect a smaller one (UNICEF, Humanitarian / Field Operations).
+  // set so the dashboard shows every case: groups that are shown, groups still collecting (DMSPC 8,
+  // UN Women 7, OLA 6), and a group withheld to protect a smaller one (UNICEF, Humanitarian / Field
+  // Operations). In a live demo, two more DMSPC answers unlock the DMSPC dataset.
   const DEMO = {
     periods: ['2026-Q2', '2026-Q3', '2026-Q4'],
     scale: [0.45, 0.8, 1],
@@ -577,7 +581,7 @@
       DPPA: { POL: 13, RES: 6, ADM: 4 }, DPO: { POL: 14, HUM: 6, ADM: 5 }, OCHA: { HUM: 24, PRG: 11, COM: 5, ADM: 4, RES: 2 },
       UNDP: { PRG: 23, ADM: 8, RES: 6, LEAD: 4 }, UNICEF: { PRG: 18, HUM: 12, ADM: 5, COM: 3 }, UNHCR: { HUM: 20, PRG: 8, LEG: 4, HR: 2 },
       WFP: { HUM: 17, ADM: 11, RES: 6, COM: 4 }, WHO: { PRG: 14, RES: 9, COM: 4 }, DMSPC: { HR: 5, ADM: 3 }, DOS: { ADM: 12, HR: 6, COM: 4 },
-      OHCHR: { LEG: 8, POL: 6 }, UNWOMEN: { PRG: 8, POL: 4 }, OLA: { LEG: 6 }, OTHER: { PRG: 6, ADM: 5, OTH: 4 }
+      OHCHR: { LEG: 8, POL: 6 }, UNWOMEN: { PRG: 4, POL: 3 }, OLA: { LEG: 6 }, OTHER: { PRG: 6, ADM: 5, OTH: 4 }
     },
     level: { PS: 3.75, IN: 3.65, CC: 3.55, LM: 3.7, IB: 3.35, OS: 3.25 }, // average favourability, 1 to 5
     cuts: [1.6, 2.6, 3.25, 4.35], // latent score -> answer 1 to 5 (5 = most favourable)
@@ -632,8 +636,8 @@
   }
 
   // ---------- responses saved in this browser (website prototype only) ----------
-  function deviceStore(storage) {
-    const key = CONFIG.storageKey;
+  function deviceStore(storage, key) {
+    key = key || CONFIG.storageKey;
     const read = () => {
       try {
         const v = JSON.parse(storage.getItem(key) || 'null');
@@ -659,6 +663,6 @@
     ITEM_BY_ID, CATEGORY_BY_ID, ENTITY_BY_ID, FUNCTION_BY_ID, TEXT, DEMO,
     polarity, answerLabel, periodOf, periodLabel, responseId, problems, makeResponse, longRows, datasets, aggregate,
     protect, buildRelease, checkRelease, cell, releaseRows, releaseCSV, questions, qualtricsTxt, codebookRows, codebookCSV,
-    parseCSV, readExport, rng, demoResponses, demoCSV, deviceStore
+    parseCSV, readExport, rng, demoResponses, demoCSV, deviceStore, demoPeriod: () => DEMO.periods[DEMO.periods.length - 1]
   };
 });

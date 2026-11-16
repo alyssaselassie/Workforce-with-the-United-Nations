@@ -6,8 +6,10 @@
   const $ = (id) => document.getElementById(id);
   const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+  // Demo mode (survey.html?demo=1): answers join the demonstration data on this device, never real responses.
+  const DEMO_MODE = new URLSearchParams(window.location.search).get('demo') === '1';
   let store = null;
-  try { store = W.deviceStore(window.localStorage); store.count(); } catch (e) { store = null; }
+  try { store = W.deviceStore(window.localStorage, DEMO_MODE ? W.CONFIG.demoStorageKey : W.CONFIG.storageKey); store.count(); } catch (e) { store = null; }
 
   // ---------- questions and pages ----------
   const Q = {
@@ -50,9 +52,10 @@
   }
 
   function storageNote() {
-    return store
-      ? 'On this website prototype, your answers are saved only in this browser, on this device, so that the results dashboard on this device can include them. They are not sent to any server.'
-      : 'This browser does not allow the website to save data, so answers cannot be recorded here.';
+    if (!store) return 'This browser does not allow the website to save data, so answers cannot be recorded here.';
+    return DEMO_MODE
+      ? 'Demo mode: your answers are added to the fictional demonstration data on this device, so you can watch the dashboard update. They are not real survey responses and are not sent anywhere.'
+      : 'On this website prototype, your answers are saved only in this browser, on this device, so that the results dashboard on this device can include them. They are not sent to any server.';
   }
 
   function reviewHtml() {
@@ -155,8 +158,10 @@
     const thanks = kind === 'thanks';
     $('sv-page').innerHTML = `<p class="sv-eyebrow">${thanks ? 'Submitted' : 'Finished'}</p><h1 class="sv-title" id="sv-h" tabindex="-1">Thank you</h1>
       <p class="sv-lead">${esc(thanks ? W.TEXT.thanks : W.TEXT.declined)}</p>
-      ${thanks ? `<p class="sv-note">Website prototype: your response was saved in this browser only, with an anonymous ID. ${saved === 1 ? '1 response is' : `${saved} responses are`} now stored on this device. Results appear on the dashboard once a group reaches ${W.CONFIG.minGroupSize} responses.</p>` : ''}
-      <div class="sv-end-links"><button type="button" class="sv-btn sv-back" id="sv-again">Start a new response</button>${thanks ? '<a class="sv-btn sv-next" href="./?source=device">See the results dashboard</a>' : ''}</div>`;
+      ${thanks ? (DEMO_MODE
+        ? `<p class="sv-note">Demo mode: your answers were added to the fictional demonstration data on this device (${saved === 1 ? '1 demo response' : `${saved} demo responses`} so far). Open the dashboard to see the counts and charts update.</p>`
+        : `<p class="sv-note">Website prototype: your response was saved in this browser only, with an anonymous ID. ${saved === 1 ? '1 response is' : `${saved} responses are`} now stored on this device. Results appear on the dashboard once a group reaches ${W.CONFIG.minGroupSize} responses.</p>`) : ''}
+      <div class="sv-end-links"><button type="button" class="sv-btn sv-back" id="sv-again">Start a new response</button>${thanks ? `<a class="sv-btn sv-next" href="./?source=${DEMO_MODE ? 'demo' : 'device'}">See the results dashboard</a>` : ''}</div>`;
     $('sv-nav').hidden = true;
     clearErrors();
     if (thanks) {
@@ -184,7 +189,8 @@
     $('sv-next').setAttribute('aria-disabled', 'true');
     let saved;
     try {
-      const r = W.makeResponse({ entity: state.answers.ENTITY, function: state.answers.FUNCTION, answers: Object.fromEntries(W.ITEMS.map((it) => [it.id, Number(state.answers[it.id])])) });
+      const r = W.makeResponse({ entity: state.answers.ENTITY, function: state.answers.FUNCTION, answers: Object.fromEntries(W.ITEMS.map((it) => [it.id, Number(state.answers[it.id])])) },
+        DEMO_MODE ? { period: W.demoPeriod() } : {});
       if (!store) throw new Error('this browser does not allow the website to save data.');
       saved = store.add(r);
     } catch (err) {
@@ -204,6 +210,11 @@
   }
 
   function init() {
+    if (DEMO_MODE) {
+      document.body.classList.add('is-demo');
+      $('sv-mode-note').innerHTML = '<strong>Demo mode:</strong> answers join the fictional demonstration data on this device, so you can watch the dashboard update. <a href="./">Results dashboard</a>';
+      $('sv-brand').textContent = 'UN Workforce Experience Survey · Demo';
+    }
     render(false);
     const form = $('sv-form');
     form.addEventListener('change', (e) => {

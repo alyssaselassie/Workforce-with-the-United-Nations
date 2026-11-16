@@ -10,8 +10,10 @@
   const K = W.CONFIG.minGroupSize;
   const REPO = 'https://github.com/alyssaselassie/Workforce-with-the-United-Nations/blob/main/';
 
-  let store = null;
+  let store = null, demoStore = null;
   try { store = W.deviceStore(window.localStorage); store.count(); } catch (e) { store = null; }
+  try { demoStore = W.deviceStore(window.localStorage, W.CONFIG.demoStorageKey); demoStore.count(); } catch (e) { demoStore = null; }
+  let demoBase = null;
 
   const releases = { demo: null, device: null, file: null };
   const state = {
@@ -22,7 +24,14 @@
   // ---------- data ----------
   function release() {
     if (state.source === 'demo') {
-      if (!releases.demo) { const rs = W.demoResponses(); releases.demo = W.buildRelease(rs, { source: 'demo', label: 'Demonstration data' }); releases.demo.responses = rs.length; }
+      // The synthetic demonstration data plus any answers given in demo mode on this device.
+      const extra = demoStore ? demoStore.all() : [];
+      if (!releases.demo || releases.demo.extra !== extra.length) {
+        demoBase = demoBase || W.demoResponses();
+        releases.demo = W.buildRelease(demoBase.concat(extra), { source: 'demo', label: 'Demonstration data' });
+        releases.demo.responses = demoBase.length;
+        releases.demo.extra = extra.length;
+      }
       return releases.demo;
     }
     if (state.source === 'device') {
@@ -43,7 +52,9 @@
     const el = $('source-banner');
     if (state.source === 'demo' || isDemo(rel)) {
       el.className = 'ws-banner is-demo';
-      el.innerHTML = `<p><strong>Demonstration data.</strong> ${rel && rel.responses ? `${rel.responses} synthetic responses` : 'Synthetic responses'} generated for this prototype in ${rel ? rel.periods.length : 3} reporting periods. They are not real survey results, and differences between entities are random: they say nothing about any real UN entity.</p>`;
+      const extra = state.source === 'demo' && rel ? rel.extra || 0 : 0;
+      el.innerHTML = `<p><strong>Demonstration data (fictional).</strong> ${rel && rel.responses ? `${rel.responses} synthetic responses` : 'Synthetic responses'} generated for this prototype in ${rel ? rel.periods.length : 3} reporting periods${extra ? `, plus ${extra} ${extra === 1 ? 'answer' : 'answers'} given in demo mode on this device` : ''}. They are not real survey results, and differences between entities are random: they say nothing about any real UN entity.</p>
+        ${state.source === 'demo' ? `<p><a class="ws-btn ws-btn-outline ws-btn-small" href="survey.html?demo=1"><i class="bi bi-play-circle" aria-hidden="true"></i> Try the live demo</a> Take the survey in demo mode and watch these charts update.${extra ? ' <button type="button" class="ws-btn ws-btn-outline ws-btn-small" id="clear-demo"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Remove demo answers</button>' : ''}</p>` : ''}`;
       return;
     }
     el.className = 'ws-banner is-real';
@@ -309,20 +320,21 @@
       ${W.CATEGORIES.map((c) => `<details class="ws-details"><summary>${c.letter}. ${esc(c.name)}: the statements and their sources</summary><ol>${c.items.map((it) => `<li><strong>${esc(it.text)}</strong><br><small>${esc(it.concept)} · ${esc(it.basis)}${it.sources.length ? ` · ${esc(it.sources.map((s) => W.SOURCES[s].short).join('; '))}` : ''}. ${esc(it.note)}</small></li>`).join('')}</ol></details>`).join('')}
       <p class="ws-note-inline">Questions are adapted from, or are new wording of, published concepts; none is copied from a licensed instrument. Category E asks what people notice in workplace practices: it is not a measure of anyone's implicit bias. Scores are descriptive and are not validated measurements.</p>
 
-      <h2>How results are protected</h2>
+      <h2 id="privacy-h" tabindex="-1">How your data is protected</h2>
       <ul>
         <li><strong>Minimum group size: ${K} completed responses.</strong> Nothing is shown for a smaller group, including every filtered group (entity, function and period together). Before then the dashboard says that results are being collected.</li>
         <li><strong>No working out small groups by subtraction.</strong> If the groups that cannot be shown add up to fewer than ${K}, the next-smallest group is withheld too, so no small group can be calculated from the totals.</li>
         <li><strong>Function results only inside an entity.</strong> Organization-wide results for one function add up entity groups that are already shown, so filtering and comparing cannot reveal anything new.</li>
         <li><strong>Each reporting period on its own.</strong> No result covers several periods, so periods cannot be subtracted from each other. Only the period is stored, never the date or time.</li>
         <li><strong>No individual answers, ever.</strong> Charts and downloads use group totals only. Groups that are not shown carry no numbers at all, not even their exact size.</li>
-        <li><strong>Demonstration data are never mixed with real responses.</strong> Each data source is shown on its own and labelled on every chart.</li>
+        <li><strong>Demonstration data is never mixed with real responses.</strong> Each data source is shown on its own and labelled on every chart. Answers given in demo mode join the demonstration data only.</li>
       </ul>
       <p>The threshold is set in <code>workforce-survey/workforce-survey.js</code> (<code>CONFIG.minGroupSize</code>). It can be raised, but not lowered below ${K}. The rules are tested in <code>tools/test_workforce_survey.js</code>.</p>
 
-      <h2>Where the data are stored</h2>
+      <h2>Where the data is stored</h2>
       <ul>
-        <li><strong>Demonstration data</strong> are generated in your browser from a fixed seed. They are synthetic.</li>
+        <li><strong>Demonstration data</strong> is generated in your browser from a fixed seed. It is fictional.</li>
+        <li><strong>Live demo:</strong> answers given in demo mode (the "Try the live demo" button) are saved in this browser and added to the demonstration data only, so you can show the dashboard updating. They are never mixed with real responses.</li>
         <li><strong>This device:</strong> the survey page saves each submitted response in this browser's local storage: a random ID, the entity, the function, the reporting period and the answers. Nothing is sent to a server, so responses from other people's devices never appear here, and anyone using this browser can delete them.</li>
         <li><strong>Imported file:</strong> a Qualtrics export is read in your browser and never uploaded. Response IDs and dates are discarded. Keep raw exports in access-controlled storage, never in this public repository.</li>
         <li><strong>Aggregated results files</strong> (CSV or JSON, below) hold only groups that can be shown, so they can be shared with entity focal points, who can load the JSON file here without seeing any individual answers.</li>
@@ -442,11 +454,13 @@
     if (!store) { $('src-device').disabled = true; }
     const params = new URLSearchParams(window.location.search);
     if (params.get('source') === 'device' && store) state.source = 'device';
+    if (params.get('source') === 'demo') state.source = 'demo';
     setSource(state.source);
 
     document.querySelectorAll('input[name="source"]').forEach((el) => el.addEventListener('change', () => { if (el.checked) setSource(el.value); }));
     $('file-input').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) readFile(f); e.target.value = ''; });
     $('source-banner').addEventListener('click', (e) => {
+      if (e.target.closest('#clear-demo')) { demoStore.clear(); renderAll(); return; }
       if (!e.target.closest('#clear-device')) return;
       if (window.confirm('Delete every survey response stored in this browser? This cannot be undone.')) { store.clear(); renderAll(); }
     });
@@ -476,12 +490,20 @@
       if (e.target.closest('#dl-csv')) download(exportName('csv'), W.releaseCSV(release()), 'text/csv');
       if (e.target.closest('#dl-json')) { const r = Object.assign({}, release()); delete r.responses; download(exportName('json'), JSON.stringify(r, null, 1), 'application/json'); }
     });
-    document.querySelectorAll('[data-tab-link]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); showTab(a.dataset.tabLink); $('main').scrollIntoView({ behavior: 'smooth' }); }));
-    if (window.location.hash === '#about' || window.location.hash === '#compare') showTab(window.location.hash.slice(1));
+    // "How your data is protected": open the About tab at the privacy section.
+    const toPrivacy = () => {
+      const go = () => { const h = $('privacy-h'); if (h) { h.scrollIntoView({ behavior: 'smooth', block: 'start' }); h.focus({ preventScroll: true }); } };
+      if ($('tab-about').classList.contains('active')) { go(); return; }
+      $('tab-about').addEventListener('shown.bs.tab', go, { once: true });
+      showTab('about');
+    };
+    document.querySelectorAll('[data-tab-link]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); toPrivacy(); }));
+    if (window.location.hash === '#about' || window.location.hash === '#privacy') toPrivacy();
+    else if (window.location.hash === '#compare') showTab('compare');
 
     // Live updates: a response submitted in another tab of this browser redraws the charts.
-    window.addEventListener('storage', (e) => { if (e.key === W.CONFIG.storageKey || e.key === null) renderAll(); });
-    document.addEventListener('visibilitychange', () => { if (!document.hidden && state.source === 'device') renderAll(); });
+    window.addEventListener('storage', (e) => { if ([W.CONFIG.storageKey, W.CONFIG.demoStorageKey, null].includes(e.key)) renderAll(); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && state.source !== 'file') renderAll(); });
     let wide = window.innerWidth;
     window.addEventListener('resize', () => { if (Math.abs(window.innerWidth - wide) > 40) { wide = window.innerWidth; drawTrends(release()); } });
     bindTips();
