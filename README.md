@@ -15,7 +15,8 @@ An interactive educational web application that helps United Nations personnel b
 | `collaboration.html` | Team Debrief: four cooperative team goals (every voice heard, every dimension discussed, decide together, agree on actions), facilitated sessions with a perspective wall, a "who's missing" prompt, contributions tagged by dimension, a dimension check before voting, a group vote compared with the guidance, an action plan and a printable summary. Sessions can be exported and imported as JSON |
 | `progress.html` | Game hub (level, recent XP, quests and the full XP rules), then the competency profile, completed scenarios with stars, recurring biases, reflections, export and reset |
 | `profile.html` | Personal profile: profile photo and LinkedIn-style banner photo (both cropped and resized in the browser), headline, duty station, languages, about and learning goal, plus your avatar (shown when there is no photo), medals, level, competencies, missions explored, the dimensions the learner most often misses, 18 badges with progress, recent activity and backup/restore of profile, progress and XP |
-| `relief-map/` | Relief Maps Tool: a 5-minute anonymous team survey and a map of where people feel safe, included and at ease (see [Relief Maps Tool](#relief-maps-tool-prototype) below). Linked from the main menu and as module 6 on the home page |
+| `workforce-survey/` | Workforce Survey & Analytics: an anonymous, all-required, multiple-choice staff survey and a dashboard with separate aggregated results for each UN entity (see [Workforce Survey & Analytics](#workforce-survey--analytics) below). Linked from the main menu and as module 6 on the home page |
+| `relief-map/` | Relief Maps Tool, the earlier settings-based pilot survey and map (see [Relief Maps Tool](#relief-maps-tool-earlier-pilot) below). Linked from the Workforce Survey's About tab |
 
 ### Scoring
 
@@ -63,7 +64,47 @@ The game layer stays professional: plain language, a calm palette and no leaderb
 
 Design principles: XP rewards learning actions (exploring a context, deciding, reflecting, hearing every voice) and never speed. Each action pays once; replaying earns XP only for doing better. There are no leaderboards, so learners are only compared with their past selves, and XP is not a measure of anyone's bias. `js/game.js` holds the rules (`XP`, `LEVELS`, `QUESTS`, badges); a ledger stores the best award per action key.
 
-## Relief Maps Tool (prototype)
+## Workforce Survey & Analytics
+
+`workforce-survey/` holds the **UN Workforce Experience Survey** and its dashboard. It measures six categories, using adapted, attributed concepts from Edmondson's team psychological safety scale, COPSOQ III and published inclusion research (no licensed instrument is copied):
+
+- **A.** psychological safety;
+- **B.** workplace inclusion;
+- **C.** cross-cultural collaboration;
+- **D.** leadership and management;
+- **E.** implicit bias and organizational awareness (perceptions of workplace practices, not a measure of anyone's bias);
+- **F.** organizational support.
+
+Respondents first choose their **UN entity** (14 options, including funds, programmes, specialized agencies and "Other UN entity or office") and their **professional function** (10 options).
+
+| File | What it is |
+| --- | --- |
+| `workforce-survey/survey.html` | The survey. All 37 questions are multiple choice and required: consent, entity, function, then six category pages of 5 or 6 statements. It shows "Required" on every question, an error summary with links, a progress bar and a review screen with Change links before submitting. On this website a submitted response is saved **only in this browser** with a random ID; nothing is sent to a server |
+| `workforce-survey/index.html` | The dashboard. Data sources: demonstration data, responses on this device (updates live when a response is submitted in another tab), or an imported Qualtrics export or aggregated results file. Entity navigation with response counts; filters for entity, function, category and reporting period; one graph per category (stacked bars per question, % favourable with a 95% confidence interval, and a trend line once two periods exist); a separate comparison tab (dot plots with sample sizes, confidence intervals and warnings); and an About tab with methods, privacy rules, sources and downloads |
+| `workforce-survey/workforce-survey.js` | The questions, scales and sources; per-entity datasets; the anonymity rules (`buildRelease`); the Qualtrics file, export reader and synthetic demonstration data. Runs in the browser and in Node |
+| `workforce-survey/workforce-survey-qualtrics.txt` | The survey in Qualtrics' Advanced Format. After importing, turn on Force response for every question and Anonymize responses |
+| `workforce-survey/workforce-survey-codebook.csv` | Every question, code, category and source |
+| `workforce-survey/demo-qualtrics-export.csv` | Synthetic demonstration data in the layout of a Qualtrics export. The dashboard keeps it labelled as demonstration data |
+| `docs/workforce-survey-data-architecture.md` | What is stored where, the anonymity rules, the limits of a static site, and the options (with accounts, costs and credentials) for real cross-user collection |
+| `tools/test_workforce_survey.js` | Tests for required answers, dataset separation, thresholds and suppression, including a property test over random datasets: `node tools/test_workforce_survey.js` |
+
+**Scales:** agreement for A–D and F ("Strongly agree" to "Strongly disagree") and frequency for E ("Always" to "Never", where less often is more favourable). "Don't know or not applicable" (code 98) means a required question never forces a guess; it is reported separately and left out of percentages. The confidence scale in the brief is not used: as written, "Slightly confident" sits below the neutral point.
+
+**Privacy:**
+
+- Nothing is shown for a group of fewer than **10** completed responses, including every filtered group (entity × function × period).
+- Withheld groups carry no numbers.
+- If the hidden groups in a breakdown add up to fewer than 10, the next-smallest group is withheld too, so small groups cannot be worked out by subtraction.
+- Function results are released only inside an entity, and each reporting period stands alone.
+- Demonstration data are never mixed with real responses.
+
+A static GitHub Pages site cannot pool responses from different people's devices. For real collection, run the survey in Qualtrics; see the data architecture note.
+
+**Changing the survey:** edit `workforce-survey/workforce-survey.js`, then run `node tools/build_workforce_survey.js` and `node tools/test_workforce_survey.js`.
+
+## Relief Maps Tool (earlier pilot)
+
+The Workforce Survey has replaced this pilot. It stays available, unchanged, at `relief-map/`.
 
 *Relief Maps Tool: Visualizing Well-Being Across Work & Learning Spaces*, in `relief-map/`, for the UN Transformative Spaces initiative. A 5-minute anonymous Qualtrics survey becomes a **team Relief Map**: six workplace settings along the bottom, the average answer from 1 to 5 up the side (higher is more positive), and three lines: **safety and voice**, **belonging and inclusion**, and **comfort**. Each setting has three fixed statements, one per line, and each statement also measures one of five dimensions (psychological safety, belonging, inclusion, voice and participation, comfort and well-being). It is a workplace adaptation of Relief Maps (Rodó-Zárate, 2023) and the 2025 Relief Maps Tool from the NYU Intersectionality Lab: it shows team averages, not individual maps.
 
@@ -96,6 +137,10 @@ data/missions.json     mission locations, scope, status, sources, verification f
 data/scenarios.json    competencies, bias library, frameworks, scenarios, choices, feedback, scores
 data/data-bundle.js    generated copy of the JSON so the site also works from file://
 tools/bundle_data.py   regenerates data-bundle.js (and validates the JSON)
+workforce-survey/      UN Workforce Experience Survey and analytics dashboard (see above)
+tools/build_workforce_survey.js  regenerates the Qualtrics file, codebook and demonstration export
+tools/test_workforce_survey.js   tests the survey model and anonymity rules
+relief-map/            Relief Maps Tool (earlier pilot)
 ```
 
 ## Running locally
