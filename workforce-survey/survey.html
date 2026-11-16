@@ -8,18 +8,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
-  <link href="survey.css?v=20261116w" rel="stylesheet">
+  <link href="survey.css?v=20261116x" rel="stylesheet">
 </head>
 <body>
   <a class="sv-skip" href="#sv-main">Skip to the survey</a>
   <aside class="sv-preview-bar" aria-label="Prototype notice">
-    <div class="sv-wrap"><p class="sv-preview-note"><strong>Website prototype:</strong> answers are saved only in this browser, on this device, and are not sent to any server. <a href="./">Results dashboard</a></p></div>
+    <div class="sv-wrap"><p class="sv-preview-note" id="sv-mode-note"><strong>Website prototype:</strong> answers are saved only in this browser, on this device, and are not sent to any server. <a href="./">Results dashboard</a></p></div>
   </aside>
 
   <header class="sv-top">
     <div class="sv-wrap">
       <div class="sv-top-row">
-        <p class="sv-brand">UN Workforce Experience Survey</p>
+        <p class="sv-brand" id="sv-brand">UN Workforce Experience Survey</p>
         <p class="sv-count" id="sv-count" aria-live="polite"></p>
       </div>
       <div class="sv-progress" id="sv-progress" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
@@ -38,7 +38,7 @@
     <p class="sv-foot">An independent educational prototype. Not an official United Nations product.</p>
   </main>
 
-  <script src="workforce-survey.js?v=20261116w"></script>
-  <script src="survey.js?v=20261116w"></script>
+  <script src="workforce-survey.js?v=20261116x"></script>
+  <script src="survey.js?v=20261116x"></script>
 </body>
 </html>

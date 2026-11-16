@@ -168,6 +168,12 @@ store.add(made);
 check('store saves complete responses', store.count() === 1 && store.all()[0].id === made.id);
 store.clear();
 check('store can be cleared', store.count() === 0);
+const demoStore = W.deviceStore(mem, W.CONFIG.demoStorageKey);
+demoStore.add(W.makeResponse(input, { period: W.demoPeriod() }));
+check('demo answers are kept apart from real responses', demoStore.count() === 1 && store.count() === 0 && W.CONFIG.demoStorageKey !== W.CONFIG.storageKey);
+check('demo answers use the latest demonstration period', demoStore.all()[0].period === '2026-Q4');
+const live = W.buildRelease(W.demoResponses().concat(Array.from({ length: 2 }, () => W.makeResponse({ entity: 'DMSPC', function: 'HR', answers: fullAnswers() }, { period: W.demoPeriod() }))));
+check('live demo: two DMSPC answers unlock the DMSPC dataset', W.buildRelease(W.demoResponses()).data['2026-Q4'].entities.DMSPC.status === 'collecting' && live.data['2026-Q4'].entities.DMSPC.status === 'published' && live.data['2026-Q4'].entities.DMSPC.n === 10);
 
 console.log(`${passed} passed, ${failures.length} failed`);
 if (failures.length) { failures.forEach((f) => console.log(`FAIL ${f}`)); process.exit(1); }

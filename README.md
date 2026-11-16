@@ -100,6 +100,8 @@ Respondents first choose their **UN entity** (14 options, including funds, progr
 
 A static GitHub Pages site cannot pool responses from different people's devices. For real collection, run the survey in Qualtrics; see the data architecture note.
 
+**Live demo for presentations:** "Try the live demo" opens the survey in demo mode (`survey.html?demo=1`). Answers join the fictional demonstration data on that device only (never real responses), and the dashboard updates while you watch. DMSPC starts at 8 responses, so submitting two demo answers as DMSPC shows its dataset unlocking at the threshold of 10. "Remove demo answers" resets it.
+
 **Changing the survey:** edit `workforce-survey/workforce-survey.js`, then run `node tools/build_workforce_survey.js` and `node tools/test_workforce_survey.js`.
 
 ## Relief Maps Tool (earlier pilot)

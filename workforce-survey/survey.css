@@ -26,6 +26,8 @@ a { color: var(--sv-teal); }
 .sv-preview-bar .sv-wrap { padding-top: .55rem; padding-bottom: .55rem; }
 .sv-preview-note { margin: 0; }
 .sv-preview-note a { color: var(--sv-navy); font-weight: 600; }
+.is-demo .sv-preview-bar { border-bottom-color: #f0d9a8; background: #fff4dc; color: #4d3500; }
+.is-demo .sv-preview-note a { color: #4d3500; }
 
 .sv-top { position: sticky; top: 0; z-index: 5; background: #fff; border-bottom: 1px solid #e3e1ee; }
 .sv-top .sv-wrap { padding-top: .7rem; padding-bottom: .8rem; }

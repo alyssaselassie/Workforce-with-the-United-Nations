@@ -16,6 +16,8 @@ sources. They are always shown separately, and every chart is labelled with its 
 | **This device** | Responses submitted with `workforce-survey/survey.html` **in the same browser**. Each is saved in that browser's local storage (key `un-workforce-survey.responses.v1`). | Only people using that browser on that device. Responses from other people's devices never appear. |
 | **Imported file** | A Qualtrics CSV export, or an aggregated results file (JSON) made by this dashboard. Files are read in the browser and never uploaded. | Whoever has the file. |
 
+**Live demo.** Answers given in demo mode (`survey.html?demo=1`, the "Try the live demo" button) are saved in this browser under a separate key (`un-workforce-survey.demo-responses.v1`) and added to the demonstration data only, so presenters can show the dashboard updating. They never mix with real responses.
+
 **This is not an organization-wide database.** The "This device" view is a working local prototype,
 for example for one shared device at a workshop. It cannot pool answers from different computers.
 
