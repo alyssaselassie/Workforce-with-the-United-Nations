@@ -266,12 +266,12 @@
     { href: 'scenarios.html', page: 'scenarios', label: 'Scenarios', icon: 'bi-signpost-split' },
     { href: 'toolkit.html', page: 'toolkit', label: 'Bias Toolkit', icon: 'bi-lightbulb' },
     { href: 'collaboration.html', page: 'collaboration', label: 'Team Debrief', icon: 'bi-people' },
-    { href: 'relief-map/', page: 'relief', label: 'Relief Maps', icon: 'bi-graph-up' }
+    { href: 'workforce-survey/', page: 'workforce', label: 'Workforce Survey', icon: 'bi-bar-chart-line' }
   ];
 
   function renderChrome() {
     const current = document.body.dataset.page;
-    const root = document.body.dataset.root || ''; // '../' on pages in a subfolder, such as relief-map/
+    const root = document.body.dataset.root || ''; // '../' on pages in a subfolder, such as workforce-survey/
     const profile = Profile.get();
     const firstName = String(profile.name || '').trim().split(/\s+/)[0];
     const onProfile = current === 'profile' || current === 'progress';
@@ -306,7 +306,7 @@
             </div>
           </div>
         </nav>
-        ${current === 'home' || current === 'relief' ? '' : '<div class="demo-banner no-print"><div class="container-xl"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <strong>Demo mode:</strong> your profile and progress reset when you refresh or reopen the site.</div></div>'}`;
+        ${['home', 'relief', 'workforce'].includes(current) ? '' : '<div class="demo-banner no-print"><div class="container-xl"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <strong>Demo mode:</strong> your profile and progress reset when you refresh or reopen the site.</div></div>'}`;
     }
 
     const footer = document.getElementById('site-footer');

@@ -85,7 +85,7 @@
     }
     RM.SETTINGS.forEach((st, i) => {
       const text = `${st.label}: ${v.lines.map((l) => `${l.label} ${l.values[i].hidden ? 'hidden' : f1(l.values[i].mean)}`).join('; ')}`;
-      out.push(`<rect class="rm-hit" data-i="${i}" x="${(m.l + (i * pw) / n).toFixed(1)}" y="${m.t}" width="${(pw / n).toFixed(1)}" height="${ph}" fill="transparent" tabindex="0" aria-label="${esc(text)}"/>`);
+      out.push(`<rect class="rm-hit" data-i="${i}" x="${(m.l + (i * pw) / n).toFixed(1)}" y="${m.t}" width="${(pw / n).toFixed(1)}" height="${ph}" fill="transparent" tabindex="0" role="img" aria-label="${esc(text)}"/>`);
     });
     const title = state.compare ? `Relief Map by ${RM.IDENTITY.find((q) => q.id === state.compare).label.toLowerCase()}` : 'Relief Map: three measures in six workplace settings';
     return `<svg viewBox="0 0 ${W} ${H}" role="group" aria-labelledby="rm-title rm-desc" xmlns="http://www.w3.org/2000/svg" data-x0="${m.l}" data-pw="${pw}" data-n="${n}" data-w="${W}">

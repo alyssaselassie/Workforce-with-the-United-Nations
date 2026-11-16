@@ -113,6 +113,7 @@ a:hover { color: #155a56; }
   font: 700 .7rem/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .06em; }
 .rm-note { padding: 1.4rem 0 2.2rem; border-top: 1px solid var(--rm-line); background: #fff; color: var(--rm-muted); font-size: .86rem; }
 .rm-note p { margin: 0 0 .25rem; }
+.rm-pilot-note { margin: 0 0 1.6rem; padding: .8rem 1rem; border-left: 3px solid var(--rm-teal); border-radius: 0 12px 12px 0; background: var(--rm-lavender-2); color: var(--rm-ink-2); font-size: .95rem; }
 /* The shared site styles set a tinted page background and heavier headings; keep this page white and light. */
 body[data-page="relief"] { background: #fff; }
 body[data-page="relief"] .rm-hero h1 { font-weight: 700; }

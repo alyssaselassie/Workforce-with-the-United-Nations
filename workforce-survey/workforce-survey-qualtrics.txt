@@ -1,0 +1,702 @@
+[[AdvancedFormat]]
+
+[[Block:Introduction]]
+
+[[Question:DB]]
+[[ID:INTRO]]
+UN Workforce Experience Survey. This survey asks about psychological safety, inclusion, cross-cultural collaboration, leadership, bias in workplace practices and organizational support. It has 37 multiple-choice questions and takes about 8 minutes. Every question needs an answer; if a statement does not apply to you, choose "Don't know or not applicable".
+
+[[Question:DB]]
+[[ID:PRIVACY]]
+Taking part is voluntary. You can stop at any time before you submit, and nothing is recorded until you do. We do not ask for your name, email, staff ID or duty station, and we do not record your IP address or location. Your entity and professional function are used only to group answers, and the date only to assign a reporting period (such as October to December 2026). Results are shown only for groups of at least 10 people. Individual answers are never shown to anyone, including supervisors.
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:CONSENT]]
+Do you agree to take part in this survey?
+[[AdvancedChoices]]
+[[Choice:1]]
+Yes, I agree to take part
+[[Choice:2]]
+No, I do not want to take part
+
+[[Block:About your work]]
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:ENTITY]]
+Which UN entity or office do you work for? Choose the one that best describes where you work. The list includes Secretariat departments and offices, funds and programmes, and specialized agencies. If yours is not listed, choose "Other UN entity or office".
+[[AdvancedChoices]]
+[[Choice:1]]
+Department of Political and Peacebuilding Affairs (DPPA)
+[[Choice:2]]
+Department of Peace Operations (DPO)
+[[Choice:3]]
+Office for the Coordination of Humanitarian Affairs (OCHA)
+[[Choice:4]]
+United Nations Development Programme (UNDP)
+[[Choice:5]]
+United Nations Children's Fund (UNICEF)
+[[Choice:6]]
+United Nations High Commissioner for Refugees (UNHCR)
+[[Choice:7]]
+World Food Programme (WFP)
+[[Choice:8]]
+World Health Organization (WHO)
+[[Choice:9]]
+Department of Management Strategy, Policy and Compliance (DMSPC)
+[[Choice:10]]
+Department of Operational Support (DOS)
+[[Choice:11]]
+Office of the High Commissioner for Human Rights (OHCHR)
+[[Choice:12]]
+UN Women
+[[Choice:13]]
+United Nations Office of Legal Affairs (OLA)
+[[Choice:14]]
+Other UN entity or office
+
+[[PageBreak]]
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:FUNCTION]]
+Which professional function best describes your work?
+[[AdvancedChoices]]
+[[Choice:1]]
+Humanitarian / Field Operations
+[[Choice:2]]
+Political Affairs / Peacekeeping
+[[Choice:3]]
+Human Resources
+[[Choice:4]]
+Administration / Operations
+[[Choice:5]]
+Communications / Public Information
+[[Choice:6]]
+Research / Data / Analytics
+[[Choice:7]]
+Programme Management / Development
+[[Choice:8]]
+Legal / Policy
+[[Choice:9]]
+Leadership / Management
+[[Choice:10]]
+Other
+
+[[Block:A. Psychological safety]]
+
+[[Question:DB]]
+[[ID:PS_INTRO]]
+A. Psychological safety. Think about the team you work with most closely. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:PS1]]
+In my team, I can express an opinion that differs from others' without fear of negative consequences.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:PS2]]
+I can ask questions in my team without worrying about how I will be seen.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:PS3]]
+If I make a mistake in my team, it is not held against me.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:PS4]]
+I feel safe raising problems and difficult issues in my team.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:PS5]]
+I can respectfully disagree with my supervisor without fear of negative consequences.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:PS6]]
+It is easy to ask colleagues in my team for help.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Block:B. Workplace inclusion]]
+
+[[Question:DB]]
+[[ID:IN_INTRO]]
+B. Workplace inclusion. Think about your workplace. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IN1]]
+I feel that I belong in my team.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IN2]]
+Everyone in my team has an equal opportunity to take part in discussions.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IN3]]
+Colleagues are treated with respect whatever their cultural or national background.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IN4]]
+Opportunities such as assignments, training and travel are open to everyone in my team.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IN5]]
+Different perspectives are valued in my team, even when they challenge the usual way of working.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IN6]]
+I am treated fairly at work.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Block:C. Cross-cultural collaboration]]
+
+[[Question:DB]]
+[[ID:CC_INTRO]]
+C. Cross-cultural collaboration. Think about working with colleagues from different cultural, national and professional backgrounds. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:CC1]]
+People in my team communicate effectively across cultural and language differences.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:CC2]]
+International and national staff in my workplace work together as equal partners.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:CC3]]
+Colleagues make an effort to understand working styles that differ from their own.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:CC4]]
+When misunderstandings arise between colleagues from different backgrounds, they are resolved respectfully.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:CC5]]
+Knowledge and information are shared openly across teams and duty stations.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Block:D. Leadership and management]]
+
+[[Question:DB]]
+[[ID:LM_INTRO]]
+D. Leadership and management. Think about your direct supervisor and the management of your office. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:LM1]]
+My supervisor treats all team members fairly.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:LM2]]
+My supervisor involves team members in decisions that affect their work.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:LM3]]
+My supervisor is open to feedback, including criticism.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:LM4]]
+My supervisor recognizes everyone's contributions, not only the most visible ones.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:LM5]]
+Management explains the reasons for decisions that affect staff.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:LM6]]
+My supervisor communicates with team members respectfully.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Block:E. Implicit bias and organizational awareness]]
+
+[[Question:DB]]
+[[ID:IB_INTRO]]
+E. Implicit bias and organizational awareness. In the past 3 months (or since you joined, if that is more recent), how often have you noticed the following in your workplace? These questions ask what you have noticed in workplace practices. They do not measure anyone's implicit bias, and results are never about individuals.
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IB1]]
+Decisions based on assumptions about people's backgrounds rather than on evidence
+[[AdvancedChoices]]
+[[Choice:1]]
+Always
+[[Choice:2]]
+Often
+[[Choice:3]]
+Sometimes
+[[Choice:4]]
+Rarely
+[[Choice:5]]
+Never
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IB2]]
+Colleagues using stereotypes about a nationality, culture or region
+[[AdvancedChoices]]
+[[Choice:1]]
+Always
+[[Choice:2]]
+Often
+[[Choice:3]]
+Sometimes
+[[Choice:4]]
+Rarely
+[[Choice:5]]
+Never
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IB3]]
+Colleagues being treated differently because of their nationality, gender, language, age or other background
+[[AdvancedChoices]]
+[[Choice:1]]
+Always
+[[Choice:2]]
+Often
+[[Choice:3]]
+Sometimes
+[[Choice:4]]
+Rarely
+[[Choice:5]]
+Never
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IB4]]
+Factors other than merit affecting who is recruited or promoted
+[[AdvancedChoices]]
+[[Choice:1]]
+Always
+[[Choice:2]]
+Often
+[[Choice:3]]
+Sometimes
+[[Choice:4]]
+Rarely
+[[Choice:5]]
+Never
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IB5]]
+Similar contributions being recognized differently depending on who made them
+[[AdvancedChoices]]
+[[Choice:1]]
+Always
+[[Choice:2]]
+Often
+[[Choice:3]]
+Sometimes
+[[Choice:4]]
+Rarely
+[[Choice:5]]
+Never
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:IB6]]
+Differences in power (for example between headquarters and the field, international and national staff, or senior and junior staff) deciding whose views count
+[[AdvancedChoices]]
+[[Choice:1]]
+Always
+[[Choice:2]]
+Often
+[[Choice:3]]
+Sometimes
+[[Choice:4]]
+Rarely
+[[Choice:5]]
+Never
+[[Choice:98]]
+Don't know or not applicable
+
+[[Block:F. Organizational support]]
+
+[[Question:DB]]
+[[ID:OS_INTRO]]
+F. Organizational support. Think about your organization as a whole. How much do you agree with each statement?
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OS1]]
+I have access to training on diversity, inclusion and bias.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OS2]]
+I know how to report discrimination or unfair treatment in my organization.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OS3]]
+When discrimination or unfair treatment is reported, my organization takes appropriate action.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OS4]]
+Senior management actively supports diversity and inclusion.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:OS5]]
+I have opportunities for professional development in my organization.
+[[AdvancedChoices]]
+[[Choice:1]]
+Strongly agree
+[[Choice:2]]
+Agree
+[[Choice:3]]
+Neither agree nor disagree
+[[Choice:4]]
+Disagree
+[[Choice:5]]
+Strongly disagree
+[[Choice:98]]
+Don't know or not applicable
+
+[[Block:Review]]
+
+[[Question:DB]]
+[[ID:REVIEW]]
+Before you submit: use the Back button to review or change any answer. When you are ready, select the arrow to submit.
