@@ -26,6 +26,9 @@
     if (session && nav && nav.type === 'reload') clearDemoData(session);
     // Earlier versions kept data in localStorage; remove it so nothing lingers.
     clearDemoData(window.localStorage);
+    // The workforce survey used to be part of this site and could keep responses in this browser. It
+    // is now a separate application, so the Navigator removes anything it left behind.
+    ['un-workforce-survey.responses.v1', 'un-workforce-survey.demo-responses.v1'].forEach((k) => window.localStorage.removeItem(k));
   } catch (e) { /* ignore */ }
 
   const Store = {
@@ -265,13 +268,12 @@
     { href: 'map.html', page: 'map', label: 'Mission Map', icon: 'bi-globe-americas' },
     { href: 'scenarios.html', page: 'scenarios', label: 'Scenarios', icon: 'bi-signpost-split' },
     { href: 'toolkit.html', page: 'toolkit', label: 'Bias Toolkit', icon: 'bi-lightbulb' },
-    { href: 'collaboration.html', page: 'collaboration', label: 'Team Debrief', icon: 'bi-people' },
-    { href: 'workforce-survey/', page: 'workforce', label: 'Workforce Survey', icon: 'bi-bar-chart-line' }
+    { href: 'collaboration.html', page: 'collaboration', label: 'Team Debrief', icon: 'bi-people' }
   ];
 
   function renderChrome() {
     const current = document.body.dataset.page;
-    const root = document.body.dataset.root || ''; // '../' on pages in a subfolder, such as workforce-survey/
+    const root = document.body.dataset.root || ''; // '../' on pages in a subfolder, such as relief-map/
     const profile = Profile.get();
     const firstName = String(profile.name || '').trim().split(/\s+/)[0];
     const onProfile = current === 'profile' || current === 'progress';
@@ -306,7 +308,7 @@
             </div>
           </div>
         </nav>
-        ${['home', 'relief', 'workforce'].includes(current) ? '' : '<div class="demo-banner no-print"><div class="container-xl"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <strong>Demo mode:</strong> your profile and progress reset when you refresh or reopen the site.</div></div>'}`;
+        ${['home', 'relief'].includes(current) ? '' : '<div class="demo-banner no-print"><div class="container-xl"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> <strong>Demo mode:</strong> your profile and progress reset when you refresh or reopen the site.</div></div>'}`;
     }
 
     const footer = document.getElementById('site-footer');

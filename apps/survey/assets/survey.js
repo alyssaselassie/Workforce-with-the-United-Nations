@@ -1,30 +1,26 @@
-// UN Workforce Experience Survey: every question is multiple choice and required, and there is a
-// review screen before submitting. On this website, answers are saved only in this browser.
+// UN Workforce Inclusion & Psychological Safety Assessment: the questionnaire.
+// Every question is multiple choice and required; a progress indicator and a review screen come
+// before submitting. Submitting is handled by site.js (secure database, or demonstration mode).
 (function () {
   'use strict';
-  const W = window.WorkforceSurvey;
+  const M = window.AssessmentModel;
+  const S = window.AssessmentSite;
   const $ = (id) => document.getElementById(id);
   const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-  // Demo mode (survey.html?demo=1): answers join the demonstration data on this device, never real responses.
-  const DEMO_MODE = new URLSearchParams(window.location.search).get('demo') === '1';
-  let store = null;
-  try { store = W.deviceStore(window.localStorage, DEMO_MODE ? W.CONFIG.demoStorageKey : W.CONFIG.storageKey); store.count(); } catch (e) { store = null; }
-
   // ---------- questions and pages ----------
   const Q = {
-    CONSENT: { id: W.CONSENT.id, text: W.CONSENT.text, options: W.CONSENT.options.map((label, i) => ({ value: String(i + 1), label })) },
-    ENTITY: { id: W.ENTITY_Q.id, text: W.ENTITY_Q.text, help: W.ENTITY_Q.help, list: true, options: W.ENTITIES.map((e) => ({ value: e.id, label: e.name })) },
-    FUNCTION: { id: W.FUNCTION_Q.id, text: W.FUNCTION_Q.text, help: W.FUNCTION_Q.help, list: true, options: W.FUNCTIONS.map((f) => ({ value: f.id, label: f.name })) }
+    CONSENT: { id: M.CONSENT.id, text: M.CONSENT.text, options: M.CONSENT.options.map((label, i) => ({ value: String(i + 1), label })) },
+    DEPARTMENT: { id: M.DEPARTMENT_Q.id, text: M.DEPARTMENT_Q.text, help: M.DEPARTMENT_Q.help, list: true, options: M.DEPARTMENTS.map((d) => ({ value: d.id, label: d.name })) }
   };
   const itemQ = (c, it, i) => ({ id: it.id, num: `${c.letter}${i + 1}`, text: it.text, scale: true,
-    options: W.SCALES[c.scale].options.map((label, j) => ({ value: String(j + 1), label })), na: { value: String(W.NA.code), label: W.NA.label } });
+    options: M.SCALES[c.scale].options.map((label, j) => ({ value: String(j + 1), label })), na: { value: String(M.NA.code), label: M.NA.label } });
 
   const PAGES = [
-    { id: 'welcome', eyebrow: 'Welcome', title: W.SURVEY_TITLE, body: [W.TEXT.intro], facts: W.TEXT.privacy, questions: [Q.CONSENT] },
-    { id: 'work', eyebrow: 'About your work', title: 'About your work', body: ['These two answers are used only to group results. Nothing is shown for a group of fewer than 10 people.'], questions: [Q.ENTITY, Q.FUNCTION] }
+    { id: 'welcome', eyebrow: 'Before you start', title: 'Taking part', body: [M.TEXT.intro], facts: M.TEXT.privacy, questions: [Q.CONSENT] },
+    { id: 'department', eyebrow: 'Your department', title: 'Your department', body: [`This is the only question about you. It is used only to group answers, and no result is shown for a group of fewer than ${M.CONFIG.minGroupSize} people.`], questions: [Q.DEPARTMENT] }
   ].concat(
-    W.CATEGORIES.map((c) => ({ id: c.id, eyebrow: `Section ${c.letter} of F`, section: `Section ${c.letter}`, title: c.name, body: [c.intro], caution: c.caution, questions: c.items.map((it, i) => itemQ(c, it, i)) })),
+    M.CATEGORIES.map((c) => ({ id: c.id, eyebrow: `Section ${c.letter} of F`, section: `Section ${c.letter}`, title: c.name, body: [c.intro], caution: c.caution, scaleName: M.SCALES[c.scale].name, questions: c.items.map((it, i) => itemQ(c, it, i)) })),
     [{ id: 'review', eyebrow: 'Review', title: 'Review your answers', review: true }]
   );
   const ALL_Q = PAGES.flatMap((p) => p.questions || []);
@@ -32,7 +28,7 @@
   const labelOf = (q, v) => (q.na && v === q.na.value ? q.na.label : (q.options.find((o) => o.value === v) || {}).label || '');
   const qName = (q) => (q.num ? `${q.num}. ${q.text}` : q.text);
 
-  const state = { answers: {}, history: [], current: 'welcome', fromReview: false, busy: false, flagged: [] };
+  const state = { answers: {}, history: [], current: 'welcome', fromReview: false, busy: false, flagged: [], done: false };
   const index = () => PAGES.findIndex((p) => p.id === state.current);
 
   // ---------- rendering ----------
@@ -51,13 +47,6 @@
     </fieldset>`;
   }
 
-  function storageNote() {
-    if (!store) return 'This browser does not allow the website to save data, so answers cannot be recorded here.';
-    return DEMO_MODE
-      ? 'Demo mode: your answers are added to the fictional demonstration data on this device, so you can watch the dashboard update. They are not real survey responses and are not sent anywhere.'
-      : 'On this website prototype, your answers are saved only in this browser, on this device, so that the results dashboard on this device can include them. They are not sent to any server.';
-  }
-
   function reviewHtml() {
     const sections = PAGES.filter((p) => p.questions && p.id !== 'welcome');
     return `<p class="sv-eyebrow">Review</p><h1 class="sv-title" id="sv-h" tabindex="-1">Review your answers</h1>
@@ -68,15 +57,19 @@
         <dl>${p.questions.map((q) => {
           const v = state.answers[q.id];
           return `<dt>${esc(qName(q))}</dt><dd${v == null ? ' class="is-missing"' : ''}>${v == null ? 'Not answered' : esc(labelOf(q, v))}</dd>`;
-        }).join('')}</dl></section>`).join('')}</div>`;
+        }).join('')}</dl></section>`).join('')}</div>
+      <p class="sv-note">${S.mode === 'live'
+        ? 'When you submit, your answers are sent to the secure database with your department. Your name, email, staff ID and IP address are not part of the response.'
+        : 'Demonstration version: when you submit, your answers stay in this browser as demonstration data. Nothing is collected.'}</p>`;
   }
 
   function pageHtml(page) {
     if (page.review) return reviewHtml();
     return `<p class="sv-eyebrow">${esc(page.eyebrow)}</p><h1 class="sv-title" id="sv-h" tabindex="-1">${esc(page.title)}</h1>
       ${page.body.map((t) => `<p class="sv-lead">${esc(t)}</p>`).join('')}
+      ${page.scaleName ? `<p class="sv-scale-note">Answer scale: ${esc(page.scaleName.toLowerCase())}. If a statement does not apply to you, choose "${esc(M.NA.label)}".</p>` : ''}
       ${page.caution ? `<p class="sv-note">${esc(page.caution)}</p>` : ''}
-      ${page.facts ? `<ul class="sv-facts">${page.facts.map((t) => `<li>${esc(t)}</li>`).join('')}</ul><p class="sv-note">${esc(storageNote())}</p>` : ''}
+      ${page.facts ? `<ul class="sv-facts">${page.facts.map((t) => `<li>${esc(t)}</li>`).join('')}</ul><p class="sv-more"><a href="privacy.html${S.demoQuery}" target="_blank" rel="noopener">Read the full privacy statement</a> (opens in a new tab).</p>` : ''}
       <p class="sv-all-required">All questions are required.</p>
       <div class="sv-questions">${page.questions.map(questionHtml).join('')}</div>`;
   }
@@ -146,38 +139,25 @@
     $('sv-errors').focus({ preventScroll: true });
   }
 
-  function showSaveError(text) {
+  function showSubmitError(text) {
     const box = $('sv-errors');
-    box.innerHTML = `<h2>Your answers could not be saved</h2><p>${esc(text)}</p>`;
+    box.innerHTML = `<h2>Your answers were not submitted</h2><p>${esc(text)}</p><p>Your answers are still here: select "Submit my answers" to try again.</p>`;
     box.hidden = false;
-    box.focus();
+    window.scrollTo(0, 0);
+    box.focus({ preventScroll: true });
   }
 
   // ---------- endings ----------
-  function finish(kind, saved) {
-    const thanks = kind === 'thanks';
-    $('sv-page').innerHTML = `<p class="sv-eyebrow">${thanks ? 'Submitted' : 'Finished'}</p><h1 class="sv-title" id="sv-h" tabindex="-1">Thank you</h1>
-      <p class="sv-lead">${esc(thanks ? W.TEXT.thanks : W.TEXT.declined)}</p>
-      ${thanks ? (DEMO_MODE
-        ? `<p class="sv-note">Demo mode: your answers were added to the fictional demonstration data on this device (${saved === 1 ? '1 demo response' : `${saved} demo responses`} so far). Open the dashboard to see the counts and charts update.</p>`
-        : `<p class="sv-note">Website prototype: your response was saved in this browser only, with an anonymous ID. ${saved === 1 ? '1 response is' : `${saved} responses are`} now stored on this device. Results appear on the dashboard once a group reaches ${W.CONFIG.minGroupSize} responses.</p>`) : ''}
-      <div class="sv-end-links"><button type="button" class="sv-btn sv-back" id="sv-again">Start a new response</button>${thanks ? `<a class="sv-btn sv-next" href="./?source=${DEMO_MODE ? 'demo' : 'device'}">See the results dashboard</a>` : ''}</div>`;
+  function declined() {
+    $('sv-page').innerHTML = `<p class="sv-eyebrow">Finished</p><h1 class="sv-title" id="sv-h" tabindex="-1">Thank you</h1>
+      <p class="sv-lead">${esc(M.TEXT.declined)}</p>
+      <div class="sv-end-links"><a class="sv-btn sv-back" href="index.html${S.demoQuery}">Return to the start</a></div>`;
     $('sv-nav').hidden = true;
     clearErrors();
-    if (thanks) {
-      const bar = $('sv-progress');
-      bar.setAttribute('aria-valuenow', '100');
-      bar.setAttribute('aria-valuetext', 'Survey submitted');
-      bar.querySelector('span').style.width = '100%';
-      $('sv-count').textContent = 'Submitted';
-    }
     state.answers = {};
     state.history = [];
     state.current = null;
-    state.fromReview = false;
-    state.busy = false;
-    $('sv-next').removeAttribute('aria-disabled');
-    $('sv-again').addEventListener('click', () => { state.current = 'welcome'; render(true); });
+    state.done = true;
     focusTitle();
   }
 
@@ -186,20 +166,22 @@
     const missing = ALL_Q.filter((q) => state.answers[q.id] == null);
     if (missing.length) { showErrors(missing, true); return; }
     state.busy = true;
-    $('sv-next').setAttribute('aria-disabled', 'true');
-    let saved;
+    const btn = $('sv-next');
+    btn.setAttribute('aria-disabled', 'true');
+    btn.textContent = 'Submitting…';
+    let input;
     try {
-      const r = W.makeResponse({ entity: state.answers.ENTITY, function: state.answers.FUNCTION, answers: Object.fromEntries(W.ITEMS.map((it) => [it.id, Number(state.answers[it.id])])) },
-        DEMO_MODE ? { period: W.demoPeriod() } : {});
-      if (!store) throw new Error('this browser does not allow the website to save data.');
-      saved = store.add(r);
-    } catch (err) {
+      input = { department: state.answers.DEPARTMENT, answers: Object.fromEntries(M.ITEMS.map((it) => [it.id, Number(state.answers[it.id])])) };
+    } catch (e) { input = null; }
+    S.submit(input).then(() => {
+      state.done = true;
+      window.location.replace(`thanks.html${S.demoQuery || (S.mode === 'demo' ? '?demo=1' : '')}`);
+    }).catch((err) => {
       state.busy = false;
-      $('sv-next').removeAttribute('aria-disabled');
-      showSaveError(`Nothing was saved: ${err.message}`);
-      return;
-    }
-    finish('thanks', saved);
+      btn.removeAttribute('aria-disabled');
+      btn.textContent = 'Submit my answers';
+      showSubmitError(err && err.message ? err.message : 'Something went wrong.');
+    });
   }
 
   // ---------- events ----------
@@ -210,11 +192,6 @@
   }
 
   function init() {
-    if (DEMO_MODE) {
-      document.body.classList.add('is-demo');
-      $('sv-mode-note').innerHTML = '<strong>Demo mode:</strong> answers join the fictional demonstration data on this device, so you can watch the dashboard update. <a href="./">Results dashboard</a>';
-      $('sv-brand').textContent = 'UN Workforce Experience Survey · Demo';
-    }
     render(false);
     const form = $('sv-form');
     form.addEventListener('change', (e) => {
@@ -244,7 +221,7 @@
       if (page.review) { submit(); return; }
       const missing = page.questions.filter((q) => state.answers[q.id] == null);
       if (missing.length) { showErrors(missing, false); return; }
-      if (page.id === 'welcome' && state.answers.CONSENT !== '1') { finish('declined'); return; } // "No" ends the survey
+      if (page.id === 'welcome' && state.answers.CONSENT !== '1') { declined(); return; } // "No" ends the assessment
       if (state.fromReview) { state.fromReview = false; state.current = 'review'; render(true); return; }
       state.history.push(state.current);
       state.current = PAGES[index() + 1].id;
@@ -253,6 +230,12 @@
     $('sv-back').addEventListener('click', () => {
       if (state.fromReview) { state.fromReview = false; state.current = 'review'; render(true); return; }
       if (state.history.length) { state.current = state.history.pop(); render(true); }
+    });
+    // Warn before leaving with unsent answers (nothing is saved until submission).
+    window.addEventListener('beforeunload', (e) => {
+      if (state.done || !Object.keys(state.answers).some((id) => id !== 'CONSENT')) return;
+      e.preventDefault();
+      e.returnValue = '';
     });
   }
 

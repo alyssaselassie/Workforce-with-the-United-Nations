@@ -3,106 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Workforce Survey &amp; Analytics · Prototype</title>
-  <meta name="description" content="Aggregated, anonymous results of the UN Workforce Experience Survey for each UN entity: psychological safety, inclusion, cross-cultural collaboration, leadership, bias in workplace practices and organizational support.">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
-  <link href="../styles.css?v=20261116x" rel="stylesheet">
-  <link href="dashboard.css?v=20261116x" rel="stylesheet">
+  <meta name="robots" content="noindex">
+  <title>This assessment has moved · CQ &amp; Bias Navigator</title>
+  <style>
+    :root { --navy: #1b2a4e; --ink: #16213a; --muted: #5d6475; --line: #e7e5ee; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f8f8fb; color: var(--ink); font-family: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.55; }
+    main { max-width: 40rem; margin: 0 auto; padding: 4rem 16px; }
+    h1 { margin: 0 0 1rem; color: var(--navy); font-family: "Source Serif 4", Georgia, serif; font-size: 2rem; line-height: 1.2; }
+    p { margin: 0 0 1rem; }
+    .note { padding: .9rem 1rem; border: 1px solid var(--line); border-left: 4px solid var(--navy); border-radius: 10px; background: #fff; }
+    a { color: #1f7a75; font-weight: 600; }
+    :focus-visible { outline: 3px solid #1f7a75; outline-offset: 2px; }
+  </style>
 </head>
-<body data-page="workforce" data-root="../">
-  <header id="site-header"></header>
-  <section class="ws-hero" aria-labelledby="ws-title">
-    <div class="container-xl">
-      <p class="ws-kicker">Workforce analytics · research prototype</p>
-      <h1 id="ws-title">Workforce Survey &amp; Analytics</h1>
-      <p class="ws-sub">Psychological safety, inclusion, cross-cultural collaboration, leadership, bias in workplace practices and organizational support, reported separately for each UN entity.</p>
-      <div class="ws-actions">
-        <a class="ws-btn ws-btn-light" href="survey.html">Take the survey</a>
-        <a class="ws-btn ws-btn-ghost" href="survey.html?demo=1"><i class="bi bi-play-circle" aria-hidden="true"></i> Try the live demo</a>
-        <a class="ws-btn ws-btn-ghost" href="#privacy" data-tab-link="about"><i class="bi bi-shield-lock" aria-hidden="true"></i> How your data is protected</a>
-      </div>
-    </div>
-  </section>
-
-  <main class="container-xl ws-main" id="main">
-    <section class="ws-source" aria-labelledby="src-h">
-      <div class="ws-source-row">
-        <div>
-          <h2 id="src-h" class="ws-label">Data source</h2>
-          <fieldset class="ws-seg">
-            <legend class="visually-hidden">Choose the data to show</legend>
-            <input type="radio" name="source" id="src-demo" value="demo" checked><label for="src-demo">Demonstration data</label>
-            <input type="radio" name="source" id="src-device" value="device"><label for="src-device">This device <span class="ws-seg-n" id="device-n"></span></label>
-            <input type="radio" name="source" id="src-file" value="file" disabled><label for="src-file">Imported file</label>
-          </fieldset>
-        </div>
-        <div class="ws-source-actions">
-          <label class="ws-btn ws-btn-outline" for="file-input"><i class="bi bi-upload" aria-hidden="true"></i> Import a file</label>
-          <input class="visually-hidden" type="file" id="file-input" accept=".csv,.json,text/csv,application/json">
-        </div>
-      </div>
-      <div id="source-banner" class="ws-banner"></div>
-      <p id="file-msg" class="ws-msg" role="status"></p>
-      <p class="ws-privacy"><i class="bi bi-shield-lock" aria-hidden="true"></i> <span><strong>Privacy:</strong> results are shown only for groups of at least <span class="js-k">10</span> completed responses, including every filtered group. Individual answers are never displayed. <a href="#privacy" data-tab-link="about">How your data is protected</a></span></p>
-    </section>
-
-    <ul class="nav ws-tabs" role="tablist">
-      <li class="nav-item" role="presentation"><button class="nav-link active" id="tab-dash" data-bs-toggle="tab" data-bs-target="#panel-dash" type="button" role="tab" aria-controls="panel-dash" aria-selected="true">Entity dashboards</button></li>
-      <li class="nav-item" role="presentation"><button class="nav-link" id="tab-compare" data-bs-toggle="tab" data-bs-target="#panel-compare" type="button" role="tab" aria-controls="panel-compare" aria-selected="false" tabindex="-1">Compare entities</button></li>
-      <li class="nav-item" role="presentation"><button class="nav-link" id="tab-about" data-bs-toggle="tab" data-bs-target="#panel-about" type="button" role="tab" aria-controls="panel-about" aria-selected="false" tabindex="-1">About the data</button></li>
-    </ul>
-
-    <div class="tab-content">
-      <!-- Entity dashboards -->
-      <div class="tab-pane fade show active" id="panel-dash" role="tabpanel" aria-labelledby="tab-dash" tabindex="0">
-        <div class="ws-filters" role="group" aria-label="Filters">
-          <div class="ws-field"><label for="f-entity">Organizational entity</label><select id="f-entity" class="form-select"></select></div>
-          <div class="ws-field"><label for="f-function">Professional function</label><select id="f-function" class="form-select"></select></div>
-          <div class="ws-field"><label for="f-category">Measurement category</label><select id="f-category" class="form-select"></select></div>
-          <div class="ws-field"><label for="f-period">Reporting period</label><select id="f-period" class="form-select"></select></div>
-        </div>
-        <div class="ws-layout">
-          <nav class="ws-entity-nav" aria-labelledby="nav-h">
-            <h2 id="nav-h" class="ws-label">Datasets</h2>
-            <ul id="entity-nav"></ul>
-          </nav>
-          <div class="ws-dash" id="dash"></div>
-        </div>
-      </div>
-
-      <!-- Comparison -->
-      <div class="tab-pane fade" id="panel-compare" role="tabpanel" aria-labelledby="tab-compare" tabindex="0">
-        <p class="ws-lead">Compare the aggregated results of two or more entities. Only entities whose results can be shown are available. Sample sizes and 95% confidence intervals are shown so that small differences are not over-read.</p>
-        <div class="ws-filters ws-filters-compare">
-          <fieldset class="ws-field ws-pick">
-            <legend>Entities to compare <span class="ws-hint">(choose 2 or more)</span></legend>
-            <div id="c-entities" class="ws-pick-list"></div>
-          </fieldset>
-          <div class="ws-field"><label for="c-function">Professional function</label><select id="c-function" class="form-select"></select></div>
-          <div class="ws-field"><label for="c-category">Measurement category</label><select id="c-category" class="form-select"></select></div>
-          <div class="ws-field"><label for="c-period">Reporting period</label><select id="c-period" class="form-select"></select></div>
-        </div>
-        <div id="compare-out" class="ws-compare"></div>
-      </div>
-
-      <!-- About -->
-      <div class="tab-pane fade" id="panel-about" role="tabpanel" aria-labelledby="tab-about" tabindex="0">
-        <div id="about" class="ws-about"></div>
-      </div>
-    </div>
-    <p class="ws-note">An independent educational prototype; not an official United Nations product and not endorsed by the UN. Demonstration data is fictional.</p>
+<body>
+  <main>
+    <h1>This assessment has moved</h1>
+    <p>The workforce assessment is no longer part of the UN Cultural Intelligence &amp; Bias Navigator. It now runs as a separate application, the <strong>UN Workforce Inclusion &amp; Psychological Safety Assessment</strong>, with its own address and privacy statement.</p>
+    <p>If you were invited to take part, please use the link in your invitation.</p>
+    <p class="note">The Navigator is a learning platform. It does not collect workforce assessment responses.</p>
+    <p><a href="../index.html">Go to the Navigator home page</a></p>
   </main>
-  <footer id="site-footer"></footer>
-
-  <div id="ws-tip" class="ws-tip" role="presentation" hidden></div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-  <script src="../script.js?v=20261116x"></script>
-  <script src="../js/avatar.js?v=20261025p"></script>
-  <script src="workforce-survey.js?v=20261116x"></script>
-  <script src="dashboard.js?v=20261116x"></script>
+  <script>
+    // The survey used to keep responses in this browser; remove anything it left behind.
+    try { ['un-workforce-survey.responses.v1', 'un-workforce-survey.demo-responses.v1'].forEach(function (k) { window.localStorage.removeItem(k); }); } catch (e) { /* storage blocked */ }
+  </script>
 </body>
 </html>

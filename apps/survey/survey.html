@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://*.supabase.co http://127.0.0.1:54321 http://localhost:54321; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <title>Take the assessment · UN Workforce Inclusion &amp; Psychological Safety Assessment</title>
+  <meta name="description" content="The anonymous assessment: every question is multiple choice and required, with a review screen before you submit.">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link href="assets/assessment.css?v=20261117a" rel="stylesheet">
+</head>
+<body>
+  <a class="as-skip" href="#sv-main">Skip to the assessment</a>
+  <header class="as-header">
+    <div class="as-wrap">
+      <a class="as-brand" href="index.html">
+        <span class="as-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5"/><path d="M8.5 12.5l2.2 2.2 4.8-4.8"/></svg></span>
+        <span class="as-brand-text"><small>Anonymous workforce assessment</small>UN Workforce Inclusion &amp; Psychological Safety Assessment</span>
+      </a>
+      <nav class="as-nav" aria-label="Assessment">
+        <ul>
+          <li><a href="index.html">About</a></li>
+          <li><a href="privacy.html" target="_blank" rel="noopener">Privacy statement<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+          <li><a class="as-nav-cta" href="survey.html" aria-current="page">Assessment</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <aside class="as-banner" id="mode-banner" aria-label="Demonstration notice" hidden><div class="as-wrap"></div></aside>
+
+  <section class="sv-top" aria-label="Progress">
+    <div class="as-wrap as-narrow">
+      <div class="sv-top-row">
+        <p class="sv-brand">Your progress</p>
+        <p class="sv-count" id="sv-count" aria-live="polite"></p>
+      </div>
+      <div class="sv-progress" id="sv-progress" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
+    </div>
+  </section>
+
+  <main id="sv-main" class="as-wrap as-narrow sv-main">
+    <form id="sv-form" class="sv-card" novalidate>
+      <div id="sv-errors" class="sv-error-summary" tabindex="-1" hidden></div>
+      <div id="sv-page"></div>
+      <div class="sv-nav" id="sv-nav">
+        <button type="button" class="sv-btn sv-back" id="sv-back">Back</button>
+        <button type="submit" class="sv-btn sv-next" id="sv-next">Next</button>
+      </div>
+    </form>
+  </main>
+
+  <footer class="as-footer">
+    <div class="as-wrap">
+      <p>An independent research prototype by Team C, NYU School of Professional Studies. Not an official United Nations product and not endorsed by the UN.</p>
+      <p><a href="privacy.html" target="_blank" rel="noopener">Privacy statement<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+    </div>
+  </footer>
+  <script src="config.js?v=20261117a"></script>
+  <script src="assets/assessment-model.js?v=20261117a"></script>
+  <script src="assets/site.js?v=20261117a"></script>
+  <script src="assets/survey.js?v=20261117a"></script>
+</body>
+</html>

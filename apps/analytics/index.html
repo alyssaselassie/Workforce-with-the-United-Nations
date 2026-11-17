@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co http://127.0.0.1:54321 http://localhost:54321; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex, nofollow">
+  <title>UN Workforce Analytics Dashboard</title>
+  <meta name="description" content="Aggregated, anonymity-protected results of the UN Workforce Inclusion & Psychological Safety Assessment, for authorized researchers and project administrators.">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link href="assets/dashboard.css?v=20261117a" rel="stylesheet">
+</head>
+<body>
+  <a class="ad-skip" href="#main">Skip to main content</a>
+  <header class="ad-header">
+    <div class="ad-wrap">
+      <div class="ad-brand">
+        <span class="ad-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-width="2.6"><path d="M6 19v-5" stroke="#cfe6f8"/><path d="M12 19V6" stroke="#fff"/><path d="M18 19v-8" stroke="#e5c98d"/></svg></span>
+        <span class="ad-brand-text"><small>Restricted · aggregated results only</small>UN Workforce Analytics Dashboard</span>
+      </div>
+      <div class="ad-session" id="session" aria-live="polite"></div>
+    </div>
+  </header>
+
+  <main id="main" class="ad-wrap ad-main">
+    <!-- Start: choose a data source -->
+    <section id="gate" aria-labelledby="gate-h">
+      <p class="ad-kicker">For authorized researchers and project administrators</p>
+      <h1 id="gate-h" tabindex="-1">Workforce analytics</h1>
+      <p class="ad-lead">Aggregated results of the UN Workforce Inclusion &amp; Psychological Safety Assessment, with a separate dataset and six graphs for each of 12 professional departments, and a comparison view.</p>
+      <div class="ad-gate">
+        <section class="ad-panel" aria-labelledby="signin-h">
+          <h2 id="signin-h">Sign in for live results</h2>
+          <p>Live results need an authorized account. Results are aggregated on the server: no individual response reaches this page.</p>
+          <form id="signin-form" novalidate>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="username" required>
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <button type="submit" class="ad-btn" id="signin-btn">Sign in</button>
+            <p id="signin-msg" class="ad-msg" role="status"></p>
+          </form>
+          <div id="signin-off" class="ad-off" hidden>
+            <p><strong>Sign-in is not set up for this copy of the dashboard.</strong> It is not yet connected to the secure results service, so there are no live results to show. The setup steps are in the dashboard's README.</p>
+          </div>
+        </section>
+        <section class="ad-panel" aria-labelledby="demo-h">
+          <h2 id="demo-h">Demonstration</h2>
+          <p>Explore every feature with fictional data. No sign-in is needed and no real responses are involved; every chart is labelled as demonstration data.</p>
+          <button type="button" class="ad-btn ad-btn-quiet" id="open-demo">Open the demonstration</button>
+        </section>
+        <section class="ad-panel" aria-labelledby="file-h">
+          <h2 id="file-h">Results file</h2>
+          <p>For researchers running the assessment in Qualtrics: open an export (CSV) or an aggregated results file (JSON). It is read in this browser and never uploaded.</p>
+          <label class="ad-btn ad-btn-quiet" for="file-input">Open a file</label>
+          <input class="visually-hidden" type="file" id="file-input" accept=".csv,.json,text/csv,application/json">
+          <p id="file-msg" class="ad-msg" role="status"></p>
+        </section>
+      </div>
+      <p class="ad-privacy"><strong>Privacy:</strong> results are shown only for groups of at least <span class="js-k">10</span> completed responses, smaller groups are protected from being worked out by subtraction, and individual answers are never displayed.</p>
+    </section>
+
+    <!-- The dashboard -->
+    <section id="app" aria-labelledby="app-h" hidden>
+      <h1 id="app-h" class="ad-app-title" tabindex="-1">Workforce analytics</h1>
+      <div id="source-banner" class="ad-banner"></div>
+
+      <div class="ad-tabs" role="tablist" aria-label="Views">
+        <button type="button" role="tab" id="tab-dash" aria-controls="panel-dash" aria-selected="true">Department dashboards</button>
+        <button type="button" role="tab" id="tab-compare" aria-controls="panel-compare" aria-selected="false" tabindex="-1">Compare departments</button>
+        <button type="button" role="tab" id="tab-about" aria-controls="panel-about" aria-selected="false" tabindex="-1">About the data</button>
+      </div>
+
+      <div id="panel-dash" role="tabpanel" aria-labelledby="tab-dash" tabindex="0">
+        <div class="ad-filters" role="group" aria-label="Filters">
+          <div class="ad-field"><label for="f-department">Department dataset</label><select id="f-department"></select></div>
+          <div class="ad-field"><label for="f-category">Area</label><select id="f-category"></select></div>
+          <div class="ad-field"><label for="f-period">Reporting period</label><select id="f-period"></select></div>
+        </div>
+        <div class="ad-layout">
+          <nav class="ad-nav" aria-labelledby="nav-h">
+            <h2 id="nav-h" class="ad-label">Datasets</h2>
+            <ul id="department-nav"></ul>
+          </nav>
+          <div class="ad-dash" id="dash"></div>
+        </div>
+      </div>
+
+      <div id="panel-compare" role="tabpanel" aria-labelledby="tab-compare" tabindex="0" hidden>
+        <h2 class="visually-hidden">Compare departments</h2>
+        <p class="ad-lead-small">Compare the aggregated results of two or more departments. Only departments whose results can be shown are available. Sample sizes and 95% confidence intervals are shown so that small differences are not over-read.</p>
+        <div class="ad-filters ad-filters-compare">
+          <fieldset class="ad-field ad-pick">
+            <legend>Departments to compare <span class="ad-hint">(choose 2 or more)</span></legend>
+            <div id="c-departments" class="ad-pick-list"></div>
+          </fieldset>
+          <div class="ad-field"><label for="c-category">Area</label><select id="c-category"></select></div>
+          <div class="ad-field"><label for="c-period">Reporting period</label><select id="c-period"></select></div>
+        </div>
+        <div id="compare-out" class="ad-compare"></div>
+      </div>
+
+      <div id="panel-about" role="tabpanel" aria-labelledby="tab-about" tabindex="0" hidden>
+        <div id="about" class="ad-about"></div>
+      </div>
+    </section>
+
+    <p class="ad-note">An independent research prototype by Team C, NYU School of Professional Studies. Not an official United Nations product and not endorsed by the UN. Demonstration data is fictional.</p>
+  </main>
+
+  <div id="ad-tip" class="ad-tip" role="presentation" hidden></div>
+  <script src="config.js?v=20261117a"></script>
+  <script src="assets/assessment-model.js?v=20261117a"></script>
+  <script src="assets/auth.js?v=20261117a"></script>
+  <script src="assets/dashboard.js?v=20261117a"></script>
+</body>
+</html>

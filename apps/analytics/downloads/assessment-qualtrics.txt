@@ -4,88 +4,57 @@
 
 [[Question:DB]]
 [[ID:INTRO]]
-UN Workforce Experience Survey. This survey asks about psychological safety, inclusion, cross-cultural collaboration, leadership, bias in workplace practices and organizational support. It has 37 multiple-choice questions and takes about 8 minutes. Every question needs an answer; if a statement does not apply to you, choose "Don't know or not applicable".
+UN Workforce Inclusion & Psychological Safety Assessment. This assessment asks about psychological safety, workplace inclusion, cross-cultural collaboration, leadership and management, awareness of bias in workplace practices, and organizational support. It has 36 multiple-choice questions and takes about 8 minutes. Every question needs an answer; if a statement does not apply to you, choose "Don't know or not applicable".
 
 [[Question:DB]]
 [[ID:PRIVACY]]
-Taking part is voluntary. You can stop at any time before you submit, and nothing is recorded until you do. We do not ask for your name, email, staff ID or duty station, and we do not record your IP address or location. Your entity and professional function are used only to group answers, and the date only to assign a reporting period (such as October to December 2026). Results are shown only for groups of at least 10 people. Individual answers are never shown to anyone, including supervisors.
+Taking part is voluntary. You can stop at any time before you submit; nothing is recorded until you do. We do not ask for your name, email, staff ID, entity or duty station. Your response is stored without your IP address or location. Your department is used only to group answers, and the date only to assign a reporting period (such as October to December 2026). The exact date and time are not stored. Results are shown only for groups of at least 10 people, and smaller groups are protected from being worked out from other results. Individual answers are never shown to anyone, including supervisors.
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:CONSENT]]
-Do you agree to take part in this survey?
+Do you agree to take part in this assessment?
 [[AdvancedChoices]]
 [[Choice:1]]
 Yes, I agree to take part
 [[Choice:2]]
 No, I do not want to take part
 
-[[Block:About your work]]
+[[Block:Your department]]
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:ENTITY]]
-Which UN entity or office do you work for? Choose the one that best describes where you work. The list includes Secretariat departments and offices, funds and programmes, and specialized agencies. If yours is not listed, choose "Other UN entity or office".
+[[ID:DEPARTMENT]]
+Which professional department do you work in? Choose the one closest to your work. If none fits, choose "Other". This is used only to group answers.
 [[AdvancedChoices]]
 [[Choice:1]]
-Department of Political and Peacebuilding Affairs (DPPA)
+Human Resources (HR)
 [[Choice:2]]
-Department of Peace Operations (DPO)
+Finance & Accounting
 [[Choice:3]]
-Office for the Coordination of Humanitarian Affairs (OCHA)
+Marketing & Communications
 [[Choice:4]]
-United Nations Development Programme (UNDP)
+Research & Data Analytics
 [[Choice:5]]
-United Nations Children's Fund (UNICEF)
+Information Technology (IT)
 [[Choice:6]]
-United Nations High Commissioner for Refugees (UNHCR)
+Legal & Compliance
 [[Choice:7]]
-World Food Programme (WFP)
+Operations & Administration
 [[Choice:8]]
-World Health Organization (WHO)
+Programme & Project Management
 [[Choice:9]]
-Department of Management Strategy, Policy and Compliance (DMSPC)
+Policy & Strategy
 [[Choice:10]]
-Department of Operational Support (DOS)
+Humanitarian & Field Operations
 [[Choice:11]]
-Office of the High Commissioner for Human Rights (OHCHR)
+Leadership & Management
 [[Choice:12]]
-UN Women
-[[Choice:13]]
-United Nations Office of Legal Affairs (OLA)
-[[Choice:14]]
-Other UN entity or office
-
-[[PageBreak]]
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:FUNCTION]]
-Which professional function best describes your work?
-[[AdvancedChoices]]
-[[Choice:1]]
-Humanitarian / Field Operations
-[[Choice:2]]
-Political Affairs / Peacekeeping
-[[Choice:3]]
-Human Resources
-[[Choice:4]]
-Administration / Operations
-[[Choice:5]]
-Communications / Public Information
-[[Choice:6]]
-Research / Data / Analytics
-[[Choice:7]]
-Programme Management / Development
-[[Choice:8]]
-Legal / Policy
-[[Choice:9]]
-Leadership / Management
-[[Choice:10]]
 Other
 
-[[Block:A. Psychological safety]]
+[[Block:A. Psychological Safety]]
 
 [[Question:DB]]
 [[ID:PS_INTRO]]
-A. Psychological safety. Think about the team you work with most closely. How much do you agree with each statement?
+A. Psychological Safety. Think about the team you work with most closely. How much do you agree with each statement?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:PS1]]
@@ -189,11 +158,11 @@ Strongly disagree
 [[Choice:98]]
 Don't know or not applicable
 
-[[Block:B. Workplace inclusion]]
+[[Block:B. Workplace Inclusion]]
 
 [[Question:DB]]
 [[ID:IN_INTRO]]
-B. Workplace inclusion. Think about your workplace. How much do you agree with each statement?
+B. Workplace Inclusion. Think about your workplace. How much do you agree with each statement?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:IN1]]
@@ -297,102 +266,102 @@ Strongly disagree
 [[Choice:98]]
 Don't know or not applicable
 
-[[Block:C. Cross-cultural collaboration]]
+[[Block:C. Cross-Cultural Collaboration]]
 
 [[Question:DB]]
 [[ID:CC_INTRO]]
-C. Cross-cultural collaboration. Think about working with colleagues from different cultural, national and professional backgrounds. How much do you agree with each statement?
+C. Cross-Cultural Collaboration. Think about working with colleagues from different cultural, national, language and professional backgrounds. How confident are you that you can do each of the following?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:CC1]]
-People in my team communicate effectively across cultural and language differences.
+Communicate clearly with colleagues whose language or cultural background differs from yours.
 [[AdvancedChoices]]
 [[Choice:1]]
-Strongly agree
+Very confident
 [[Choice:2]]
-Agree
+Fairly confident
 [[Choice:3]]
-Neither agree nor disagree
+Somewhat confident
 [[Choice:4]]
-Disagree
+Slightly confident
 [[Choice:5]]
-Strongly disagree
+Not at all confident
 [[Choice:98]]
 Don't know or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:CC2]]
-International and national staff in my workplace work together as equal partners.
+Adapt how you work when collaborating with colleagues whose working styles differ from yours.
 [[AdvancedChoices]]
 [[Choice:1]]
-Strongly agree
+Very confident
 [[Choice:2]]
-Agree
+Fairly confident
 [[Choice:3]]
-Neither agree nor disagree
+Somewhat confident
 [[Choice:4]]
-Disagree
+Slightly confident
 [[Choice:5]]
-Strongly disagree
+Not at all confident
 [[Choice:98]]
 Don't know or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:CC3]]
-Colleagues make an effort to understand working styles that differ from their own.
+Work as an equal partner with colleagues across international and national staff, or headquarters and the field.
 [[AdvancedChoices]]
 [[Choice:1]]
-Strongly agree
+Very confident
 [[Choice:2]]
-Agree
+Fairly confident
 [[Choice:3]]
-Neither agree nor disagree
+Somewhat confident
 [[Choice:4]]
-Disagree
+Slightly confident
 [[Choice:5]]
-Strongly disagree
+Not at all confident
 [[Choice:98]]
 Don't know or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:CC4]]
-When misunderstandings arise between colleagues from different backgrounds, they are resolved respectfully.
+Resolve a misunderstanding with a colleague from a different background respectfully.
 [[AdvancedChoices]]
 [[Choice:1]]
-Strongly agree
+Very confident
 [[Choice:2]]
-Agree
+Fairly confident
 [[Choice:3]]
-Neither agree nor disagree
+Somewhat confident
 [[Choice:4]]
-Disagree
+Slightly confident
 [[Choice:5]]
-Strongly disagree
+Not at all confident
 [[Choice:98]]
 Don't know or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:CC5]]
-Knowledge and information are shared openly across teams and duty stations.
+Share knowledge and information effectively with colleagues in other teams and duty stations.
 [[AdvancedChoices]]
 [[Choice:1]]
-Strongly agree
+Very confident
 [[Choice:2]]
-Agree
+Fairly confident
 [[Choice:3]]
-Neither agree nor disagree
+Somewhat confident
 [[Choice:4]]
-Disagree
+Slightly confident
 [[Choice:5]]
-Strongly disagree
+Not at all confident
 [[Choice:98]]
 Don't know or not applicable
 
-[[Block:D. Leadership and management]]
+[[Block:D. Leadership & Management]]
 
 [[Question:DB]]
 [[ID:LM_INTRO]]
-D. Leadership and management. Think about your direct supervisor and the management of your office. How much do you agree with each statement?
+D. Leadership & Management. Think about your direct supervisor and the management of your office. How much do you agree with each statement?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:LM1]]
@@ -496,11 +465,11 @@ Strongly disagree
 [[Choice:98]]
 Don't know or not applicable
 
-[[Block:E. Implicit bias and organizational awareness]]
+[[Block:E. Implicit Bias Awareness]]
 
 [[Question:DB]]
 [[ID:IB_INTRO]]
-E. Implicit bias and organizational awareness. In the past 3 months (or since you joined, if that is more recent), how often have you noticed the following in your workplace? These questions ask what you have noticed in workplace practices. They do not measure anyone's implicit bias, and results are never about individuals.
+E. Implicit Bias Awareness. In the past 3 months (or since you joined, if that is more recent), how often have you noticed the following in your workplace? These questions ask what you have noticed in workplace practices. They do not measure anyone's implicit bias, and results are never about individuals.
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:IB1]]
@@ -604,11 +573,11 @@ Never
 [[Choice:98]]
 Don't know or not applicable
 
-[[Block:F. Organizational support]]
+[[Block:F. Organizational Support]]
 
 [[Question:DB]]
 [[ID:OS_INTRO]]
-F. Organizational support. Think about your organization as a whole. How much do you agree with each statement?
+F. Organizational Support. Think about your organization as a whole. How much do you agree with each statement?
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:OS1]]
