@@ -3,42 +3,31 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Take the Survey · UN Workforce Experience Survey</title>
-  <meta name="description" content="An anonymous, multiple-choice survey on psychological safety, inclusion, cross-cultural collaboration, leadership, bias in workplace practices and organizational support.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
-  <link href="survey.css?v=20261116x" rel="stylesheet">
+  <meta name="robots" content="noindex">
+  <title>This assessment has moved · CQ &amp; Bias Navigator</title>
+  <style>
+    :root { --navy: #1b2a4e; --ink: #16213a; --muted: #5d6475; --line: #e7e5ee; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f8f8fb; color: var(--ink); font-family: "Source Sans 3", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height: 1.55; }
+    main { max-width: 40rem; margin: 0 auto; padding: 4rem 16px; }
+    h1 { margin: 0 0 1rem; color: var(--navy); font-family: "Source Serif 4", Georgia, serif; font-size: 2rem; line-height: 1.2; }
+    p { margin: 0 0 1rem; }
+    .note { padding: .9rem 1rem; border: 1px solid var(--line); border-left: 4px solid var(--navy); border-radius: 10px; background: #fff; }
+    a { color: #1f7a75; font-weight: 600; }
+    :focus-visible { outline: 3px solid #1f7a75; outline-offset: 2px; }
+  </style>
 </head>
 <body>
-  <a class="sv-skip" href="#sv-main">Skip to the survey</a>
-  <aside class="sv-preview-bar" aria-label="Prototype notice">
-    <div class="sv-wrap"><p class="sv-preview-note" id="sv-mode-note"><strong>Website prototype:</strong> answers are saved only in this browser, on this device, and are not sent to any server. <a href="./">Results dashboard</a></p></div>
-  </aside>
-
-  <header class="sv-top">
-    <div class="sv-wrap">
-      <div class="sv-top-row">
-        <p class="sv-brand" id="sv-brand">UN Workforce Experience Survey</p>
-        <p class="sv-count" id="sv-count" aria-live="polite"></p>
-      </div>
-      <div class="sv-progress" id="sv-progress" role="progressbar" aria-label="Questions answered" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div>
-    </div>
-  </header>
-
-  <main id="sv-main" class="sv-wrap">
-    <form id="sv-form" class="sv-card" novalidate>
-      <div id="sv-errors" class="sv-error-summary" tabindex="-1" hidden></div>
-      <div id="sv-page"></div>
-      <div class="sv-nav" id="sv-nav">
-        <button type="button" class="sv-btn sv-back" id="sv-back">Back</button>
-        <button type="submit" class="sv-btn sv-next" id="sv-next">Next</button>
-      </div>
-    </form>
-    <p class="sv-foot">An independent educational prototype. Not an official United Nations product.</p>
+  <main>
+    <h1>This assessment has moved</h1>
+    <p>The workforce assessment is no longer part of the UN Cultural Intelligence &amp; Bias Navigator. It now runs as a separate application, the <strong>UN Workforce Inclusion &amp; Psychological Safety Assessment</strong>, with its own address and privacy statement.</p>
+    <p>If you were invited to take part, please use the link in your invitation.</p>
+    <p class="note">The Navigator is a learning platform. It does not collect workforce assessment responses.</p>
+    <p><a href="../index.html">Go to the Navigator home page</a></p>
   </main>
-
-  <script src="workforce-survey.js?v=20261116x"></script>
-  <script src="survey.js?v=20261116x"></script>
+  <script>
+    // The survey used to keep responses in this browser; remove anything it left behind.
+    try { ['un-workforce-survey.responses.v1', 'un-workforce-survey.demo-responses.v1'].forEach(function (k) { window.localStorage.removeItem(k); }); } catch (e) { /* storage blocked */ }
+  </script>
 </body>
 </html>
