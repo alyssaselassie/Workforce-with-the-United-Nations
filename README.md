@@ -80,8 +80,10 @@ own addresses, developed in this repository but **not published as part of the N
   Management, E. Implicit Bias Awareness, F. Organizational Support) on agreement, confidence and
   frequency scales. It ends with a review screen. It does not link to the dashboard.
 - **UN Workforce Analytics Dashboard** (`apps/analytics/`): for authorized researchers. Live results
-  need a sign-in and arrive already aggregated by a server-side results service. It has a dataset
-  and six graphs for each department, a comparison view and a labelled demonstration.
+  need a sign-in and arrive already aggregated by a server-side results service. Each department has
+  a Relief Map (a workplace adaptation of Relief Maps: the six areas across, comfort to discomfort
+  up the side, compared with all departments) and six graphs. A comparison view shows a small Relief
+  Map for every department, and a labelled demonstration uses fictional data.
 - **Backend** (`supabase/`): a database that respondents can only write to, and the results
   service. No backend has been created yet; see `supabase/README.md` for what it needs.
 
