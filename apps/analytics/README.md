@@ -6,27 +6,33 @@ the UN Cultural Intelligence & Bias Navigator. Search engines are asked not to i
 
 ## What it shows
 
-- **12 department datasets** (Human Resources to Other) plus the organization-wide dataset. Each has
-  **six separate graphs**, one per area: Psychological Safety, Workplace Inclusion, Cross-Cultural
-  Collaboration, Leadership & Management, Implicit Bias Awareness and Organizational Support. Each graph
-  shows a stacked bar per statement, % favourable with a 95% confidence interval, a trend line across
-  reporting periods and a numbers table.
-- **Filters** for department, area and reporting period.
-- **Compare departments**: dot plots per area with sample sizes, confidence intervals, a dashed
-  line for all departments, warnings when sample sizes differ, and a table.
-- **About the data**: the statements and their sources, the anonymity rules, data sources and downloads.
+The dashboard is kept deliberately simple: two views and two choices.
+
+- **By department**: pick one of the **12 department datasets** (Human Resources to Other) or all
+  departments together. Each has **six separate graphs**, one per area: Psychological Safety, Workplace
+  Inclusion, Cross-Cultural Collaboration, Leadership & Management, Implicit Bias Awareness and
+  Organizational Support. Each graph shows the area's % favourable and one bar per statement (% of
+  people who gave a favourable answer). Hovering over a bar shows the full statement and the counts.
+- **Compare departments**: one table with every department and the six areas (% favourable),
+  shaded light to dark blue, with the number of responses. Select a department to open its graphs.
+- **Period**: the reporting quarter (the latest is shown first).
+
+A department with fewer than 10 responses shows "Not enough responses yet", and a department hidden to
+protect a smaller group shows "Hidden to protect a smaller group". Neither shows any numbers.
 
 ## Data sources
 
 | Source | Who can use it | What it is |
 | --- | --- | --- |
 | **Sign in → live results** | Accounts listed in `assessment_admins` | Aggregated results from the results service (`supabase/functions/assessment-release`). Individual responses never reach the browser. The session is kept in memory only |
-| **Demonstration** | Anyone | Fictional data, labelled as such on every chart. It also includes answers given in the survey's demonstration mode in the same browser, so a live demo can show a department unlocking at 10 responses |
-| **Results file** | Whoever holds the file | A Qualtrics export (CSV) or an aggregated results file (JSON), read in the browser and never uploaded. For organizations that run the assessment in Qualtrics (`downloads/assessment-qualtrics.txt`) |
+| **Demonstration** | Anyone | Fictional data, labelled as such. It also includes answers given in the survey's demonstration mode in the same browser, so a live demo can show a department appearing once it reaches 10 responses. Direct link: `?demo=1` (add `#compare` to open the comparison) |
 
-Anonymity rules, applied to every source: no result for a group of fewer than **10** completed
-responses; if the hidden departments add up to fewer than 10, the next-smallest department is withheld
-too; each reporting period stands alone; hidden groups carry no numbers.
+Anonymity rules: no result for a group of fewer than **10** completed responses; if the hidden
+departments add up to fewer than 10, the next-smallest department is withheld too; each reporting
+period stands alone; hidden groups carry no numbers.
+
+The `downloads/` folder holds the questionnaire for import into Qualtrics, the codebook and a
+demonstration export. They are not linked from the dashboard.
 
 ## Deploying it on its own (GitHub Pages)
 
