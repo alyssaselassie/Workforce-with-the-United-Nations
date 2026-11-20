@@ -13,5 +13,5 @@ window.ANALYTICS_CONFIG = {
   resultsFunction: 'assessment-release',
   // Optional: the address of the separate survey application, e.g. 'https://<account>.github.io/un-workforce-assessment/'.
   // Used only for the "Take the demonstration survey" link in demonstration mode.
-  surveyUrl: ''
+  surveyUrl: 'https://alyssaselassie.github.io/un-workforce-assessment/'
 };

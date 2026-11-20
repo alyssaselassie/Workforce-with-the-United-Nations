@@ -87,6 +87,11 @@ own addresses, developed in this repository but **not published as part of the N
 
 Nothing is shown for a group of fewer than 10 responses, small groups are protected from subtraction,
 individual answers are never displayed, and demonstration data is never mixed with real results.
+They are published from their own repositories:
+[alyssaselassie/un-workforce-assessment](https://github.com/alyssaselassie/un-workforce-assessment)
+(`https://alyssaselassie.github.io/un-workforce-assessment/`) and
+[alyssaselassie/un-workforce-analytics](https://github.com/alyssaselassie/un-workforce-analytics)
+(`https://alyssaselassie.github.io/un-workforce-analytics/`).
 Start with [`apps/README.md`](apps/README.md) and
 [`docs/workforce-assessment-architecture.md`](docs/workforce-assessment-architecture.md). The old
 `workforce-survey/` address now only says that the assessment has moved.
