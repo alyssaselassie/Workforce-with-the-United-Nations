@@ -40,7 +40,7 @@ revoke all on table public.assessment_admins from public, anon, authenticated;
 
 -- 3. Submitting a response --------------------------------------------------------------------------
 -- The only way in for respondents. It checks the department and that every one of the
--- 34 statements has a valid answer code, and assigns the reporting quarter itself (UTC).
+-- 59 statements has a valid answer code, and assigns the reporting quarter itself (UTC).
 create or replace function public.submit_assessment(p_department text, p_answers jsonb)
 returns void
 language plpgsql
@@ -48,7 +48,7 @@ security definer
 set search_path = ''
 as $$
 declare
-  expected text[] := array['PS1', 'PS2', 'PS3', 'PS4', 'PS5', 'PS6', 'IN1', 'IN2', 'IN3', 'IN4', 'IN5', 'IN6', 'CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'LM1', 'LM2', 'LM3', 'LM4', 'LM5', 'LM6', 'IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'OS1', 'OS2', 'OS3', 'OS4', 'OS5'];
+  expected text[] := array['PS1', 'PS2', 'PS3', 'PS4', 'PS5', 'PS6', 'IN1', 'IN2', 'IN3', 'IN4', 'IN5', 'IN6', 'CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'LM1', 'LM2', 'LM3', 'LM4', 'LM5', 'LM6', 'IB1', 'IB2', 'IB3', 'IB4', 'IB5', 'IB6', 'OS1', 'OS2', 'OS3', 'OS4', 'OS5', 'RM_TM_GEN', 'RM_TM_AGE', 'RM_TM_REL', 'RM_TM_ETH', 'RM_TM_CLS', 'RM_SUP_GEN', 'RM_SUP_AGE', 'RM_SUP_REL', 'RM_SUP_ETH', 'RM_SUP_CLS', 'RM_HYB_GEN', 'RM_HYB_AGE', 'RM_HYB_REL', 'RM_HYB_ETH', 'RM_HYB_CLS', 'RM_NET_GEN', 'RM_NET_AGE', 'RM_NET_REL', 'RM_NET_ETH', 'RM_NET_CLS', 'RM_DEC_GEN', 'RM_DEC_AGE', 'RM_DEC_REL', 'RM_DEC_ETH', 'RM_DEC_CLS'];
   k text;
   v jsonb;
 begin

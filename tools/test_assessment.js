@@ -36,9 +36,11 @@ const many = (n, department, period, over) => Array.from({ length: n }, () => pe
   check('every statement has a basis and note; sources exist', M.ITEMS.every((it) => it.note && ['Adapted', 'New'].includes(it.basis) && it.sources.every((s) => M.SOURCES[s])));
   check('every source has a citation and a link', Object.values(M.SOURCES).every((s) => s.cite && /^https:\/\//.test(s.url)));
   const qs = M.questions().filter((q) => q.type !== 'DB');
-  check(`${M.QUESTION_COUNT} questions, all multiple choice`, qs.length === M.QUESTION_COUNT && M.QUESTION_COUNT === 36 && qs.every((q) => q.type === 'MC' && q.options.length >= 2));
+  check(`${M.QUESTION_COUNT} questions, all multiple choice`, qs.length === M.QUESTION_COUNT && M.QUESTION_COUNT === 61 && qs.every((q) => q.type === 'MC' && q.options.length >= 2));
   check('consent first, then department, then the statements', qs[0].id === 'CONSENT' && qs[1].id === 'DEPARTMENT' && qs[2].id === 'PS1');
-  check('the only question about the respondent is the department; no identifiers asked', qs.filter((q) => !M.ITEM_BY_ID[q.id]).map((q) => q.id).join() === 'CONSENT,DEPARTMENT' && !qs.some((q) => /\byour (name|e-?mail|staff id|duty station|entity|age|gender|nationality)\b/i.test(q.text)));
+  const notRelief = qs.filter((q) => !(M.ITEM_BY_ID[q.id] && M.ITEM_BY_ID[q.id].category === M.RELIEF.id));
+  check('the only question about the respondent is the department; no identifiers asked', qs.filter((q) => !M.ITEM_BY_ID[q.id]).map((q) => q.id).join() === 'CONSENT,DEPARTMENT' && !notRelief.some((q) => /\byour (name|e-?mail|staff id|duty station|entity|age|gender|nationality|religio\w*|ethnicity|social class)\b/i.test(q.text)));
+  check('Relief Map questions ask only how comfortable, never which identity', M.RELIEF.items.every((it) => /^In [a-z -]+, how comfortable do you feel in relation to your [a-z ()]+\?$/.test(it.text)) && qs.filter((q) => M.RELIEF.items.some((it) => it.id === q.id)).every((q) => q.options.join('|') === M.SCALES.comfort.options.concat(M.SCALES.comfort.na).join('|')) && !qs.some((q) => /which (gender|age|religion|ethnicity|class)|what is your/i.test(q.text)));
   check('intro states the real question count', M.TEXT.intro.includes(`${M.QUESTION_COUNT} multiple-choice questions`));
 
   // ---------- 2. Every question is required ----------
@@ -66,7 +68,7 @@ const many = (n, department, period, over) => Array.from({ length: n }, () => pe
   check('department datasets hold only their department', Object.entries(ds.byDepartment).every(([id, rs]) => rs.every((r) => r.department === id)));
   check('department datasets add up to the overall dataset', Object.values(ds.byDepartment).reduce((a, rs) => a + rs.length, 0) === ds.overall.length);
   const rows = M.longRows(mixed.slice(0, 1));
-  check('long rows: department, period, question, area, answer', rows.length === 34 && ['response_id', 'department', 'period', 'question_id', 'category', 'answer_code', 'answer'].every((c) => c in rows[0]));
+  check('long rows: department, period, question, area, answer', rows.length === 59 && ['response_id', 'department', 'period', 'question_id', 'category', 'answer_code', 'answer'].every((c) => c in rows[0]));
 
   // ---------- 4. Threshold and suppression ----------
   let rel = M.buildRelease(many(9, 'HR'));
@@ -114,6 +116,50 @@ const many = (n, department, period, over) => Array.from({ length: n }, () => pe
   }
   check(`property test over ${trials} random datasets`, trials > 300 && !violations.length, violations.slice(0, 5).join('; '));
 
+  // ---------- 5b. The Relief Map (section G) ----------
+  check('Relief Map lines are the worksheet\'s identity dimensions', M.RELIEF.dimensions.map((x) => x.name).join('|') === 'Gender|Age|Religious identity|Ethnicity|Social class');
+  check('Relief Map has 4 to 6 workplace settings, 5 questions each', M.RELIEF.settings.length >= 4 && M.RELIEF.settings.length <= 6 && M.RELIEF.items.length === M.RELIEF.settings.length * 5);
+  check('comfort scale, very comfortable first, own "prefer not to say" wording', M.SCALES.comfort.options.join('|') === 'Very comfortable|Comfortable|Neither comfortable nor uncomfortable|Uncomfortable|Very uncomfortable' && M.answerLabel('RM_TM_REL', 98) === 'Prefer not to say or not applicable' && M.answerLabel('PS1', 98) === M.NA.label);
+  check('point value: average answer, 98 left out', M.reliefValue([1, 0, 0, 0, 1, 5]) === 3 && M.reliefValue([0, 0, 0, 0, 0, 4]) === null);
+  const pt = (v) => (M.placeType(v) || { id: null }).id;
+  check('place types: oppression, controversial, relief, neutral, in that order', pt([3, 3.1, 2.9]) === 'oppression' && pt([3.5, 3.4, 2.4]) === 'oppression' && pt([1.5, 2.6, 2.2]) === 'controversial' && pt([1.8, 1.9, 2]) === 'relief' && pt([2.3, 2.5, 2.4]) === 'neutral' && pt([1.2, 3.9, null, null, null]) === null);
+  const withNa = (n, department, item, na) => many(n - na, department).concat(many(na, department, '2026-Q4', { [item]: 98 }));
+  rel = M.buildRelease(withNa(12, 'HR', 'RM_TM_REL', 3));
+  d = rel.data['2026-Q4'];
+  check('point with fewer than 10 answers is held back ("prefer not to say" does not count)', d.departments.HR.status === 'published' && d.departments.HR.relief.RM_TM_REL === null && d.overall.relief.RM_TM_REL === null && Array.isArray(d.departments.HR.relief.RM_TM_GEN));
+  rel = M.buildRelease(many(20, 'HR').concat(withNa(12, 'IT', 'RM_TM_GEN', 3)));
+  d = rel.data['2026-Q4'];
+  check('a second point is held back so the first cannot be worked out by subtraction', d.departments.IT.relief.RM_TM_GEN === null && d.departments.HR.relief.RM_TM_GEN === null && M.answered(d.overall.relief.RM_TM_GEN) === 29 && Array.isArray(d.departments.HR.relief.RM_TM_AGE));
+  check('hidden groups carry no Relief Map', M.buildRelease(many(20, 'HR').concat(many(4, 'LEG'))).data['2026-Q4'].departments.LEG.relief === undefined);
+  const rand3 = M.rng(7);
+  let trials3 = 0;
+  const bad = [];
+  for (let t = 0; t < 300; t += 1) {
+    const rs = [];
+    M.DEPARTMENTS.forEach((dep) => {
+      if (rand3() < 0.7) for (let i = Math.floor(rand3() * 18); i > 0; i -= 1) rs.push(person(dep.id, '2026-Q4', Object.fromEntries(M.RELIEF.items.filter(() => rand3() < 0.15).map((it) => [it.id, 98]))));
+    });
+    const r3 = M.buildRelease(rs);
+    const dd = r3.data['2026-Q4'];
+    if (!dd || dd.overall.status !== 'published') continue;
+    trials3 += 1;
+    const shownDeps = M.DEPARTMENTS.filter((dep) => dd.departments[dep.id].status === 'published');
+    M.RELIEF.items.forEach((it) => {
+      const answeredBy = (id) => rs.filter((x) => (id === 'ALL' || x.department === id) && x.answers[it.id] !== 98).length;
+      const o = dd.overall.relief[it.id];
+      if (o && M.answered(o) !== answeredBy('ALL')) bad.push(`trial ${t}: wrong overall count for ${it.id}`);
+      const pts = shownDeps.filter((dep) => dd.departments[dep.id].relief[it.id]);
+      if (pts.some((dep) => M.answered(dd.departments[dep.id].relief[it.id]) < k) || (o && M.answered(o) < k)) bad.push(`trial ${t}: point below ${k} for ${it.id}`);
+      if (!o && pts.length) bad.push(`trial ${t}: department point shown without the overall one`);
+      if (o) {
+        const rest = answeredBy('ALL') - pts.reduce((a, dep) => a + answeredBy(dep.id), 0);
+        if (rest > 0 && rest < k) bad.push(`trial ${t}: ${it.id} overall minus shown points = ${rest}`);
+      }
+    });
+    try { M.checkRelease(JSON.parse(JSON.stringify(r3))); } catch (e) { bad.push(`trial ${t}: release fails its own check: ${e.message}`); }
+  }
+  check(`Relief Map property test over ${trials3} random datasets`, trials3 > 200 && !bad.length, bad.slice(0, 5).join('; '));
+
   // ---------- 6. Demonstration data and release files ----------
   const demo = M.demoResponses();
   rel = M.buildRelease(demo, { source: 'demo' });
@@ -129,6 +175,13 @@ const many = (n, department, period, over) => Array.from({ length: n }, () => pe
   check('release with numbers on a hidden group refused', tamper((x) => { x.data['2026-Q4'].departments.LEG = { status: 'collecting', n: 8 }; }));
   check('release that allows subtraction refused', tamper((x) => { x.data['2026-Q4'].departments.LEAD = Object.assign({ status: 'published' }, M.aggregate(demo.filter((r) => r.period === '2026-Q4' && r.department === 'LEAD'))); }));
   check('release with another format refused', tamper((x) => { x.format = 'workforce-survey-release'; }));
+  const heldBack = Object.entries(q4.departments).flatMap(([id, c]) => (c.relief ? Object.keys(c.relief).filter((it) => c.relief[it] === null).map((it) => [id, it]) : []));
+  check('demo shows held-back Relief Map points in a small department', heldBack.length > 0 && heldBack.length < 20);
+  const map4 = M.reliefMap(q4.overall);
+  check('demo organization-wide map shows every kind of place', ['oppression', 'controversial', 'relief', 'neutral'].every((id) => Object.values(map4.types).some((tp) => tp.id === id)) && map4.shown === 25);
+  check('release with a Relief Map point below the minimum refused', tamper((x) => { const c = x.data['2026-Q4'].departments.HUM; c.relief.RM_TM_GEN = [2, 2, 2, 1, 1, 18]; }));
+  check('release with a held-back point put back refused', tamper((x) => { const [id, it] = heldBack[0]; const rs = demo.filter((r) => r.period === '2026-Q4' && r.department === id); x.data['2026-Q4'].departments[id].relief[it] = M.countAnswers(rs, it); }));
+  check('release with a Relief Map on a hidden group refused', tamper((x) => { x.data['2026-Q4'].departments.LEG.relief = {}; }));
   const json = JSON.stringify(rel);
   check('release holds no response IDs', !/R-[A-Z0-9]{12}/.test(json));
   const csvRows = M.releaseRows(rel);
@@ -142,7 +195,8 @@ const many = (n, department, period, over) => Array.from({ length: n }, () => pe
   const txt = M.qualtricsTxt();
   check('Qualtrics file has every question', ['CONSENT', 'DEPARTMENT'].concat(M.ITEMS.map((it) => it.id)).every((id) => txt.includes(`[[ID:${id}]]`)));
   check('Qualtrics file has no text-entry questions', !/Question:TE/.test(txt));
-  check('Qualtrics file sets code 98 on every statement', (txt.match(/\[\[Choice:98\]\]/g) || []).length === 34);
+  check('Qualtrics file sets code 98 on every statement', (txt.match(/\[\[Choice:98\]\]/g) || []).length === 59);
+  check('Qualtrics file: one block per Relief Map setting, worded "Prefer not to say"', M.RELIEF.settings.every((st, i) => txt.includes(`[[Block:G${i + 1}. Relief Map: ${st.name}]]`)) && (txt.match(/Prefer not to say or not applicable/g) || []).length >= 25);
   check('codebook marks every question required', M.codebookRows().every((r) => r.required === 'Yes'));
   const back = M.readExport(M.demoCSV());
   check('demo export reads back in full, labelled as demo', back.responses.length === demo.length && back.incomplete === 0 && back.demo === true);

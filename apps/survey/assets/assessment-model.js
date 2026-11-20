@@ -63,8 +63,12 @@
     agree: { id: 'agree', name: 'Agreement', options: ['Strongly agree', 'Agree', 'Neither agree nor disagree', 'Disagree', 'Strongly disagree'] },
     frequency: { id: 'frequency', name: 'Frequency', options: ['Always', 'Often', 'Sometimes', 'Rarely', 'Never'] },
     // Unipolar confidence scale; "Somewhat confident" is treated as the middle point.
-    confidence: { id: 'confidence', name: 'Confidence', options: ['Very confident', 'Fairly confident', 'Somewhat confident', 'Slightly confident', 'Not at all confident'] }
+    confidence: { id: 'confidence', name: 'Confidence', options: ['Very confident', 'Fairly confident', 'Somewhat confident', 'Slightly confident', 'Not at all confident'] },
+    // Section G (Relief Map). Code 98 has its own wording here: these questions touch on identity, so
+    // anyone can decline, and not everyone takes part in every setting.
+    comfort: { id: 'comfort', name: 'Comfort', options: ['Very comfortable', 'Comfortable', 'Neither comfortable nor uncomfortable', 'Uncomfortable', 'Very uncomfortable'], na: 'Prefer not to say or not applicable' }
   };
+  const naLabel = (scale) => (SCALES[scale] && SCALES[scale].na) || NA.label;
 
   // ---------- sources (all real; every item is adapted or new wording, never copied) ----------
   const SOURCES = {
@@ -80,7 +84,9 @@
     eisenberger: { short: 'Eisenberger et al. (1986)', cite: 'Eisenberger, R., Huntington, R., Hutchison, S., & Sowa, D. (1986). Perceived organizational support. Journal of Applied Psychology, 71(3), 500–507.', url: 'https://doi.org/10.1037/0021-9010.71.3.500' },
     ang: { short: 'Ang et al. (2007)', cite: 'Ang, S., Van Dyne, L., Koh, C., Ng, K. Y., Templer, K. J., Tay, C., & Chandrasekar, N. A. (2007). Cultural intelligence: Its measurement and effects on cultural judgment and decision making, cultural adaptation and task performance. Management and Organization Review, 3(3), 335–371.', url: 'https://doi.org/10.1111/j.1740-8784.2007.00082.x' },
     greenwald: { short: 'Greenwald & Banaji (1995)', cite: 'Greenwald, A. G., & Banaji, M. R. (1995). Implicit social cognition: Attitudes, self-esteem, and stereotypes. Psychological Review, 102(1), 4–27.', url: 'https://doi.org/10.1037/0033-295X.102.1.4' },
-    opm: { short: 'OPM FEVS inclusion index', cite: 'U.S. Office of Personnel Management. Federal Employee Viewpoint Survey: the New Inclusion Quotient (New IQ) index (five habits of inclusion: fair, open, cooperative, supportive, empowering), replaced in 2020 by the DEIA index.', url: 'https://www.opm.gov/fevs/' }
+    opm: { short: 'OPM FEVS inclusion index', cite: 'U.S. Office of Personnel Management. Federal Employee Viewpoint Survey: the New Inclusion Quotient (New IQ) index (five habits of inclusion: fair, open, cooperative, supportive, empowering), replaced in 2020 by the DEIA index.', url: 'https://www.opm.gov/fevs/' },
+    rodozarate: { short: 'Rodó-Zárate (2023); Relief Maps+', cite: 'Rodó-Zárate, M. (2023). Intersectionality and the spatiality of emotions in feminist research. The Professional Geographer, 75(4), 676–681. Relief Maps+ (INTERMAPS, Universitat Pompeu Fabra, 2024): reliefmaps.upf.edu.', url: 'https://doi.org/10.1080/00330124.2022.2075406',
+      licence: 'The Relief Maps method maps how comfortable a person feels in each place in relation to each axis of their identity. Section G adapts that idea to workplace settings and group averages; it is not the original individual-level method.' }
   };
 
   // ---------- the six areas ----------
@@ -149,7 +155,46 @@
       ] }
   ];
   CATEGORIES.forEach((c) => c.items.forEach((it) => { it.category = c.id; it.scale = c.scale; }));
-  const ITEMS = CATEGORIES.flatMap((c) => c.items);
+
+  // ---------- G. Relief Map ----------
+  // A workplace adaptation of Relief Maps (Rodó-Zárate): for each workplace setting, how comfortable
+  // people feel in relation to five parts of who they are, as on the Relief Maps Tool worksheet. The
+  // settings run along the bottom of the map, comfort to discomfort up the side, and each identity
+  // dimension is one line. No one is asked which gender, age, religion, ethnicity or social class they
+  // are: only how comfortable they feel, so the map needs no identity groups and has none to expose.
+  const RELIEF = {
+    id: 'RM', letter: 'G', name: 'Relief Map', scale: 'comfort',
+    intro: 'This section maps where people feel at ease at work. Think about the past 3 months (or since you joined, if that is more recent). For each of five workplace settings, say how comfortable you feel in relation to five parts of who you are. For example, someone may feel at ease in team meetings in relation to their age, but uncomfortable in relation to their gender.',
+    note: 'These questions never ask which gender, age, religion, ethnicity or social class you are, only how comfortable you feel.',
+    settings: [
+      { id: 'TM', name: 'Team meetings', short: 'Team meetings', phrase: 'team meetings', about: 'Meetings of your team, in person or online.' },
+      { id: 'SUP', name: 'One-on-one meetings with your supervisor', short: 'Supervisor one-on-ones', phrase: 'one-on-one meetings with your supervisor', about: 'Conversations with your supervisor, in person or online, such as check-ins and performance discussions.' },
+      { id: 'HYB', name: 'Hybrid and virtual collaboration', short: 'Hybrid and virtual work', phrase: 'hybrid and virtual collaboration', about: 'Working with colleagues through video calls, chat and shared documents.' },
+      { id: 'NET', name: 'Informal networking', short: 'Informal networking', phrase: 'informal networking', about: 'Breaks, social events and conversations outside formal meetings.' },
+      { id: 'DEC', name: 'Decision-making spaces', short: 'Decision-making spaces', phrase: 'decision-making spaces', about: 'Meetings and conversations where decisions that affect your work are made.' }
+    ],
+    // In the order of the Relief Maps worksheet's legend.
+    dimensions: [
+      { id: 'GEN', name: 'Gender', phrase: 'your gender' },
+      { id: 'AGE', name: 'Age', phrase: 'your age' },
+      { id: 'REL', name: 'Religious identity', phrase: 'your religious identity (including having no religion)' },
+      { id: 'ETH', name: 'Ethnicity', phrase: 'your ethnicity' },
+      { id: 'CLS', name: 'Social class', phrase: 'your social class or background' }
+    ]
+  };
+  RELIEF.items = RELIEF.settings.flatMap((s) => RELIEF.dimensions.map((d) => ({
+    id: `${RELIEF.id}_${s.id}_${d.id}`, setting: s.id, dimension: d.id, category: RELIEF.id, scale: RELIEF.scale,
+    concept: `${s.name}: ${d.name.toLowerCase()}`, short: `In relation to ${d.phrase}`,
+    text: `In ${s.phrase}, how comfortable do you feel in relation to ${d.phrase}?`,
+    basis: 'New', sources: ['rodozarate'], note: 'New item: comfort in a place in relation to one axis of identity, adapted from Relief Maps to a workplace setting.'
+  })));
+  const RELIEF_SETTING_BY_ID = Object.fromEntries(RELIEF.settings.map((s) => [s.id, s]));
+  const RELIEF_DIMENSION_BY_ID = Object.fromEntries(RELIEF.dimensions.map((d) => [d.id, d]));
+  const reliefItem = (settingId, dimensionId) => `${RELIEF.id}_${settingId}_${dimensionId}`;
+
+  // Every required statement: the six areas, then the Relief Map.
+  const ITEMS = CATEGORIES.flatMap((c) => c.items).concat(RELIEF.items);
+  const AREA_ITEMS = ITEMS.filter((it) => it.category !== RELIEF.id);
   const ITEM_BY_ID = Object.fromEntries(ITEMS.map((it) => [it.id, it]));
   const CATEGORY_BY_ID = Object.fromEntries(CATEGORIES.map((c) => [c.id, c]));
   const DEPARTMENT_BY_ID = Object.fromEntries(DEPARTMENTS.map((d) => [d.id, d]));
@@ -168,14 +213,53 @@
     const o = SCALES[c.scale].options;
     return c.lowerIsBetter ? `"${o[3]}" or "${o[4]}"` : `"${o[0]}" or "${o[1]}"`;
   };
-  const answerLabel = (itemId, code) => (code === NA.code ? NA.label : SCALES[ITEM_BY_ID[itemId].scale].options[code - 1]);
+  const answerLabel = (itemId, code) => (code === NA.code ? naLabel(ITEM_BY_ID[itemId].scale) : SCALES[ITEM_BY_ID[itemId].scale].options[code - 1]);
+
+  // ---------- Relief Map: values and place types ----------
+  // A point on the map is the average answer from 1 (very comfortable) to 5 (very uncomfortable);
+  // "prefer not to say or not applicable" is left out. counts = [code 1, ..., code 5, code 98].
+  const answered = (counts) => (counts ? counts.slice(0, 5).reduce((a, b) => a + b, 0) : 0);
+  function reliefValue(counts) {
+    const n = answered(counts);
+    return n ? counts.slice(0, 5).reduce((a, c, i) => a + c * (i + 1), 0) / n : null;
+  }
+  // The four kinds of place on the Relief Maps worksheet. In this workplace adaptation a setting is
+  // labelled from its lines (the group's averages), checked in this order. The rule is ours: it is a
+  // reading aid for group averages, not part of the original individual-level method.
+  const PLACE_TYPES = [
+    { id: 'oppression', name: 'Places of oppression', short: 'Oppression', rule: 'the lines average 3 or more: as much discomfort as comfort, or more' },
+    { id: 'controversial', name: 'Controversial places', short: 'Controversial', rule: 'the highest and lowest lines are at least 1 point apart: comfort in relation to some identities, discomfort in relation to others' },
+    { id: 'relief', name: 'Places of relief', short: 'Relief', rule: 'the lines average 2 or less: comfortable on average' },
+    { id: 'neutral', name: 'Neutral places', short: 'Neutral', rule: 'anything in between' }
+  ];
+  const PLACE_TYPE_BY_ID = Object.fromEntries(PLACE_TYPES.map((p) => [p.id, p]));
+  const PLACE_MIN_LINES = 3; // a setting with fewer shown lines is not labelled
+  function placeType(values) {
+    const v = values.filter((x) => x != null);
+    if (v.length < PLACE_MIN_LINES) return null;
+    const avg = v.reduce((a, b) => a + b, 0) / v.length;
+    if (avg >= 3) return PLACE_TYPE_BY_ID.oppression;
+    if (Math.max(...v) - Math.min(...v) >= 1) return PLACE_TYPE_BY_ID.controversial;
+    if (avg <= 2) return PLACE_TYPE_BY_ID.relief;
+    return PLACE_TYPE_BY_ID.neutral;
+  }
+  // The Relief Map of one published group: values[setting][dimension] (null where a point is held
+  // back) and the place type of each setting.
+  function reliefMap(c) {
+    if (!c || c.status !== 'published' || !c.relief) return null;
+    const values = Object.fromEntries(RELIEF.settings.map((s) => [s.id, Object.fromEntries(RELIEF.dimensions.map((d) => [d.id, reliefValue(c.relief[reliefItem(s.id, d.id)])]))]));
+    const types = Object.fromEntries(RELIEF.settings.map((s) => [s.id, placeType(RELIEF.dimensions.map((d) => values[s.id][d.id]))]));
+    const shown = RELIEF.items.filter((it) => c.relief[it.id]).length;
+    return { values, types, shown };
+  }
 
   const TEXT = {
-    intro: `This assessment asks about psychological safety, workplace inclusion, cross-cultural collaboration, leadership and management, awareness of bias in workplace practices, and organizational support. It has ${QUESTION_COUNT} multiple-choice questions and takes about 8 minutes. Every question needs an answer; if a statement does not apply to you, choose "${NA.label}".`,
+    intro: `This assessment asks about psychological safety, workplace inclusion, cross-cultural collaboration, leadership and management, awareness of bias in workplace practices and organizational support, and ends with a Relief Map of how comfortable you feel in five workplace settings. It has ${QUESTION_COUNT} multiple-choice questions and takes about 11 minutes. Every question needs an answer; if a statement does not apply to you, choose "${NA.label}" (in the Relief Map section, "${SCALES.comfort.na}").`,
     purpose: 'The results help organizations see, department by department, where people feel safe to speak up, included and supported, and where practices need attention. They are used for organizational learning, never to assess individuals.',
     privacy: [
       'Taking part is voluntary. You can stop at any time before you submit; nothing is recorded until you do.',
       'We do not ask for your name, email, staff ID, entity or duty station. Your response is stored without your IP address or location.',
+      'The Relief Map section asks how comfortable you feel in relation to your gender, age, religious identity, ethnicity and social class. It never asks which of these you are, and you can always choose "Prefer not to say".',
       'Your department is used only to group answers, and the date only to assign a reporting period (such as October to December 2026). The exact date and time are not stored.',
       'Results are shown only for groups of at least 10 people, and smaller groups are protected from being worked out from other results. Individual answers are never shown to anyone, including supervisors.'
     ],
@@ -258,13 +342,16 @@
   }
 
   // ---------- aggregation ----------
+  function countAnswers(rs, itemId) {
+    const counts = [0, 0, 0, 0, 0, 0]; // codes 1 to 5, then 98 ("don't know", "prefer not to say" or not applicable)
+    rs.forEach((r) => { const c = r.answers[itemId]; if (c === NA.code) counts[5] += 1; else if (c >= 1 && c <= 5) counts[c - 1] += 1; });
+    return counts;
+  }
+
+  // The six areas. (The Relief Map points are added by buildRelease, which holds back small points.)
   function aggregate(rs) {
     const items = {};
-    ITEMS.forEach((it) => {
-      const counts = [0, 0, 0, 0, 0, 0]; // codes 1 to 5, then "don't know or not applicable"
-      rs.forEach((r) => { const c = r.answers[it.id]; if (c === NA.code) counts[5] += 1; else if (c >= 1 && c <= 5) counts[c - 1] += 1; });
-      items[it.id] = counts;
-    });
+    AREA_ITEMS.forEach((it) => { items[it.id] = countAnswers(rs, it.id); });
     const scores = {};
     CATEGORIES.forEach((c) => {
       const pol = polarity(c.id);
@@ -303,11 +390,17 @@
   //     out a small department by subtracting the shown departments from the organization total.
   //  3. No result covers more than one period, so periods cannot be subtracted from each other.
   //  4. Hidden groups carry no counts or answers at all, not even their size.
-  function protect(groups, k) {
-    // groups: [{key, n}] -> Map key -> 'published' | 'collecting' | 'protected'
+  //  5. Relief Map points (section G) follow the same two rules one point at a time, counting the
+  //     people who gave a comfort answer ("prefer not to say" does not count): a point is shown for a
+  //     group only with at least k such answers, and the answers held back across departments must
+  //     number 0 or at least k, so no point can be worked out from the organization-wide one.
+  function protect(groups, k, total) {
+    // groups: [{key, n}] -> Map key -> 'published' | 'collecting' | 'protected'. total: the size of the
+    // whole they are part of (default: their sum); whatever is not shown counts as hidden.
     const status = new Map();
     groups.forEach((g) => status.set(g.key, g.n >= k ? 'published' : 'collecting'));
-    let hidden = groups.filter((g) => status.get(g.key) !== 'published').reduce((a, g) => a + g.n, 0);
+    const whole = total == null ? groups.reduce((a, g) => a + g.n, 0) : total;
+    let hidden = whole - groups.filter((g) => status.get(g.key) === 'published').reduce((a, g) => a + g.n, 0);
     while (hidden > 0 && hidden < k) {
       const shown = groups.filter((g) => status.get(g.key) === 'published');
       if (!shown.length) break;
@@ -343,9 +436,26 @@
         const s = st.get(d.id);
         out.departments[d.id] = s === 'published' ? Object.assign({ status: s }, aggregate(ds.byDepartment[d.id])) : { status: s };
       });
+      if (overallShown) addRelief(out, rs, ds, k);
       release.data[p] = out;
     });
     return release;
+  }
+
+  // Relief Map points for the shown groups of one period (rule 5): counts for a point that may be
+  // shown, null for one held back.
+  function addRelief(out, rs, ds, k) {
+    const shown = DEPARTMENTS.filter((d) => out.departments[d.id].status === 'published');
+    out.overall.relief = {};
+    shown.forEach((d) => { out.departments[d.id].relief = {}; });
+    RELIEF.items.forEach((it) => {
+      const all = countAnswers(rs, it.id);
+      const total = answered(all);
+      out.overall.relief[it.id] = total >= k ? all : null;
+      const points = shown.map((d) => ({ key: d.id, counts: countAnswers(ds.byDepartment[d.id], it.id) }));
+      const st = total >= k ? protect(points.map((pt) => ({ key: pt.key, n: answered(pt.counts) })), k, total) : new Map();
+      points.forEach((pt) => { out.departments[pt.key].relief[it.id] = st.get(pt.key) === 'published' ? pt.counts : null; });
+    });
   }
 
   // Checks a release before showing it: right format, threshold not lowered, no published group
@@ -359,16 +469,37 @@
       if (!d || !d.overall || !d.departments) throw new Error('The file is incomplete.');
       const cells = [d.overall].concat(Object.values(d.departments));
       if (cells.some((c) => c && c.status === 'published' && !(c.n >= k))) throw new Error('The file contains a group below the minimum size, so it cannot be shown.');
-      if (cells.some((c) => c && c.status !== 'published' && (c.n != null || c.items || c.scores))) throw new Error('The file contains numbers for a group that should be hidden, so it cannot be shown.');
+      if (cells.some((c) => c && c.status !== 'published' && (c.n != null || c.items || c.scores || c.relief))) throw new Error('The file contains numbers for a group that should be hidden, so it cannot be shown.');
       if (d.overall.status === 'published') {
         const shown = Object.values(d.departments).filter((c) => c.status === 'published').reduce((a, c) => a + c.n, 0);
         const rest = d.overall.n - shown;
         if (rest < 0 || (rest > 0 && rest < k)) throw new Error('The file would let a small group be worked out by subtraction, so it cannot be shown.');
+        checkRelief(d, k);
       } else if (Object.values(d.departments).some((c) => c.status === 'published')) {
         throw new Error('The file is inconsistent, so it cannot be shown.');
       }
     });
     return rel;
+  }
+
+  // Rule 5 for one period: every shown Relief Map point has at least k answers, and the answers held
+  // back from the departments' points number 0 or at least k.
+  function checkRelief(d, k) {
+    const deps = Object.values(d.departments).filter((c) => c.status === 'published');
+    if (!d.overall.relief) {
+      if (deps.some((c) => c.relief)) throw new Error('The file is inconsistent, so it cannot be shown.');
+      return; // a release made before section G existed has no Relief Map
+    }
+    const ok = (x) => Array.isArray(x) && x.length === 6 && x.every((v) => Number.isInteger(v) && v >= 0);
+    RELIEF.items.forEach((it) => {
+      const o = d.overall.relief[it.id];
+      const pts = deps.map((c) => (c.relief ? c.relief[it.id] : null)).filter((x) => x != null);
+      if (o == null) { if (pts.length) throw new Error('The file is inconsistent, so it cannot be shown.'); return; }
+      if (![o].concat(pts).every(ok)) throw new Error('The file is incomplete.');
+      if (answered(o) < k || pts.some((x) => answered(x) < k)) throw new Error('The file contains a Relief Map point with fewer answers than the minimum, so it cannot be shown.');
+      const rest = answered(o) - pts.reduce((a, x) => a + answered(x), 0);
+      if (rest < 0 || (rest > 0 && rest < k)) throw new Error('The file would let a small group be worked out by subtraction, so it cannot be shown.');
+    });
   }
 
   // One reporting group from a release: department 'ALL' (organization-wide) or a department code.
@@ -388,10 +519,16 @@
         return;
       }
       ITEMS.forEach((it) => {
-        const counts = c.items[it.id];
-        const subst = counts.slice(0, 5).reduce((a, b) => a + b, 0);
+        const relief = it.category === RELIEF.id;
+        const counts = relief ? (c.relief || {})[it.id] : c.items[it.id];
+        const category = relief ? `${RELIEF.letter}. ${RELIEF.name}` : CATEGORY_BY_ID[it.category].name;
+        if (!counts) {
+          rows.push(Object.assign({}, base, { status: `point not shown: fewer than ${rel.minGroupSize} answers, or held back to protect one`, group_n: '', category, question_id: it.id, concept: it.concept, answer_code: '', answer: '', count: '', percent: '' }));
+          return;
+        }
+        const subst = answered(counts);
         ANSWER_CODES.forEach((code, i) => rows.push(Object.assign({}, base, {
-          status: 'shown', group_n: c.n, category: CATEGORY_BY_ID[it.category].name, question_id: it.id, concept: it.concept, answer_code: code, answer: answerLabel(it.id, code),
+          status: 'shown', group_n: c.n, category, question_id: it.id, concept: it.concept, answer_code: code, answer: answerLabel(it.id, code),
           count: counts[i], percent: code === NA.code ? (c.n ? +(100 * counts[i] / c.n).toFixed(1) : '') : (subst ? +(100 * counts[i] / subst).toFixed(1) : '')
         })));
       });
@@ -420,6 +557,12 @@
       const block = `${c.letter}. ${c.name}`;
       list.push({ id: `${c.id}_INTRO`, type: 'DB', block, text: `${block}. ${c.intro}${c.caution ? ` ${c.caution}` : ''}` });
       c.items.forEach((it) => list.push({ id: it.id, type: 'MC', block, text: it.text, options: SCALES[c.scale].options.concat(NA.label), codes: ANSWER_CODES }));
+    });
+    // Section G: one block (one page) per setting, five questions each.
+    RELIEF.settings.forEach((s, i) => {
+      const block = `${RELIEF.letter}${i + 1}. ${RELIEF.name}: ${s.name}`;
+      if (i === 0) list.push({ id: `${RELIEF.id}_INTRO`, type: 'DB', block, text: `${RELIEF.letter}. ${RELIEF.name}. ${RELIEF.intro} ${RELIEF.note} If you prefer not to answer, or you do not take part in a setting, choose "${SCALES.comfort.na}".` });
+      RELIEF.items.filter((it) => it.setting === s.id).forEach((it) => list.push({ id: it.id, type: 'MC', block, text: it.text, options: SCALES.comfort.options.concat(SCALES.comfort.na), codes: ANSWER_CODES }));
     });
     list.push({ id: 'REVIEW', type: 'DB', block: 'Review', text: 'Before you submit: use the Back button to review or change any answer. When you are ready, select the arrow to submit.' });
     return list;
@@ -451,6 +594,12 @@
       answers: codes(SCALES[c.scale].options.concat(NA.label), ANSWER_CODES), basis: it.basis,
       sources: it.sources.map((s) => SOURCES[s].short).join('; '), note: `${it.note} Favourable = ${favourableWords(c.id)}.`
     })));
+    RELIEF.items.forEach((it) => rows.push({
+      question_id: it.id, section: `${RELIEF.letter}. ${RELIEF.name}: ${RELIEF_SETTING_BY_ID[it.setting].name}`, concept: it.concept, question: it.text, type: 'Single choice (radio)', required: 'Yes',
+      answers: codes(SCALES.comfort.options.concat(SCALES.comfort.na), ANSWER_CODES), basis: it.basis,
+      sources: it.sources.map((s) => SOURCES[s].short).join('; '),
+      note: `${it.note} Relief Map line: ${RELIEF_DIMENSION_BY_ID[it.dimension].name}. Point = average answer (1 = very comfortable, 5 = very uncomfortable), leaving out code 98; shown only when at least ${CONFIG.minGroupSize} people gave a comfort answer.`
+    }));
     return rows;
   }
   const codebookCSV = () => toCSV(codebookRows(), ['question_id', 'section', 'concept', 'question', 'type', 'required', 'answers', 'basis', 'sources', 'note']);
@@ -511,7 +660,7 @@
       const finished = col('Finished') >= 0 ? String(r[col('Finished')] || '').trim() : '1';
       const dep = choice(r[col(DEPARTMENT_Q.id)], DEPARTMENTS.map((x) => x.name), DEPARTMENTS.map((_, i) => i + 1));
       const answers = {};
-      ITEMS.forEach((it) => { answers[it.id] = col(it.id) >= 0 ? choice(r[col(it.id)], SCALES[it.scale].options.concat(NA.label), ANSWER_CODES) : null; });
+      ITEMS.forEach((it) => { answers[it.id] = col(it.id) >= 0 ? choice(r[col(it.id)], SCALES[it.scale].options.concat(naLabel(it.scale)), ANSWER_CODES) : null; });
       const raw = dateCol != null ? String(r[dateCol] || '').trim() : '';
       const period = raw ? periodOf(raw.replace(' ', 'T') + (/[zZ]|[+-]\d\d:?\d\d$/.test(raw) ? '' : 'Z')) : null;
       const resp = { id: responseId(), period, department: dep ? DEPARTMENTS[dep - 1].id : null, answers };
@@ -547,7 +696,21 @@
     unlock: { department: 'LEG', needed: 2, alsoShows: 'LEAD' },
     level: { PS: 3.75, IN: 3.65, CC: 3.6, LM: 3.7, IB: 3.35, OS: 3.25 }, // average favourability, 1 to 5
     cuts: [1.6, 2.6, 3.25, 4.35], // latent score -> answer 1 to 5 (5 = most favourable)
-    na: { CC3: 0.12, IB4: 0.1, OS3: 0.16 }
+    na: { CC3: 0.12, IB4: 0.1, OS3: 0.16 },
+    // Section G: the level of discomfort (1 = very comfortable, 5 = very uncomfortable) in each setting
+    // in relation to each identity dimension, before random differences. Invented so that the fictional
+    // organization-wide map shows each kind of place; they are not findings.
+    relief: {
+      level: {
+        TM: { GEN: 2.45, AGE: 2.3, REL: 2.05, ETH: 2.4, CLS: 2.35 },
+        SUP: { GEN: 1.85, AGE: 1.75, REL: 1.5, ETH: 1.7, CLS: 1.8 },
+        HYB: { GEN: 2.15, AGE: 2.75, REL: 1.85, ETH: 2.15, CLS: 2.05 },
+        NET: { GEN: 2.2, AGE: 1.9, REL: 3.2, ETH: 3.0, CLS: 3.3 },
+        DEC: { GEN: 3.35, AGE: 3.2, REL: 2.65, ETH: 3.15, CLS: 3.6 }
+      },
+      na: { GEN: 0.02, AGE: 0.015, REL: 0.07, ETH: 0.04, CLS: 0.03 }, // "prefer not to say"
+      naSetting: { SUP: 0.02, DEC: 0.04 } // plus "not applicable": not everyone takes part
+    }
   };
   const demoPeriod = () => DEMO.periods[DEMO.periods.length - 1];
 
@@ -557,6 +720,13 @@
     // Small random differences by department: they are noise, not findings about any real department.
     const effect = {};
     DEPARTMENTS.forEach((d) => { effect[d.id] = Object.fromEntries(CATEGORIES.map((c) => [c.id, normal() * 0.12])); });
+    // Section G answers come from their own random stream, so the answers to the six areas are the
+    // same as before section G was added.
+    const rand2 = rng(20261120);
+    const normal2 = () => { let u = 0, v = 0; while (!u) u = rand2(); while (!v) v = rand2(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    const R = DEMO.relief;
+    const reliefEffect = {};
+    DEPARTMENTS.forEach((d) => { reliefEffect[d.id] = Object.fromEntries(RELIEF.items.map((it) => [it.id, normal2() * 0.22])); });
     const out = [];
     DEMO.periods.forEach((p, pi) => {
       DEPARTMENTS.forEach((d) => {
@@ -570,6 +740,13 @@
             const v = 1 + DEMO.cuts.filter((cut) => x >= cut).length;
             answers[it.id] = c.lowerIsBetter ? v : 6 - v; // v = 5 is the most favourable answer
           }));
+          const ease = normal2() * 0.4; // how at ease this person is in general
+          const axis = Object.fromEntries(RELIEF.dimensions.map((dim) => [dim.id, normal2() * 0.35]));
+          RELIEF.items.forEach((it) => {
+            if (rand2() < R.na[it.dimension] + (R.naSetting[it.setting] || 0)) { answers[it.id] = NA.code; return; }
+            const x = R.level[it.setting][it.dimension] + reliefEffect[d.id][it.id] - 0.04 * pi + ease + axis[it.dimension] + normal2() * 0.6;
+            answers[it.id] = Math.min(5, Math.max(1, Math.round(x)));
+          });
           out.push({ id: responseId(rand), period: p, department: d.id, answers });
         }
       });
@@ -626,10 +803,12 @@
   const schema = () => ({ departments: DEPARTMENTS.map((d) => d.id), items: ITEMS.map((it) => it.id), codes: ANSWER_CODES.slice() });
 
   return {
-    CONFIG, TITLE, SHORT_TITLE, DASHBOARD_TITLE, DEPARTMENTS, CONSENT, DEPARTMENT_Q, NA, SCALES, SOURCES, CATEGORIES, ITEMS,
+    CONFIG, TITLE, SHORT_TITLE, DASHBOARD_TITLE, DEPARTMENTS, CONSENT, DEPARTMENT_Q, NA, SCALES, SOURCES, CATEGORIES, ITEMS, AREA_ITEMS,
+    RELIEF, RELIEF_SETTING_BY_ID, RELIEF_DIMENSION_BY_ID, PLACE_TYPES, PLACE_TYPE_BY_ID, PLACE_MIN_LINES,
     ITEM_BY_ID, CATEGORY_BY_ID, DEPARTMENT_BY_ID, QUESTION_COUNT, ANSWER_CODES, TEXT, DEMO, RELEASE_FORMAT,
-    polarity, favourableWords, answerLabel, periodOf, periodLabel, responseId, problems, makeResponse, submissionPayload,
-    longRows, datasets, aggregate, protect, buildRelease, checkRelease, cell, releaseRows, releaseCSV, questions, qualtricsTxt,
-    codebookRows, codebookCSV, parseCSV, readExport, rng, demoResponses, demoCSV, demoStore, demoPeriod, schema
+    polarity, favourableWords, naLabel, answerLabel, periodOf, periodLabel, responseId, problems, makeResponse, submissionPayload,
+    longRows, datasets, countAnswers, aggregate, protect, buildRelease, checkRelease, cell, releaseRows, releaseCSV, questions, qualtricsTxt,
+    codebookRows, codebookCSV, parseCSV, readExport, rng, demoResponses, demoCSV, demoStore, demoPeriod, schema,
+    answered, reliefItem, reliefValue, placeType, reliefMap
   };
 });

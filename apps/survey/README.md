@@ -7,7 +7,7 @@ confirmation page. It does not link to the Navigator or to the analytics dashboa
 | Page | What it is |
 | --- | --- |
 | `index.html` | Home: purpose, what the assessment covers, how it works, privacy summary |
-| `survey.html` | The assessment: consent, department (12 options), six sections (A to F) of statements, a review screen with Change links, then submit. Every question is multiple choice and required; a progress bar and step counter show progress |
+| `survey.html` | The assessment: consent, department (12 options), six sections (A to F) of statements, then section G, the Relief Map (one page per workplace setting: how comfortable you feel in relation to your gender, age, religious identity, ethnicity and social class; it never asks which of these you are), a review screen with Change links, then submit. Every question is multiple choice and required; a progress bar and step counter show progress |
 | `thanks.html` | Submission confirmation |
 | `privacy.html` | Privacy statement. Complete the "Responsibility, retention and contact" section before collecting real responses |
 | `config.js` | The database connection (see below) |

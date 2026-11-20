@@ -1,8 +1,10 @@
-// UN Workforce Analytics Dashboard. For each department: a Relief Map (a workplace adaptation of
-// Rodó-Zárate's Relief Maps, with the six areas across and comfort to discomfort up the side) and six
-// graphs, one per area. Compare departments: one small Relief Map per department and a table of the
-// numbers. Every number comes from an aggregated release (AssessmentModel.buildRelease): groups under
-// the minimum size carry no numbers at all, and individual answers never reach this page.
+// UN Workforce Analytics Dashboard. For each department: a Relief Map laid out like the Relief Maps
+// Tool worksheet (the workplace settings along the bottom, each labelled with its kind of place;
+// comfort at the bottom and discomfort at the top; one coloured line per identity dimension: gender,
+// age, religious identity, ethnicity and social class), then six graphs, one per area of the
+// assessment. Compare departments: one small Relief Map per department and tables of the numbers.
+// Every number comes from an aggregated release (AssessmentModel.buildRelease): groups and Relief Map
+// points under the minimum size carry no numbers at all, and individual answers never reach this page.
 (function () {
   'use strict';
   const M = window.AssessmentModel;
@@ -14,6 +16,12 @@
   const one = (v) => (v == null ? '–' : v.toFixed(1));
   const K = M.CONFIG.minGroupSize;
   const CATS = M.CATEGORIES;
+  const R = M.RELIEF;
+  const SETTINGS = R.settings;
+  const DIMS = R.dimensions;
+  // Line colours: the worksheet's hues (orange, dark blue, pink, green, red), set dark enough for 3:1
+  // contrast on white and checked for colour-vision deficiencies across every pair of lines.
+  const COLORS = { GEN: '#d67c15', AGE: '#0244be', REL: '#ef3cb3', ETH: '#077952', CLS: '#d02107' };
 
   // Answers given in the demonstration survey in this browser are added to the demonstration data.
   let demoStore = null;
@@ -22,8 +30,8 @@
   let demoRelease = null;
   let liveRelease = null;
 
-  const state = { source: null, view: 'dept', department: 'ALL', period: null, liveAt: null };
-  const charts = new Map(); // chart id -> { series, compact, label }
+  const state = { source: null, view: 'dept', department: 'ALL', period: null, liveAt: null, pinned: null };
+  const charts = new Map(); // chart id -> { map, ref, compact, label }
 
   // ---------- data ----------
   function release() {
@@ -46,9 +54,9 @@
     return { share: answered ? fav / answered : null, fav, answered, na: counts[5] };
   }
 
-  // Relief Map value for one area: the average answer from 1 (the most favourable answer, comfort) to
-  // 5 (the least favourable, discomfort), whatever the scale. "Don't know / N/A" is left out.
-  function discomfort(catId, counts) {
+  // Average answer in one of the six areas, from 1 (the most favourable answer) to 5 (the least
+  // favourable), whatever the scale. Used in the comparison table.
+  function areaAverage(catId, counts) {
     const order = M.polarity(catId).order;
     let n = 0;
     let sum = 0;
@@ -58,7 +66,9 @@
     }
     return n ? sum / n : null;
   }
-  const reliefValues = (c) => CATS.map((cat) => discomfort(cat.id, c.scores[cat.id].counts));
+
+  const typeName = (t) => (t ? t.name : 'Too few answers');
+  const valueText = (v) => (v == null ? `not shown (fewer than ${K} answers)` : one(v));
 
   // ---------- Relief Map chart (SVG) ----------
   // A smooth line through every point that never overshoots them (monotone cubic interpolation).
@@ -85,78 +95,81 @@
     return d;
   }
 
-  // Split an area's long name into at most two lines for the axis.
-  function twoLines(text, max) {
+  // Split a label into lines of at most `max` characters.
+  function wrap(text, max, lines) {
     const words = text.split(' ');
-    let a = '';
-    while (words.length && (a + ' ' + words[0]).trim().length <= max) a = (a + ' ' + words.shift()).trim();
-    return [a || words.shift(), words.join(' ')].filter(Boolean);
+    const out = [];
+    while (words.length && out.length < lines) {
+      let line = words.shift();
+      while (words.length && `${line} ${words[0]}`.length <= max) line += ` ${words.shift()}`;
+      out.push(line);
+    }
+    if (words.length) out[out.length - 1] += ` ${words.join(' ')}`;
+    return out;
   }
 
+  // The worksheet layout: settings across, Comfort (1) at the bottom and Discomfort (5) at the top,
+  // one line per identity dimension. Wide: full labels with the kind of place under each setting.
+  // Narrow and compact (small multiples): numbered settings, with a key outside the chart.
   function reliefSvg(chart, width) {
-    const { series, compact, label } = chart;
-    const W = Math.max(compact ? 250 : 300, Math.round(width));
-    const narrow = !compact && W < 640;
-    const H = compact ? 168 : narrow ? 270 : 340;
-    const m = compact ? { l: 22, r: 12, t: 14, b: 26 } : narrow ? { l: 26, r: 14, t: 30, b: 34 } : { l: 92, r: 128, t: 26, b: 58 };
+    const { map, ref, compact, label } = chart;
+    const W = Math.max(compact ? 240 : 290, Math.round(width));
+    const narrow = compact || W < 640;
+    const H = compact ? 176 : narrow ? 280 : 400;
+    const m = compact ? { l: 16, r: 12, t: 12, b: 26 } : narrow ? { l: 76, r: 14, t: 16, b: 34 } : { l: 104, r: 26, t: 20, b: 80 };
     const pw = W - m.l - m.r;
     const ph = H - m.t - m.b;
-    const band = pw / CATS.length;
+    const band = pw / SETTINGS.length;
     const x = (i) => m.l + band * (i + 0.5);
-    const y = (v) => m.t + ((5 - v) / 4) * ph; // 5 (discomfort) at the top, 1 (comfort) at the bottom
+    const y = (v) => m.t + ((5 - v) / 4) * ph;
     const out = [];
-    // Grid: 1 to 5, with the neutral middle (3) dashed.
-    for (let v = 1; v <= 5; v += 1) {
-      out.push(`<line class="${v === 3 ? 'rm-mid' : 'rm-grid'}" x1="${m.l}" x2="${m.l + pw}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/>`);
+    // Axes as on the worksheet: a vertical axis on the left and a baseline at "Comfort".
+    out.push(`<line class="rm-mid" x1="${m.l}" x2="${m.l + pw}" y1="${y(3).toFixed(1)}" y2="${y(3).toFixed(1)}"/>`);
+    out.push(`<line class="rm-axis" x1="${m.l}" x2="${m.l}" y1="${(y(5) - 4).toFixed(1)}" y2="${y(1).toFixed(1)}"/>`);
+    out.push(`<line class="rm-axis" x1="${m.l}" x2="${m.l + pw}" y1="${y(1).toFixed(1)}" y2="${y(1).toFixed(1)}"/>`);
+    if (!compact) {
+      out.push(`<text class="rm-end" x="${m.l - 12}" y="${(y(5) + 5).toFixed(1)}" text-anchor="end">Discomfort</text>`);
+      out.push(`<text class="rm-end" x="${m.l - 12}" y="${(y(1) + 5).toFixed(1)}" text-anchor="end">Comfort</text>`);
+      out.push(`<text class="rm-tick" x="${m.l - 12}" y="${(y(3) + 4).toFixed(1)}" text-anchor="end">Neutral</text>`);
     }
-    if (!compact && !narrow) {
-      out.push(`<text class="rm-end" x="${m.l - 12}" y="${y(5) + 4}" text-anchor="end">Discomfort</text>`);
-      out.push(`<text class="rm-end" x="${m.l - 12}" y="${y(1) + 4}" text-anchor="end">Comfort</text>`);
-      out.push(`<text class="rm-tick" x="${m.l - 12}" y="${y(3) + 4}" text-anchor="end">Neutral</text>`);
-    } else if (narrow) {
-      out.push(`<text class="rm-end" x="${m.l}" y="${m.t - 12}">Higher = more discomfort</text>`);
-    }
-    // Area labels across the bottom.
-    CATS.forEach((cat, i) => {
-      if (compact || narrow) {
-        out.push(`<text class="rm-cat" x="${x(i).toFixed(1)}" y="${H - m.b + 18}" text-anchor="middle">${cat.letter}</text>`);
+    // Settings along the bottom, each with its kind of place in brackets on one shared line.
+    const longTypes = band >= 150;
+    const names = SETTINGS.map((s) => wrap(s.short, Math.max(10, Math.floor(band / 8)), 2));
+    const kindY = y(1) + 24 + 16 * (Math.max(...names.map((n) => n.length)) - 1) + 18;
+    SETTINGS.forEach((s, i) => {
+      const cx = x(i).toFixed(1);
+      if (narrow) {
+        out.push(`<text class="rm-num" x="${cx}" y="${H - m.b + (compact ? 17 : 21)}" text-anchor="middle">${i + 1}</text>`);
         return;
       }
-      const lines = twoLines(cat.name, Math.max(9, Math.floor(band / 7.6) - 3));
-      out.push(`<text class="rm-cat" x="${x(i).toFixed(1)}" y="${H - m.b + 20}" text-anchor="middle"><tspan class="rm-letter">${cat.letter}.</tspan> ${esc(lines[0])}${lines[1] ? `<tspan x="${x(i).toFixed(1)}" dy="15">${esc(lines[1])}</tspan>` : ''}</text>`);
+      const t = map.types[s.id];
+      const kind = t ? `(${longTypes ? t.name : t.short})` : '(Too few answers)';
+      out.push(`<text class="rm-cat" text-anchor="middle">${names[i].map((l, j) => `<tspan x="${cx}" y="${(y(1) + 24 + 16 * j).toFixed(1)}">${esc(l)}</tspan>`).join('')}<tspan class="rm-kind" x="${cx}" y="${kindY.toFixed(1)}">${esc(kind)}</tspan></text>`);
     });
-    // Lines: the reference first, so the department is drawn on top.
-    const drawn = series.slice().sort((a, b) => (a.ref === b.ref ? 0 : a.ref ? -1 : 1));
-    drawn.forEach((s) => {
+    // Hover columns: the values of every line in one setting.
+    SETTINGS.forEach((s, i) => {
+      const rows = DIMS.map((d) => {
+        const v = map.values[s.id][d.id];
+        const r = ref ? ref.values[s.id][d.id] : null;
+        return `${d.name}: ${valueText(v)}${v != null && r != null ? ` (all departments ${one(r)})` : ''}`;
+      });
+      out.push(`<g class="rm-hit" data-t="${esc(`${s.name} (${typeName(map.types[s.id])})`)}" data-v="${esc(rows.join('\n'))}"><rect x="${(m.l + band * i).toFixed(1)}" y="${m.t - 8}" width="${band.toFixed(1)}" height="${ph + 16}" fill="transparent"/><line class="rm-guide" x1="${x(i).toFixed(1)}" x2="${x(i).toFixed(1)}" y1="${m.t}" y2="${y(1).toFixed(1)}"/></g>`);
+    });
+    // One line per identity dimension, in the worksheet's legend order. A held-back point leaves a gap.
+    DIMS.forEach((d) => {
+      const vals = SETTINGS.map((s) => map.values[s.id][d.id]);
       const segs = [];
       let cur = [];
-      s.values.forEach((v, i) => { if (v == null) { if (cur.length) segs.push(cur); cur = []; } else cur.push({ x: x(i), y: y(v) }); });
+      vals.forEach((v, i) => { if (v == null) { if (cur.length) segs.push(cur); cur = []; } else cur.push({ x: x(i), y: y(v) }); });
       if (cur.length) segs.push(cur);
-      segs.forEach((pts) => out.push(`<path class="rm-line ${s.ref ? 'is-ref' : 'is-main'}" d="${curve(pts)}"/>`));
-      s.values.forEach((v, i) => {
-        if (v != null) out.push(`<circle class="rm-dot ${s.ref ? 'is-ref' : 'is-main'}" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${compact ? 3.5 : 4.5}"/>`);
-      });
+      const tip = SETTINGS.map((s, i) => `${s.short}: ${valueText(vals[i])}`).join('\n');
+      const paths = segs.map((pts) => `<path class="rm-line-hit" d="${curve(pts)}"/><path class="rm-line" stroke="${COLORS[d.id]}" d="${curve(pts)}"/>`).join('');
+      const dots = vals.map((v, i) => (v == null ? '' : `<circle class="rm-dot" fill="${COLORS[d.id]}" cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${compact ? 3.5 : 5.5}"/>`)).join('');
+      out.push(`<g class="rm-series" data-dim="${d.id}" data-t="${esc(d.name)}" data-v="${esc(tip)}">${paths}${dots}</g>`);
     });
-    // Direct labels at the right end of each line.
-    if (!compact && !narrow) {
-      const lx = x(CATS.length - 1) + 12;
-      const ends = series.map((s) => ({ s, v: s.values[s.values.length - 1] })).filter((e) => e.v != null)
-        .map((e) => { const lines = twoLines(e.s.name, 17); return { s: e.s, lines, y: y(e.v) - ((lines.length - 1) * 14) / 2 }; })
-        .sort((a, b) => a.y - b.y);
-      for (let i = 1; i < ends.length; i += 1) {
-        const minY = ends[i - 1].y + ends[i - 1].lines.length * 14 + 4;
-        if (ends[i].y < minY) ends[i].y = minY;
-      }
-      ends.forEach((e) => out.push(`<text class="rm-label ${e.s.ref ? 'is-ref' : 'is-main'}" x="${lx.toFixed(1)}" y="${(e.y + 4).toFixed(1)}">${e.lines.map((t, k) => (k ? `<tspan x="${lx.toFixed(1)}" dy="14">${esc(t)}</tspan>` : esc(t))).join('')}</text>`));
-    }
-    // Hover columns: a guide line and the values of every line for that area.
-    CATS.forEach((cat, i) => {
-      const tip = series.map((s) => `${s.name}: ${one(s.values[i])}${s.fav ? ` (${pct(s.fav[i])} favourable)` : ''}`).join(' · ');
-      out.push(`<g class="rm-hit" data-t="${esc(`${cat.letter}. ${cat.name}`)}" data-v="${esc(tip)}"><rect x="${(m.l + band * i).toFixed(1)}" y="${m.t - 6}" width="${band.toFixed(1)}" height="${ph + 12}" fill="transparent"/><line class="rm-guide" x1="${x(i).toFixed(1)}" x2="${x(i).toFixed(1)}" y1="${m.t}" y2="${m.t + ph}"/></g>`);
-    });
-    const summary = `${label}. Average answer in each area, from 1 (most comfortable) to 5 (most discomfort): `
-      + series.map((s) => `${s.name}: ${CATS.map((cat, i) => `${cat.letter} ${one(s.values[i])}`).join(', ')}`).join('; ') + '.';
-    return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(summary)}">${out.join('')}</svg>`;
+    const summary = `${label}. Average answer from 1 (very comfortable) to 5 (very uncomfortable). `
+      + SETTINGS.map((s) => `${s.name} (${typeName(map.types[s.id])}): ${DIMS.map((d) => `${d.name} ${valueText(map.values[s.id][d.id])}`).join(', ')}`).join('; ') + '.';
+    return `<svg class="rm-svg${narrow && !compact ? ' is-narrow' : ''}" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(summary)}">${out.join('')}</svg>`;
   }
 
   function drawCharts() {
@@ -164,8 +177,14 @@
       const chart = charts.get(el.dataset.chart);
       if (!chart || !el.offsetParent) return; // hidden panels are drawn when they are shown
       const w = el.clientWidth;
-      if (w && Number(el.dataset.w) !== w) { el.innerHTML = reliefSvg(chart, w); el.dataset.w = String(w); }
+      if (w && Number(el.dataset.w) !== w) {
+        el.innerHTML = reliefSvg(chart, w);
+        el.dataset.w = String(w);
+        const card = el.closest('.ad-relief-card');
+        if (card && !chart.compact) card.classList.toggle('is-narrow', w < 640);
+      }
     });
+    applyFocus();
   }
 
   function chartSlot(id, chart) {
@@ -173,37 +192,90 @@
     return `<div class="ad-relief${chart.compact ? ' is-compact' : ''}" data-chart="${id}"></div>`;
   }
 
-  const legend = (series) => (series.length < 2 ? '' : `<ul class="ad-lines" aria-label="Lines">${series.map((s) => `<li><span class="ad-line-key ${s.ref ? 'is-ref' : 'is-main'}" aria-hidden="true"></span>${esc(s.name)}</li>`).join('')}</ul>`);
+  // The legend, as on the worksheet: a coloured line and dot per identity dimension. Selecting one
+  // highlights its line (select it again to show all lines).
+  const legend = () => `<ul class="rm-legend" aria-label="Lines: identity dimensions">${DIMS.map((d) => `<li><button type="button" class="rm-key" data-dim="${d.id}" aria-pressed="${state.pinned === d.id}"><span class="rm-swatch" style="--c:${COLORS[d.id]}" aria-hidden="true"></span>${esc(d.name)}</button></li>`).join('')}</ul>`;
+  const settingsKey = (map) => `<ol class="rm-settings" aria-label="Workplace settings">${SETTINGS.map((s) => `<li>${esc(s.name)}${map ? ` <span class="rm-settings-kind">(${esc(typeName(map.types[s.id]))})</span>` : ''}</li>`).join('')}</ol>`;
+
+  // Highlight one line: the one pinned from a legend, or the one under the pointer.
+  let hoverDim = null;
+  function applyFocus() {
+    const dim = hoverDim || state.pinned;
+    document.querySelectorAll('.rm-series').forEach((g) => {
+      g.classList.toggle('is-faded', !!dim && g.dataset.dim !== dim);
+      if (dim && g.dataset.dim === dim && g.nextElementSibling) g.parentNode.appendChild(g); // draw it on top
+    });
+    document.querySelectorAll('.rm-key').forEach((b) => {
+      b.setAttribute('aria-pressed', String(state.pinned === b.dataset.dim));
+      b.classList.toggle('is-faded', !!dim && b.dataset.dim !== dim);
+    });
+  }
 
   // ---------- pieces ----------
   const heading = (title, meta) => `<div class="ad-set-head"><h2>${esc(title)}</h2>${meta ? `<p>${esc(meta)}</p>` : ''}</div>`;
   const message = (title, text) => `<div class="ad-empty"><h3>${esc(title)}</h3><p>${esc(text)}</p></div>`;
   const hiddenText = (c) => (c && c.status === 'protected' ? 'Hidden to protect a smaller group' : 'Not enough responses yet');
-  const areaName = (i) => `${CATS[i].letter}. ${CATS[i].name}`;
 
-  // A short reading of the map: where discomfort is highest and lowest, and the biggest difference
-  // from all departments. Descriptive only.
-  function insights(values, ref, n) {
-    const idx = values.map((v, i) => i).filter((i) => values[i] != null);
-    if (!idx.length) return '';
-    const hi = idx.reduce((a, b) => (values[b] > values[a] ? b : a));
-    const lo = idx.reduce((a, b) => (values[b] < values[a] ? b : a));
+  // A short, descriptive reading of the map.
+  function insights(map, ref, n) {
+    const pts = [];
+    SETTINGS.forEach((s) => DIMS.forEach((d) => { const v = map.values[s.id][d.id]; if (v != null) pts.push({ s, d, v }); }));
+    if (!pts.length) return '';
+    const hi = pts.reduce((a, b) => (b.v > a.v ? b : a));
+    const lo = pts.reduce((a, b) => (b.v < a.v ? b : a));
     const items = [
-      `<li><strong>Highest point (least comfort):</strong> ${esc(areaName(hi))} (${one(values[hi])}), a possible place to start.</li>`,
-      `<li><strong>Lowest point (most comfort):</strong> ${esc(areaName(lo))} (${one(values[lo])}).</li>`
+      `<li><strong>Most discomfort:</strong> ${esc(hi.d.name)} in ${esc(hi.s.name.toLowerCase())} (${one(hi.v)}), a possible place to start.</li>`,
+      `<li><strong>Most comfort:</strong> ${esc(lo.d.name)} in ${esc(lo.s.name.toLowerCase())} (${one(lo.v)}).</li>`
     ];
-    const above = idx.filter((i) => values[i] > 3);
-    if (above.length) items.push(`<li><strong>Above neutral (more discomfort than comfort):</strong> ${above.map((i) => esc(areaName(i))).join(', ')}.</li>`);
+    M.PLACE_TYPES.filter((t) => t.id !== 'neutral').forEach((t) => {
+      const where = SETTINGS.filter((s) => map.types[s.id] && map.types[s.id].id === t.id);
+      if (!where.length) return;
+      const detail = (s) => {
+        if (t.id !== 'controversial') return esc(s.name);
+        const v = DIMS.map((d) => ({ d, v: map.values[s.id][d.id] })).filter((e) => e.v != null);
+        const top = v.reduce((a, b) => (b.v > a.v ? b : a));
+        const bottom = v.reduce((a, b) => (b.v < a.v ? b : a));
+        return `${esc(s.name)} (${esc(top.d.name.toLowerCase())} ${one(top.v)}, ${esc(bottom.d.name.toLowerCase())} ${one(bottom.v)})`;
+      };
+      items.push(`<li><strong>${esc(t.name)}:</strong> ${where.map(detail).join('; ')}.</li>`);
+    });
     if (ref) {
-      const diffs = idx.filter((i) => ref[i] != null).map((i) => ({ i, d: values[i] - ref[i] }));
-      const big = diffs.reduce((a, b) => (Math.abs(b.d) > Math.abs(a.d) ? b : a), { d: 0 });
-      items.push(Math.abs(big.d) >= 0.2
-        ? `<li><strong>Biggest difference from all departments:</strong> ${esc(areaName(big.i))}, ${one(Math.abs(big.d))} ${big.d > 0 ? 'higher (more discomfort)' : 'lower (more comfort)'}.</li>`
-        : '<li><strong>Compared with all departments:</strong> within 0.2 in every area.</li>');
+      const diffs = [];
+      SETTINGS.forEach((s) => DIMS.forEach((d) => {
+        const v = map.values[s.id][d.id];
+        const r = ref.values[s.id][d.id];
+        if (v != null && r != null) diffs.push({ s, d, diff: v - r });
+      }));
+      const big = diffs.reduce((a, b) => (Math.abs(b.diff) > Math.abs(a.diff) ? b : a), { diff: 0 });
+      items.push(Math.abs(big.diff) >= 0.3
+        ? `<li><strong>Biggest difference from all departments:</strong> ${esc(big.d.name)} in ${esc(big.s.name.toLowerCase())}, ${one(Math.abs(big.diff))} ${big.diff > 0 ? 'higher (more discomfort)' : 'lower (more comfort)'}.</li>`
+        : '<li><strong>Compared with all departments:</strong> within 0.3 on every point.</li>');
     }
-    items.push(`<li class="ad-insight-note">Based on ${n} responses. Small differences can be due to chance.</li>`);
+    const missing = SETTINGS.length * DIMS.length - map.shown;
+    items.push(`<li class="ad-insight-note">Based on ${n} responses.${missing ? ` ${missing} ${missing === 1 ? 'point is' : 'points are'} not shown, to protect anonymity (fewer than ${K} answers, or held back so a smaller group cannot be worked out).` : ''} Small differences can be due to chance.</li>`);
     return `<ul class="ad-insights">${items.join('')}</ul>`;
   }
+
+  // The numbers behind the map: one row per line, one column per setting.
+  function reliefTable(map, title) {
+    return `<details class="ad-numbers"><summary>Show the numbers</summary>
+      <div class="ad-table-wrap" tabindex="0" role="region" aria-label="Relief Map numbers">
+      <table class="ad-compare rm-table">
+        <caption class="visually-hidden">Relief Map for ${esc(title)}: average answer from 1 (very comfortable) to 5 (very uncomfortable), by identity dimension and workplace setting</caption>
+        <thead><tr><th scope="col">Line</th>${SETTINGS.map((s) => `<th scope="col">${esc(s.short)}</th>`).join('')}</tr></thead>
+        <tbody>${DIMS.map((d) => `<tr><th scope="row"><span class="rm-swatch" style="--c:${COLORS[d.id]}" aria-hidden="true"></span>${esc(d.name)}</th>${SETTINGS.map((s) => {
+          const v = map.values[s.id][d.id];
+          return v == null ? '<td class="is-held">–<span class="visually-hidden"> not shown</span></td>' : `<td>${one(v)}</td>`;
+        }).join('')}</tr>`).join('')}
+        <tr class="is-all"><th scope="row">Kind of place</th>${SETTINGS.map((s) => `<td>${esc(map.types[s.id] ? map.types[s.id].short : '–')}</td>`).join('')}</tr></tbody>
+      </table></div>
+      <p class="ad-hint">– = not shown: fewer than ${K} people answered, or held back so that a smaller group cannot be worked out. "Prefer not to say or not applicable" is left out of every average.</p></details>`;
+  }
+
+  const howLabelled = () => `<details class="ad-numbers"><summary>How settings are labelled</summary>
+    <p class="ad-hint">Each point is the average answer from 1 (very comfortable) to 5 (very uncomfortable). Each setting is labelled with one of the four kinds of place on the Relief Maps worksheet, checked in this order:</p>
+    <ol class="rm-rules">${M.PLACE_TYPES.map((t) => `<li><strong>${esc(t.name)}:</strong> ${esc(t.rule)}.</li>`).join('')}</ol>
+    <p class="ad-hint">A setting is labelled only when at least ${M.PLACE_MIN_LINES} of its ${DIMS.length} points are shown. The labels describe a group's averages, never a person.</p></details>`;
 
   function card(c, cat) {
     const rows = cat.items.map((it) => {
@@ -226,8 +298,7 @@
     </section>`;
   }
 
-  const CREDIT = 'A workplace adaptation of Relief Maps (Rodó-Zárate) and the NYU Intersectionality Lab\'s Relief Maps Tool: the six areas stand in for places, and the dashed line shows all departments.';
-  const areaKey = () => `<p class="ad-key-areas">${CATS.map((cat) => `<span><b>${cat.letter}</b> ${esc(cat.name)}</span>`).join('')}</p>`;
+  const CREDIT = 'A workplace adaptation of Relief Maps (Rodó-Zárate, 2023; Relief Maps+, INTERMAPS) and the NYU Intersectionality Lab\'s Relief Maps Tool. It shows group averages for workplace settings, not individual maps, and no one is asked which gender, age, religion, ethnicity or social class they are.';
 
   // ---------- views ----------
   function renderDept(rel) {
@@ -243,22 +314,22 @@
         : message(hiddenText(c), `Results appear once ${d ? 'this department has' : 'there are'} at least ${K} responses in this period.`));
       return;
     }
-    const values = reliefValues(c);
-    const fav = CATS.map((cat) => c.scores[cat.id].favourable);
-    const all = M.cell(rel, state.period, 'ALL');
-    const ref = d && all.status === 'published' ? reliefValues(all) : null;
-    const series = [{ name: d ? d.short : 'All departments', values, fav }];
-    if (ref) series.push({ name: 'All departments', values: ref, fav: CATS.map((cat) => all.scores[cat.id].favourable), ref: true });
+    const map = M.reliefMap(c);
+    const ref = d ? M.reliefMap(M.cell(rel, state.period, 'ALL')) : null;
+    let relief;
+    if (!map) relief = message('No Relief Map in these results', 'These results were produced before the Relief Map section was added to the assessment.');
+    else if (!map.shown) relief = message('Not enough answers for a Relief Map yet', `A point appears once at least ${K} people in the group have answered it.`);
+    else {
+      relief = `<p class="rm-sub">How comfortable people feel in five workplace settings, in relation to five parts of who they are. Each line is one identity dimension: the higher the line, the more discomfort.</p>
+        <div class="rm-layout">${chartSlot('dept', { map, ref, compact: false, label: `Relief Map for ${title}` })}${legend()}</div>
+        <div class="rm-narrow-key">${settingsKey(map)}</div>
+        ${insights(map, ref, c.n)}
+        ${reliefTable(map, title)}
+        ${howLabelled()}
+        <p class="ad-credit">${esc(CREDIT)}</p>`;
+    }
     out.innerHTML = heading(title, `${c.n} responses · ${when}`)
-      + `<section class="ad-relief-card" aria-labelledby="relief-h">
-          <div class="ad-relief-head"><h3 id="relief-h">Relief Map</h3>
-            <p>Each point is the average answer in one area, from 1 (most comfortable) to 5 (most discomfort). Lines that rise show more discomfort.</p></div>
-          ${chartSlot('dept', { series, compact: false, label: `Relief Map for ${title}` })}
-          <div class="ad-narrow-key">${areaKey()}</div>
-          ${legend(series)}
-          ${insights(values, ref, c.n)}
-          <p class="ad-credit">${esc(d ? CREDIT : CREDIT.replace(', and the dashed line shows all departments', ''))}</p>
-        </section>
+      + `<section class="ad-relief-card" aria-labelledby="relief-h"><h3 id="relief-h" class="rm-title">Relief Map</h3>${relief}</section>
         <h3 class="ad-section-h">The six areas in detail</h3>
         <p class="ad-section-p">Each bar is the share of favourable answers to one statement.</p>
         <div class="ad-cards">${CATS.map((cat) => card(c, cat)).join('')}</div>`;
@@ -267,35 +338,49 @@
   function renderCompare(rel) {
     const out = $('compare-out');
     if (!rel || !rel.periods.length) { out.innerHTML = heading('Compare departments', '') + message('No responses yet', `Results appear once there are at least ${K} responses.`); return; }
-    const all = M.cell(rel, state.period, 'ALL');
-    const ref = all.status === 'published' ? reliefValues(all) : null;
     const tiles = M.DEPARTMENTS.map((d) => {
       const c = M.cell(rel, state.period, d.id);
-      if (c.status !== 'published') {
-        return `<li class="ad-mini is-off" data-row="${d.id}"><div class="ad-mini-head"><span class="ad-mini-name">${esc(d.short)}</span><span class="ad-mini-n">&nbsp;</span></div><p class="ad-mini-msg">${hiddenText(c)}</p></li>`;
+      const map = M.reliefMap(c);
+      if (c.status !== 'published' || !map || !map.shown) {
+        const why = c.status !== 'published' ? hiddenText(c) : 'Not enough answers for a Relief Map yet';
+        return `<li class="ad-mini is-off" data-row="${d.id}"><div class="ad-mini-head"><span class="ad-mini-name">${esc(d.short)}</span><span class="ad-mini-n">&nbsp;</span></div><p class="ad-mini-msg">${why}</p></li>`;
       }
-      const series = [{ name: d.short, values: reliefValues(c), fav: CATS.map((cat) => c.scores[cat.id].favourable) }];
-      if (ref) series.push({ name: 'All departments', values: ref, fav: CATS.map((cat) => all.scores[cat.id].favourable), ref: true });
-      return `<li class="ad-mini" data-row="${d.id}"><div class="ad-mini-head"><button type="button" class="ad-link" data-department="${d.id}">${esc(d.short)}</button><span class="ad-mini-n">${c.n} responses</span></div>
-        ${chartSlot(`mini-${d.id}`, { series, compact: true, label: `Relief Map for ${d.name}` })}</li>`;
+      const held = SETTINGS.length * DIMS.length - map.shown;
+      return `<li class="ad-mini" data-row="${d.id}"><div class="ad-mini-head"><button type="button" class="ad-link" data-department="${d.id}">${esc(d.short)}</button><span class="ad-mini-n">${c.n} responses${held ? ` · ${held} ${held === 1 ? 'point' : 'points'} not shown` : ''}</span></div>
+        ${chartSlot(`mini-${d.id}`, { map, ref: null, compact: true, label: `Relief Map for ${d.name}` })}</li>`;
     }).join('');
-    const row = (id, label) => {
+    const typeRow = (id, label) => {
+      const c = M.cell(rel, state.period, id);
+      const map = M.reliefMap(c);
+      if (c.status !== 'published') return `<tr class="is-off" data-row="${id}"><th scope="row">${esc(label)}</th><td colspan="${SETTINGS.length}">${hiddenText(c)}</td></tr>`;
+      if (!map) return `<tr class="is-off" data-row="${id}"><th scope="row">${esc(label)}</th><td colspan="${SETTINGS.length}">No Relief Map in these results</td></tr>`;
+      return `<tr data-row="${id}"${id === 'ALL' ? ' class="is-all"' : ''}><th scope="row">${esc(label)}</th>${SETTINGS.map((s) => `<td>${esc(map.types[s.id] ? map.types[s.id].short : '–')}</td>`).join('')}</tr>`;
+    };
+    const areaRow = (id, label) => {
       const c = M.cell(rel, state.period, id);
       if (c.status !== 'published') return `<tr class="is-off" data-row="${id}"><th scope="row">${esc(label)}</th><td colspan="${CATS.length + 1}">${hiddenText(c)}</td></tr>`;
-      return `<tr data-row="${id}"${id === 'ALL' ? ' class="is-all"' : ''}><th scope="row">${esc(label)}</th><td class="ad-n">${c.n}</td>${reliefValues(c).map((v) => `<td>${one(v)}</td>`).join('')}</tr>`;
+      return `<tr data-row="${id}"${id === 'ALL' ? ' class="is-all"' : ''}><th scope="row">${esc(label)}</th><td class="ad-n">${c.n}</td>${CATS.map((cat) => `<td>${one(areaAverage(cat.id, c.scores[cat.id].counts))}</td>`).join('')}</tr>`;
     };
+    const rows = (f) => f('ALL', 'All departments') + M.DEPARTMENTS.map((d) => f(d.id, d.short)).join('');
     out.innerHTML = heading('Compare departments', `Relief Maps · ${M.periodLabel(state.period)}`)
-      + `<div class="ad-compare-key">${legend([{ name: 'Department' }, { name: 'All departments', ref: true }])}
-          ${areaKey()}
-          <p class="ad-hint">Higher means more discomfort (average answer from 1, most comfortable, to 5). Select a department to open its Relief Map and six graphs.</p></div>
+      + `<div class="ad-compare-key">${legend()}${settingsKey(null)}
+          <p class="ad-hint">Higher means more discomfort (average answer from 1, very comfortable, to 5, very uncomfortable). Select a department to open its Relief Map and six graphs.</p></div>
         <ul class="ad-multiples">${tiles}</ul>
-        <details class="ad-numbers"><summary>Show the numbers</summary>
-          <div class="ad-table-wrap" tabindex="0" role="region" aria-label="Relief Map numbers">
+        <details class="ad-numbers"><summary>Kinds of place by department</summary>
+          <div class="ad-table-wrap" tabindex="0" role="region" aria-label="Kinds of place by department">
           <table class="ad-compare">
-            <caption class="visually-hidden">Average answer in each area, from 1 (most comfortable) to 5 (most discomfort), by department</caption>
+            <caption class="visually-hidden">The kind of place of each workplace setting, by department, as labelled on the Relief Map</caption>
+            <thead><tr><th scope="col">Department</th>${SETTINGS.map((s) => `<th scope="col">${esc(s.short)}</th>`).join('')}</tr></thead>
+            <tbody>${rows(typeRow)}</tbody>
+          </table></div></details>
+        <details class="ad-numbers"><summary>The six areas by department</summary>
+          <div class="ad-table-wrap" tabindex="0" role="region" aria-label="The six areas by department">
+          <table class="ad-compare">
+            <caption class="visually-hidden">Average answer in each area, from 1 (most favourable) to 5 (least favourable), by department</caption>
             <thead><tr><th scope="col">Department</th><th scope="col">Responses</th>${CATS.map((cat) => `<th scope="col"><span class="ad-letter" aria-hidden="true">${cat.letter}</span><span class="ad-col-name">${esc(cat.name)}</span></th>`).join('')}</tr></thead>
-            <tbody>${row('ALL', 'All departments')}${M.DEPARTMENTS.map((d) => row(d.id, d.short)).join('')}</tbody>
-          </table></div></details>`;
+            <tbody>${rows(areaRow)}</tbody>
+          </table></div>
+          <p class="ad-hint">Average answer in each area, from 1 (the most favourable answer) to 5 (the least favourable).</p></details>`;
   }
 
   function fillSelects(rel) {
@@ -344,6 +429,7 @@
     if (!state.source) return;
     const rel = release();
     charts.clear();
+    hoverDim = null;
     $('ad-tip').hidden = true;
     renderNotice(rel);
     fillSelects(rel);
@@ -367,11 +453,11 @@
     if (focus) $(`tab-${name}`).focus();
   }
 
-  // ---------- tooltips (mouse) ----------
+  // ---------- tooltips and line highlighting (mouse) ----------
   function bindTips() {
     const tip = $('ad-tip');
     const show = (el, ev) => {
-      tip.innerHTML = `<strong>${esc(el.dataset.t)}</strong>${esc(el.dataset.v)}`;
+      tip.innerHTML = `<strong>${esc(el.dataset.t)}</strong><span>${esc(el.dataset.v)}</span>`;
       tip.hidden = false;
       const r = el.getBoundingClientRect();
       let left = (ev && ev.pageX ? ev.pageX : r.left + window.scrollX + r.width / 2) + 12;
@@ -380,7 +466,13 @@
       const top = ev && ev.pageY ? ev.pageY - tip.offsetHeight - 14 : r.top + window.scrollY - tip.offsetHeight - 8;
       tip.style.top = `${Math.max(window.scrollY + 8, top)}px`;
     };
-    document.addEventListener('mousemove', (e) => { const el = e.target.closest('[data-t]'); if (el) show(el, e); else tip.hidden = true; });
+    document.addEventListener('mousemove', (e) => {
+      const el = e.target.closest('[data-t]');
+      if (el) show(el, e); else tip.hidden = true;
+      const series = e.target.closest('.rm-series, .rm-key');
+      const dim = series ? series.dataset.dim : null;
+      if (dim !== hoverDim) { hoverDim = dim; applyFocus(); }
+    });
     window.addEventListener('scroll', () => { tip.hidden = true; }, { passive: true });
   }
 
@@ -388,6 +480,7 @@
   function open(source) {
     state.source = source;
     state.department = 'ALL';
+    state.pinned = null;
     $('gate').hidden = true;
     $('app').hidden = false;
     showView('dept');
@@ -470,8 +563,10 @@
     });
     $('department').addEventListener('change', (e) => { state.department = e.target.value; render(); });
     $('period').addEventListener('change', (e) => { state.period = e.target.value; render(); });
-    $('compare-out').addEventListener('click', (e) => {
-      const b = e.target.closest('[data-department]');
+    $('app').addEventListener('click', (e) => {
+      const key = e.target.closest('.rm-key');
+      if (key) { state.pinned = state.pinned === key.dataset.dim ? null : key.dataset.dim; applyFocus(); return; }
+      const b = e.target.closest('#compare-out [data-department]');
       if (!b) return;
       state.department = b.dataset.department;
       showView('dept');
