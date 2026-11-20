@@ -13,7 +13,8 @@ menu. It is now three distinct products:
    own home page, navigation, privacy statement and confirmation page. It does not link to the
    dashboard or the Navigator.
 3. **UN Workforce Analytics Dashboard** (`apps/analytics/`): the analysis tool, with a sign-in for live
-   results, 12 department datasets with six graphs each, and a comparison view.
+   results, 12 department datasets each with a Relief Map and six graphs, and a comparison view of
+   small Relief Maps.
 
 The survey and dashboard are developed in this repository, so that they share one tested model file.
 They are not published as part of the Navigator: `_config.yml` excludes them from its site. Each is

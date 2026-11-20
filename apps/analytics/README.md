@@ -6,16 +6,30 @@ the UN Cultural Intelligence & Bias Navigator. Search engines are asked not to i
 
 ## What it shows
 
-The dashboard is kept deliberately simple: two views and two choices.
+The dashboard is kept deliberately simple: two views and two choices. Its main chart follows the
+Relief Maps Tool specification (Team C assignment): a team-level, anonymous **Relief Map**.
 
 - **By department**: pick one of the **12 department datasets** (Human Resources to Other) or all
-  departments together. Each has **six separate graphs**, one per area: Psychological Safety, Workplace
-  Inclusion, Cross-Cultural Collaboration, Leadership & Management, Implicit Bias Awareness and
-  Organizational Support. Each graph shows the area's % favourable and one bar per statement (% of
-  people who gave a favourable answer). Hovering over a bar shows the full statement and the counts.
-- **Compare departments**: one table with every department and the six areas (% favourable),
-  shaded light to dark blue, with the number of responses. Select a department to open its graphs.
+  departments together.
+  - **Relief Map**: the six areas along the bottom, comfort to discomfort up the side, one line for
+    the department and a dashed line for all departments. Each point is the average answer in that
+    area, from 1 (the most favourable answer, comfort) to 5 (the least favourable, discomfort), so lines
+    that rise show more discomfort, as in Rodó-Zárate's Relief Maps. "Don't know / N/A" is left out.
+    Below it, a short reading: the highest and lowest points, any area above neutral, and the biggest
+    difference from all departments.
+  - **Six separate graphs**, one per area: Psychological Safety, Workplace Inclusion, Cross-Cultural
+    Collaboration, Leadership & Management, Implicit Bias Awareness and Organizational Support. Each
+    shows the area's % favourable and one bar per statement. Hovering over a bar shows the full
+    statement and the counts.
+- **Compare departments**: one small Relief Map per department, each with the dashed all-departments
+  line, and the numbers behind them in a table ("Show the numbers"). Select a department to open its
+  Relief Map and six graphs.
 - **Period**: the reporting quarter (the latest is shown first).
+
+This is a workplace adaptation of Relief Maps (Rodó-Zárate) and the NYU Intersectionality Lab's Relief
+Maps Tool, not the original individual-level method: the six areas of the assessment stand in for
+places, and departments take the place of identity lines. The assessment collects no identity
+questions, so no identity lines are drawn.
 
 A department with fewer than 10 responses shows "Not enough responses yet", and a department hidden to
 protect a smaller group shows "Hidden to protect a smaller group". Neither shows any numbers.
