@@ -77,10 +77,10 @@ sessions are stored in the browser. Separate custom domains would separate them 
 
 - **An institutional survey platform (for example Qualtrics), with no new backend.** Import
   `apps/analytics/downloads/assessment-qualtrics.txt`, then turn on Force response and Anonymize
-  responses. Export the responses as a CSV and open it in the dashboard's "Results file" panel; it is
-  read in the browser and never uploaded. Share only the aggregated JSON or CSV it produces. This suits
-  organizations that already have a licence and data protection approval for their platform. It
-  avoids a new provider, but results update only when someone exports again.
+  responses, and report results with the platform's own tools, applying the same rules (at least 10
+  responses per group, no individual answers). This suits organizations that already have a licence
+  and data protection approval for their platform. It avoids a new provider, but this dashboard would
+  not be used: it reads results only from the secure results service (or its demonstration data).
 - **Another database with an API** (an organization's own PostgreSQL behind an API, Azure or AWS).
   The schema and the results-service logic are plain PostgreSQL and JavaScript, so they can be
   ported. This is more engineering work.

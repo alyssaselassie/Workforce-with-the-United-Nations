@@ -1,7 +1,7 @@
 // Connection to the secure results service. See README.md in this folder.
 //
-// Leave supabaseUrl and supabaseKey empty and the dashboard offers only the demonstration and the
-// file import (for Qualtrics exports): sign-in is switched off.
+// Leave supabaseUrl and supabaseKey empty and the dashboard offers only the demonstration: sign-in
+// is switched off.
 //
 // supabaseKey is the project's PUBLISHABLE key (called "anon" key in older projects). It is designed
 // to be public: it lets an account sign in, and results are only returned to accounts listed in
