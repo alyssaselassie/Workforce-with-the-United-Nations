@@ -32,15 +32,17 @@ Researcher's browser ──sign in──▶ Supabase Auth
   be public. With this schema it can only call `submit_assessment()`: it cannot read, change or
   delete any response.
 - `submit_assessment()` accepts only a valid department and exactly one valid answer code for each
-  of the 34 statements. The database assigns the reporting quarter itself.
+  of the 59 statements (34 in the six areas, 25 in the Relief Map section). The database assigns the
+  reporting quarter itself.
 - Stored per response: a random ID, the department code, the quarter and the answer codes. No name,
   email, staff ID, IP address, date or time.
 - Nobody can read responses through the public API. The results service reads them on the server
   with the service-role key, which Supabase provides to the function automatically. That key must
   never be put in the websites or this repository.
 - Results go only to signed-in accounts listed in `assessment_admins`, and only as aggregated groups
-  of at least 10 responses, with small groups protected from subtraction. The rules are the same code
-  as the dashboard's (`buildRelease()` in the shared model).
+  of at least 10 responses (and Relief Map points of at least 10 answers), with small groups protected
+  from subtraction. The rules are the same code as the dashboard's (`buildRelease()` in the shared
+  model).
 
 These protections are tested: `tools/test_assessment_db.js` runs the schema against a real PostgreSQL
 database with Supabase's roles. It checks that respondents can only submit, that 11 kinds of invalid

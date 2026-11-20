@@ -13,8 +13,9 @@ menu. It is now three distinct products:
    own home page, navigation, privacy statement and confirmation page. It does not link to the
    dashboard or the Navigator.
 3. **UN Workforce Analytics Dashboard** (`apps/analytics/`): the analysis tool, with a sign-in for live
-   results, 12 department datasets each with a Relief Map and six graphs, and a comparison view of
-   small Relief Maps.
+   results, 12 department datasets each with a Relief Map (laid out like the Relief Maps Tool
+   worksheet: workplace settings across, one line per identity dimension) and six graphs, and a
+   comparison view of small Relief Maps.
 
 The survey and dashboard are developed in this repository, so that they share one tested model file.
 They are not published as part of the Navigator: `_config.yml` excludes them from its site. Each is
@@ -55,7 +56,12 @@ researcher  │ Dashboard (static site)  │─sign─▶│ Supabase Auth      
   - nothing is shown for fewer than 10 completed responses;
   - if the hidden departments add up to fewer than 10, the next-smallest department is withheld too;
   - each reporting period stands alone;
-  - hidden groups carry no numbers.
+  - hidden groups carry no numbers;
+  - each Relief Map point (setting × identity dimension) needs at least 10 comfort answers ("Prefer
+    not to say" does not count), and the points held back must together hold 0 or at least 10
+    answers, so none can be worked out from the all-departments point. The survey never asks anyone's
+    gender, age, religion, ethnicity or social class, only how comfortable they feel in relation to
+    each, so there are no identity groups to protect.
 - **Demonstration data** is generated in the browser, labelled on every chart and never mixed with
   real results.
 

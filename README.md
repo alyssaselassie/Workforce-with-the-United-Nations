@@ -74,21 +74,27 @@ own addresses, developed in this repository but **not published as part of the N
 (`_config.yml` excludes `apps/` and `supabase/` from this site):
 
 - **UN Workforce Inclusion & Psychological Safety Assessment** (`apps/survey/`): an anonymous survey
-  with its own home page, privacy statement and confirmation page. It has 36 multiple-choice
+  with its own home page, privacy statement and confirmation page. It has 61 multiple-choice
   questions, all required: consent, one of 12 professional departments, then six areas (A.
   Psychological Safety, B. Workplace Inclusion, C. Cross-Cultural Collaboration, D. Leadership &
   Management, E. Implicit Bias Awareness, F. Organizational Support) on agreement, confidence and
-  frequency scales. It ends with a review screen. It does not link to the dashboard.
+  frequency scales, and G. Relief Map: how comfortable people feel in five workplace settings in
+  relation to their gender, age, religious identity, ethnicity and social class (it never asks which
+  of these they are; "Prefer not to say" is always available). It ends with a review screen. It does
+  not link to the dashboard.
 - **UN Workforce Analytics Dashboard** (`apps/analytics/`): for authorized researchers. Live results
   need a sign-in and arrive already aggregated by a server-side results service. Each department has
-  a Relief Map (a workplace adaptation of Relief Maps: the six areas across, comfort to discomfort
-  up the side, compared with all departments) and six graphs. A comparison view shows a small Relief
-  Map for every department, and a labelled demonstration uses fictional data.
+  a Relief Map laid out like the Relief Maps Tool worksheet (workplace settings across, each labelled
+  as a place of oppression, controversial, neutral or relief; comfort to discomfort up the side; one
+  coloured line each for gender, age, religious identity, ethnicity and social class) and six graphs.
+  A comparison view shows a small Relief Map for every department, and a labelled demonstration uses
+  fictional data.
 - **Backend** (`supabase/`): a database that respondents can only write to, and the results
   service. No backend has been created yet; see `supabase/README.md` for what it needs.
 
-Nothing is shown for a group of fewer than 10 responses, small groups are protected from subtraction,
-individual answers are never displayed, and demonstration data is never mixed with real results.
+Nothing is shown for a group of fewer than 10 responses (or a Relief Map point with fewer than 10
+answers), small groups are protected from subtraction, individual answers are never displayed, and
+demonstration data is never mixed with real results.
 They are published from their own repositories:
 [alyssaselassie/un-workforce-assessment](https://github.com/alyssaselassie/un-workforce-assessment)
 (`https://alyssaselassie.github.io/un-workforce-assessment/`) and

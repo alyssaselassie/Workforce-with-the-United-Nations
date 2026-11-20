@@ -4,11 +4,11 @@
 
 [[Question:DB]]
 [[ID:INTRO]]
-UN Workforce Inclusion & Psychological Safety Assessment. This assessment asks about psychological safety, workplace inclusion, cross-cultural collaboration, leadership and management, awareness of bias in workplace practices, and organizational support. It has 36 multiple-choice questions and takes about 8 minutes. Every question needs an answer; if a statement does not apply to you, choose "Don't know or not applicable".
+UN Workforce Inclusion & Psychological Safety Assessment. This assessment asks about psychological safety, workplace inclusion, cross-cultural collaboration, leadership and management, awareness of bias in workplace practices and organizational support, and ends with a Relief Map of how comfortable you feel in five workplace settings. It has 61 multiple-choice questions and takes about 11 minutes. Every question needs an answer; if a statement does not apply to you, choose "Don't know or not applicable" (in the Relief Map section, "Prefer not to say or not applicable").
 
 [[Question:DB]]
 [[ID:PRIVACY]]
-Taking part is voluntary. You can stop at any time before you submit; nothing is recorded until you do. We do not ask for your name, email, staff ID, entity or duty station. Your response is stored without your IP address or location. Your department is used only to group answers, and the date only to assign a reporting period (such as October to December 2026). The exact date and time are not stored. Results are shown only for groups of at least 10 people, and smaller groups are protected from being worked out from other results. Individual answers are never shown to anyone, including supervisors.
+Taking part is voluntary. You can stop at any time before you submit; nothing is recorded until you do. We do not ask for your name, email, staff ID, entity or duty station. Your response is stored without your IP address or location. The Relief Map section asks how comfortable you feel in relation to your gender, age, religious identity, ethnicity and social class. It never asks which of these you are, and you can always choose "Prefer not to say". Your department is used only to group answers, and the date only to assign a reporting period (such as October to December 2026). The exact date and time are not stored. Results are shown only for groups of at least 10 people, and smaller groups are protected from being worked out from other results. Individual answers are never shown to anyone, including supervisors.
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:CONSENT]]
@@ -663,6 +663,445 @@ Disagree
 Strongly disagree
 [[Choice:98]]
 Don't know or not applicable
+
+[[Block:G1. Relief Map: Team meetings]]
+
+[[Question:DB]]
+[[ID:RM_INTRO]]
+G. Relief Map. This section maps where people feel at ease at work. Think about the past 3 months (or since you joined, if that is more recent). For each of five workplace settings, say how comfortable you feel in relation to five parts of who you are. For example, someone may feel at ease in team meetings in relation to their age, but uncomfortable in relation to their gender. These questions never ask which gender, age, religion, ethnicity or social class you are, only how comfortable you feel. If you prefer not to answer, or you do not take part in a setting, choose "Prefer not to say or not applicable".
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_TM_GEN]]
+In team meetings, how comfortable do you feel in relation to your gender?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_TM_AGE]]
+In team meetings, how comfortable do you feel in relation to your age?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_TM_REL]]
+In team meetings, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_TM_ETH]]
+In team meetings, how comfortable do you feel in relation to your ethnicity?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_TM_CLS]]
+In team meetings, how comfortable do you feel in relation to your social class or background?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Block:G2. Relief Map: One-on-one meetings with your supervisor]]
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_SUP_GEN]]
+In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your gender?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_SUP_AGE]]
+In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your age?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_SUP_REL]]
+In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_SUP_ETH]]
+In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your ethnicity?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_SUP_CLS]]
+In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your social class or background?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Block:G3. Relief Map: Hybrid and virtual collaboration]]
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_HYB_GEN]]
+In hybrid and virtual collaboration, how comfortable do you feel in relation to your gender?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_HYB_AGE]]
+In hybrid and virtual collaboration, how comfortable do you feel in relation to your age?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_HYB_REL]]
+In hybrid and virtual collaboration, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_HYB_ETH]]
+In hybrid and virtual collaboration, how comfortable do you feel in relation to your ethnicity?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_HYB_CLS]]
+In hybrid and virtual collaboration, how comfortable do you feel in relation to your social class or background?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Block:G4. Relief Map: Informal networking]]
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_NET_GEN]]
+In informal networking, how comfortable do you feel in relation to your gender?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_NET_AGE]]
+In informal networking, how comfortable do you feel in relation to your age?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_NET_REL]]
+In informal networking, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_NET_ETH]]
+In informal networking, how comfortable do you feel in relation to your ethnicity?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_NET_CLS]]
+In informal networking, how comfortable do you feel in relation to your social class or background?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Block:G5. Relief Map: Decision-making spaces]]
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_DEC_GEN]]
+In decision-making spaces, how comfortable do you feel in relation to your gender?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_DEC_AGE]]
+In decision-making spaces, how comfortable do you feel in relation to your age?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_DEC_REL]]
+In decision-making spaces, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_DEC_ETH]]
+In decision-making spaces, how comfortable do you feel in relation to your ethnicity?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_DEC_CLS]]
+In decision-making spaces, how comfortable do you feel in relation to your social class or background?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
 
 [[Block:Review]]
 

@@ -7,29 +7,44 @@ the UN Cultural Intelligence & Bias Navigator. Search engines are asked not to i
 ## What it shows
 
 The dashboard is kept deliberately simple: two views and two choices. Its main chart follows the
-Relief Maps Tool specification (Team C assignment): a team-level, anonymous **Relief Map**.
+Relief Maps Tool specification and worksheet (Team C assignment): a team-level, anonymous **Relief Map**.
 
 - **By department**: pick one of the **12 department datasets** (Human Resources to Other) or all
   departments together.
-  - **Relief Map**: the six areas along the bottom, comfort to discomfort up the side, one line for
-    the department and a dashed line for all departments. Each point is the average answer in that
-    area, from 1 (the most favourable answer, comfort) to 5 (the least favourable, discomfort), so lines
-    that rise show more discomfort, as in Rodó-Zárate's Relief Maps. "Don't know / N/A" is left out.
-    Below it, a short reading: the highest and lowest points, any area above neutral, and the biggest
-    difference from all departments.
+  - **Relief Map**, laid out like the worksheet: the five workplace settings of section G along the
+    bottom (team meetings, one-on-one meetings with a supervisor, hybrid and virtual collaboration,
+    informal networking, decision-making spaces), each labelled with its kind of place in brackets;
+    **Comfort** at the bottom and **Discomfort** at the top; and one coloured line per identity
+    dimension: **Gender, Age, Religious identity, Ethnicity and Social class**, with a legend. Each
+    point is the average answer from 1 (very comfortable) to 5 (very uncomfortable); "Prefer not to say
+    or not applicable" is left out. Choosing a legend entry highlights its line; hovering shows the
+    values. Below it: a short reading (most discomfort, most comfort, the kinds of place, the biggest
+    difference from all departments), the numbers in a table, and how settings are labelled.
+  - **Kinds of place** (the worksheet's terms), checked in this order: *Places of oppression* (the
+    lines average 3 or more), *Controversial places* (the highest and lowest lines are at least 1 point
+    apart), *Places of relief* (the lines average 2 or less), *Neutral places* (anything in between). A
+    setting is labelled only when at least 3 of its 5 points are shown. These thresholds are this
+    project's reading aid for group averages, not part of the original method.
   - **Six separate graphs**, one per area: Psychological Safety, Workplace Inclusion, Cross-Cultural
     Collaboration, Leadership & Management, Implicit Bias Awareness and Organizational Support. Each
     shows the area's % favourable and one bar per statement. Hovering over a bar shows the full
     statement and the counts.
-- **Compare departments**: one small Relief Map per department, each with the dashed all-departments
-  line, and the numbers behind them in a table ("Show the numbers"). Select a department to open its
-  Relief Map and six graphs.
+- **Compare departments**: one small Relief Map per department (the same five identity lines, settings
+  numbered 1 to 5), a table of the kind of place of every setting by department, and a table of the
+  six areas' averages. Select a department to open its Relief Map and six graphs.
 - **Period**: the reporting quarter (the latest is shown first).
 
-This is a workplace adaptation of Relief Maps (Rodó-Zárate) and the NYU Intersectionality Lab's Relief
-Maps Tool, not the original individual-level method: the six areas of the assessment stand in for
-places, and departments take the place of identity lines. The assessment collects no identity
-questions, so no identity lines are drawn.
+This is a workplace adaptation of Relief Maps (Rodó-Zárate, 2023; Relief Maps+, INTERMAPS) and the
+NYU Intersectionality Lab's Relief Maps Tool, not the original individual-level method: it shows group
+averages for workplace settings. Nobody is asked which gender, age, religion, ethnicity or social class
+they are, only how comfortable they feel in relation to each, so the identity lines need no identity
+groups and there are no small identity intersections to expose.
+
+Each Relief Map point is shown only when at least **10** people in the group gave a comfort answer
+("Prefer not to say" does not count). As for departments, the points held back in a period must
+together hold 0 or at least 10 answers, so none can be worked out from the all-departments point;
+if needed, the next-smallest department's point is held back too. A held-back point leaves a gap in
+its line and a dash in the table.
 
 A department with fewer than 10 responses shows "Not enough responses yet", and a department hidden to
 protect a smaller group shows "Hidden to protect a smaller group". Neither shows any numbers.
