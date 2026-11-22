@@ -4,675 +4,30 @@
 
 [[Question:DB]]
 [[ID:INTRO]]
-UN Workforce Inclusion & Psychological Safety Assessment. This assessment asks about psychological safety, workplace inclusion, cross-cultural collaboration, leadership and management, awareness of bias in workplace practices and organizational support, and ends with a Relief Map of how comfortable you feel in five workplace settings. It has 61 multiple-choice questions and takes about 11 minutes. Every question needs an answer; if a statement does not apply to you, choose "Don't know or not applicable" (in the Relief Map section, "Prefer not to say or not applicable").
+Workplace Relief Map Survey. This short, anonymous survey asks how comfortable you feel in five everyday workplace spaces, in relation to your gender, age, religious identity, ethnicity and social class. It never asks which of these you are. It has 26 multiple-choice questions and takes about 5 minutes. Every question needs an answer; you can always choose "Prefer not to say or not applicable".
 
 [[Question:DB]]
 [[ID:PRIVACY]]
-Taking part is voluntary. You can stop at any time before you submit; nothing is recorded until you do. We do not ask for your name, email, staff ID, entity or duty station. Your response is stored without your IP address or location. The Relief Map section asks how comfortable you feel in relation to your gender, age, religious identity, ethnicity and social class. It never asks which of these you are, and you can always choose "Prefer not to say". Your department is used only to group answers, and the date only to assign a reporting period (such as October to December 2026). The exact date and time are not stored. Results are shown only for groups of at least 10 people, and smaller groups are protected from being worked out from other results. Individual answers are never shown to anyone, including supervisors.
+Taking part is voluntary, and you can stop at any time. We do not ask for your name, email, staff ID or department, and responses are anonymized, so your IP address and location are not recorded. The survey asks how comfortable you feel in relation to your gender, age, religious identity, ethnicity and social class. It never asks which of these you are. Results are shown only as one combined map, and each point on it only when at least 10 people have answered it. Individual answers are never shown to anyone, including supervisors.
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:CONSENT]]
-Do you agree to take part in this assessment?
+Do you agree to take part in this survey?
 [[AdvancedChoices]]
 [[Choice:1]]
 Yes, I agree to take part
 [[Choice:2]]
 No, I do not want to take part
 
-[[Block:Your department]]
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:DEPARTMENT]]
-Which professional department do you work in? Choose the one closest to your work. If none fits, choose "Other". This is used only to group answers.
-[[AdvancedChoices]]
-[[Choice:1]]
-Human Resources (HR)
-[[Choice:2]]
-Finance & Accounting
-[[Choice:3]]
-Marketing & Communications
-[[Choice:4]]
-Research & Data Analytics
-[[Choice:5]]
-Information Technology (IT)
-[[Choice:6]]
-Legal & Compliance
-[[Choice:7]]
-Operations & Administration
-[[Choice:8]]
-Programme & Project Management
-[[Choice:9]]
-Policy & Strategy
-[[Choice:10]]
-Humanitarian & Field Operations
-[[Choice:11]]
-Leadership & Management
-[[Choice:12]]
-Other
-
-[[Block:A. Psychological Safety]]
-
-[[Question:DB]]
-[[ID:PS_INTRO]]
-A. Psychological Safety. Think about the team you work with most closely. How much do you agree with each statement?
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:PS1]]
-In my team, I can express an opinion that differs from others' without fear of negative consequences.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:PS2]]
-I can ask questions in my team without worrying about how I will be seen.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:PS3]]
-If I make a mistake in my team, it is not held against me.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:PS4]]
-I feel safe raising problems and difficult issues in my team.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:PS5]]
-I can respectfully disagree with my supervisor without fear of negative consequences.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:PS6]]
-It is easy to ask colleagues in my team for help.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Block:B. Workplace Inclusion]]
-
-[[Question:DB]]
-[[ID:IN_INTRO]]
-B. Workplace Inclusion. Think about your workplace. How much do you agree with each statement?
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IN1]]
-I feel that I belong in my team.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IN2]]
-Everyone in my team has an equal opportunity to take part in discussions.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IN3]]
-Colleagues are treated with respect whatever their cultural or national background.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IN4]]
-Opportunities such as assignments, training and travel are open to everyone in my team.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IN5]]
-Different perspectives are valued in my team, even when they challenge the usual way of working.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IN6]]
-I am treated fairly at work.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Block:C. Cross-Cultural Collaboration]]
-
-[[Question:DB]]
-[[ID:CC_INTRO]]
-C. Cross-Cultural Collaboration. Think about working with colleagues from different cultural, national, language and professional backgrounds. How confident are you that you can do each of the following?
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:CC1]]
-Communicate clearly with colleagues whose language or cultural background differs from yours.
-[[AdvancedChoices]]
-[[Choice:1]]
-Very confident
-[[Choice:2]]
-Fairly confident
-[[Choice:3]]
-Somewhat confident
-[[Choice:4]]
-Slightly confident
-[[Choice:5]]
-Not at all confident
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:CC2]]
-Adapt how you work when collaborating with colleagues whose working styles differ from yours.
-[[AdvancedChoices]]
-[[Choice:1]]
-Very confident
-[[Choice:2]]
-Fairly confident
-[[Choice:3]]
-Somewhat confident
-[[Choice:4]]
-Slightly confident
-[[Choice:5]]
-Not at all confident
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:CC3]]
-Work as an equal partner with colleagues across international and national staff, or headquarters and the field.
-[[AdvancedChoices]]
-[[Choice:1]]
-Very confident
-[[Choice:2]]
-Fairly confident
-[[Choice:3]]
-Somewhat confident
-[[Choice:4]]
-Slightly confident
-[[Choice:5]]
-Not at all confident
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:CC4]]
-Resolve a misunderstanding with a colleague from a different background respectfully.
-[[AdvancedChoices]]
-[[Choice:1]]
-Very confident
-[[Choice:2]]
-Fairly confident
-[[Choice:3]]
-Somewhat confident
-[[Choice:4]]
-Slightly confident
-[[Choice:5]]
-Not at all confident
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:CC5]]
-Share knowledge and information effectively with colleagues in other teams and duty stations.
-[[AdvancedChoices]]
-[[Choice:1]]
-Very confident
-[[Choice:2]]
-Fairly confident
-[[Choice:3]]
-Somewhat confident
-[[Choice:4]]
-Slightly confident
-[[Choice:5]]
-Not at all confident
-[[Choice:98]]
-Don't know or not applicable
-
-[[Block:D. Leadership & Management]]
-
-[[Question:DB]]
-[[ID:LM_INTRO]]
-D. Leadership & Management. Think about your direct supervisor and the management of your office. How much do you agree with each statement?
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:LM1]]
-My supervisor treats all team members fairly.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:LM2]]
-My supervisor involves team members in decisions that affect their work.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:LM3]]
-My supervisor is open to feedback, including criticism.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:LM4]]
-My supervisor recognizes everyone's contributions, not only the most visible ones.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:LM5]]
-Management explains the reasons for decisions that affect staff.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:LM6]]
-My supervisor communicates with team members respectfully.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Block:E. Implicit Bias Awareness]]
-
-[[Question:DB]]
-[[ID:IB_INTRO]]
-E. Implicit Bias Awareness. In the past 3 months (or since you joined, if that is more recent), how often have you noticed the following in your workplace? These questions ask what you have noticed in workplace practices. They do not measure anyone's implicit bias, and results are never about individuals.
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IB1]]
-Decisions based on assumptions about people's backgrounds rather than on evidence
-[[AdvancedChoices]]
-[[Choice:1]]
-Always
-[[Choice:2]]
-Often
-[[Choice:3]]
-Sometimes
-[[Choice:4]]
-Rarely
-[[Choice:5]]
-Never
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IB2]]
-Colleagues using stereotypes about a nationality, culture or region
-[[AdvancedChoices]]
-[[Choice:1]]
-Always
-[[Choice:2]]
-Often
-[[Choice:3]]
-Sometimes
-[[Choice:4]]
-Rarely
-[[Choice:5]]
-Never
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IB3]]
-Colleagues being treated differently because of their nationality, gender, language, age or other background
-[[AdvancedChoices]]
-[[Choice:1]]
-Always
-[[Choice:2]]
-Often
-[[Choice:3]]
-Sometimes
-[[Choice:4]]
-Rarely
-[[Choice:5]]
-Never
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IB4]]
-Factors other than merit affecting who is recruited or promoted
-[[AdvancedChoices]]
-[[Choice:1]]
-Always
-[[Choice:2]]
-Often
-[[Choice:3]]
-Sometimes
-[[Choice:4]]
-Rarely
-[[Choice:5]]
-Never
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IB5]]
-Similar contributions being recognized differently depending on who made them
-[[AdvancedChoices]]
-[[Choice:1]]
-Always
-[[Choice:2]]
-Often
-[[Choice:3]]
-Sometimes
-[[Choice:4]]
-Rarely
-[[Choice:5]]
-Never
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:IB6]]
-Differences in power (for example between headquarters and the field, international and national staff, or senior and junior staff) deciding whose views count
-[[AdvancedChoices]]
-[[Choice:1]]
-Always
-[[Choice:2]]
-Often
-[[Choice:3]]
-Sometimes
-[[Choice:4]]
-Rarely
-[[Choice:5]]
-Never
-[[Choice:98]]
-Don't know or not applicable
-
-[[Block:F. Organizational Support]]
-
-[[Question:DB]]
-[[ID:OS_INTRO]]
-F. Organizational Support. Think about your organization as a whole. How much do you agree with each statement?
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:OS1]]
-I have access to training on diversity, inclusion and bias.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:OS2]]
-I know how to report discrimination or unfair treatment in my organization.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:OS3]]
-When discrimination or unfair treatment is reported, my organization takes appropriate action.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:OS4]]
-Senior management actively supports diversity and inclusion.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:OS5]]
-I have opportunities for professional development in my organization.
-[[AdvancedChoices]]
-[[Choice:1]]
-Strongly agree
-[[Choice:2]]
-Agree
-[[Choice:3]]
-Neither agree nor disagree
-[[Choice:4]]
-Disagree
-[[Choice:5]]
-Strongly disagree
-[[Choice:98]]
-Don't know or not applicable
-
-[[Block:G1. Relief Map: Team meetings]]
+[[Block:1. Your desk or workstation]]
 
 [[Question:DB]]
 [[ID:RM_INTRO]]
-G. Relief Map. This section maps where people feel at ease at work. Think about the past 3 months (or since you joined, if that is more recent). For each of five workplace settings, say how comfortable you feel in relation to five parts of who you are. For example, someone may feel at ease in team meetings in relation to their age, but uncomfortable in relation to their gender. These questions never ask which gender, age, religion, ethnicity or social class you are, only how comfortable you feel. If you prefer not to answer, or you do not take part in a setting, choose "Prefer not to say or not applicable".
+This survey maps where people feel at ease at work. Think about the past 3 months (or since you joined, if that is more recent). For each of five workplace spaces, say how comfortable you feel there in relation to five parts of who you are. For example, someone may feel at ease in meeting rooms in relation to their age, but uncomfortable in relation to their gender. These questions never ask which gender, age, religion, ethnicity or social class you are, only how comfortable you feel. If you prefer not to answer, or you do not use a space, choose "Prefer not to say or not applicable".
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_TM_GEN]]
-In team meetings, how comfortable do you feel in relation to your gender?
+[[ID:RM_DESK_GEN]]
+At your desk or workstation, how comfortable do you feel in relation to your gender?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -688,8 +43,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_TM_AGE]]
-In team meetings, how comfortable do you feel in relation to your age?
+[[ID:RM_DESK_AGE]]
+At your desk or workstation, how comfortable do you feel in relation to your age?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -705,8 +60,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_TM_REL]]
-In team meetings, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[ID:RM_DESK_REL]]
+At your desk or workstation, how comfortable do you feel in relation to your religious identity (including having no religion)?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -722,8 +77,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_TM_ETH]]
-In team meetings, how comfortable do you feel in relation to your ethnicity?
+[[ID:RM_DESK_ETH]]
+At your desk or workstation, how comfortable do you feel in relation to your ethnicity?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -739,8 +94,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_TM_CLS]]
-In team meetings, how comfortable do you feel in relation to your social class or background?
+[[ID:RM_DESK_CLS]]
+At your desk or workstation, how comfortable do you feel in relation to your social class or background?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -755,11 +110,98 @@ Very uncomfortable
 [[Choice:98]]
 Prefer not to say or not applicable
 
-[[Block:G2. Relief Map: One-on-one meetings with your supervisor]]
+[[Block:2. Meeting rooms]]
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_MEET_GEN]]
+In meeting rooms, how comfortable do you feel in relation to your gender?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_MEET_AGE]]
+In meeting rooms, how comfortable do you feel in relation to your age?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_MEET_REL]]
+In meeting rooms, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_MEET_ETH]]
+In meeting rooms, how comfortable do you feel in relation to your ethnicity?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_MEET_CLS]]
+In meeting rooms, how comfortable do you feel in relation to your social class or background?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Block:3. Your supervisor's office]]
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:RM_SUP_GEN]]
-In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your gender?
+In your supervisor's office, how comfortable do you feel in relation to your gender?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -776,7 +218,7 @@ Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:RM_SUP_AGE]]
-In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your age?
+In your supervisor's office, how comfortable do you feel in relation to your age?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -793,7 +235,7 @@ Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:RM_SUP_REL]]
-In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your religious identity (including having no religion)?
+In your supervisor's office, how comfortable do you feel in relation to your religious identity (including having no religion)?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -810,7 +252,7 @@ Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:RM_SUP_ETH]]
-In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your ethnicity?
+In your supervisor's office, how comfortable do you feel in relation to your ethnicity?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -827,7 +269,7 @@ Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
 [[ID:RM_SUP_CLS]]
-In one-on-one meetings with your supervisor, how comfortable do you feel in relation to your social class or background?
+In your supervisor's office, how comfortable do you feel in relation to your social class or background?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -842,28 +284,11 @@ Very uncomfortable
 [[Choice:98]]
 Prefer not to say or not applicable
 
-[[Block:G3. Relief Map: Hybrid and virtual collaboration]]
+[[Block:4. Kitchen, break room or cafeteria]]
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_HYB_GEN]]
-In hybrid and virtual collaboration, how comfortable do you feel in relation to your gender?
-[[AdvancedChoices]]
-[[Choice:1]]
-Very comfortable
-[[Choice:2]]
-Comfortable
-[[Choice:3]]
-Neither comfortable nor uncomfortable
-[[Choice:4]]
-Uncomfortable
-[[Choice:5]]
-Very uncomfortable
-[[Choice:98]]
-Prefer not to say or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_HYB_AGE]]
-In hybrid and virtual collaboration, how comfortable do you feel in relation to your age?
+[[ID:RM_BREAK_GEN]]
+In the kitchen, break room or cafeteria, how comfortable do you feel in relation to your gender?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -879,8 +304,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_HYB_REL]]
-In hybrid and virtual collaboration, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[ID:RM_BREAK_AGE]]
+In the kitchen, break room or cafeteria, how comfortable do you feel in relation to your age?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -896,8 +321,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_HYB_ETH]]
-In hybrid and virtual collaboration, how comfortable do you feel in relation to your ethnicity?
+[[ID:RM_BREAK_REL]]
+In the kitchen, break room or cafeteria, how comfortable do you feel in relation to your religious identity (including having no religion)?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -913,27 +338,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_HYB_CLS]]
-In hybrid and virtual collaboration, how comfortable do you feel in relation to your social class or background?
-[[AdvancedChoices]]
-[[Choice:1]]
-Very comfortable
-[[Choice:2]]
-Comfortable
-[[Choice:3]]
-Neither comfortable nor uncomfortable
-[[Choice:4]]
-Uncomfortable
-[[Choice:5]]
-Very uncomfortable
-[[Choice:98]]
-Prefer not to say or not applicable
-
-[[Block:G4. Relief Map: Informal networking]]
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_NET_GEN]]
-In informal networking, how comfortable do you feel in relation to your gender?
+[[ID:RM_BREAK_ETH]]
+In the kitchen, break room or cafeteria, how comfortable do you feel in relation to your ethnicity?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -949,8 +355,27 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_NET_AGE]]
-In informal networking, how comfortable do you feel in relation to your age?
+[[ID:RM_BREAK_CLS]]
+In the kitchen, break room or cafeteria, how comfortable do you feel in relation to your social class or background?
+[[AdvancedChoices]]
+[[Choice:1]]
+Very comfortable
+[[Choice:2]]
+Comfortable
+[[Choice:3]]
+Neither comfortable nor uncomfortable
+[[Choice:4]]
+Uncomfortable
+[[Choice:5]]
+Very uncomfortable
+[[Choice:98]]
+Prefer not to say or not applicable
+
+[[Block:5. Hallways, elevators and entrances]]
+
+[[Question:MC:SingleAnswer:Vertical]]
+[[ID:RM_HALL_GEN]]
+In hallways, elevators and entrances, how comfortable do you feel in relation to your gender?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -966,8 +391,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_NET_REL]]
-In informal networking, how comfortable do you feel in relation to your religious identity (including having no religion)?
+[[ID:RM_HALL_AGE]]
+In hallways, elevators and entrances, how comfortable do you feel in relation to your age?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -983,8 +408,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_NET_ETH]]
-In informal networking, how comfortable do you feel in relation to your ethnicity?
+[[ID:RM_HALL_REL]]
+In hallways, elevators and entrances, how comfortable do you feel in relation to your religious identity (including having no religion)?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -1000,27 +425,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_NET_CLS]]
-In informal networking, how comfortable do you feel in relation to your social class or background?
-[[AdvancedChoices]]
-[[Choice:1]]
-Very comfortable
-[[Choice:2]]
-Comfortable
-[[Choice:3]]
-Neither comfortable nor uncomfortable
-[[Choice:4]]
-Uncomfortable
-[[Choice:5]]
-Very uncomfortable
-[[Choice:98]]
-Prefer not to say or not applicable
-
-[[Block:G5. Relief Map: Decision-making spaces]]
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_DEC_GEN]]
-In decision-making spaces, how comfortable do you feel in relation to your gender?
+[[ID:RM_HALL_ETH]]
+In hallways, elevators and entrances, how comfortable do you feel in relation to your ethnicity?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -1036,59 +442,8 @@ Very uncomfortable
 Prefer not to say or not applicable
 
 [[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_DEC_AGE]]
-In decision-making spaces, how comfortable do you feel in relation to your age?
-[[AdvancedChoices]]
-[[Choice:1]]
-Very comfortable
-[[Choice:2]]
-Comfortable
-[[Choice:3]]
-Neither comfortable nor uncomfortable
-[[Choice:4]]
-Uncomfortable
-[[Choice:5]]
-Very uncomfortable
-[[Choice:98]]
-Prefer not to say or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_DEC_REL]]
-In decision-making spaces, how comfortable do you feel in relation to your religious identity (including having no religion)?
-[[AdvancedChoices]]
-[[Choice:1]]
-Very comfortable
-[[Choice:2]]
-Comfortable
-[[Choice:3]]
-Neither comfortable nor uncomfortable
-[[Choice:4]]
-Uncomfortable
-[[Choice:5]]
-Very uncomfortable
-[[Choice:98]]
-Prefer not to say or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_DEC_ETH]]
-In decision-making spaces, how comfortable do you feel in relation to your ethnicity?
-[[AdvancedChoices]]
-[[Choice:1]]
-Very comfortable
-[[Choice:2]]
-Comfortable
-[[Choice:3]]
-Neither comfortable nor uncomfortable
-[[Choice:4]]
-Uncomfortable
-[[Choice:5]]
-Very uncomfortable
-[[Choice:98]]
-Prefer not to say or not applicable
-
-[[Question:MC:SingleAnswer:Vertical]]
-[[ID:RM_DEC_CLS]]
-In decision-making spaces, how comfortable do you feel in relation to your social class or background?
+[[ID:RM_HALL_CLS]]
+In hallways, elevators and entrances, how comfortable do you feel in relation to your social class or background?
 [[AdvancedChoices]]
 [[Choice:1]]
 Very comfortable
@@ -1107,4 +462,4 @@ Prefer not to say or not applicable
 
 [[Question:DB]]
 [[ID:REVIEW]]
-Before you submit: use the Back button to review or change any answer. When you are ready, select the arrow to submit.
+That was the last question. When you are ready, select the arrow to submit your answers.

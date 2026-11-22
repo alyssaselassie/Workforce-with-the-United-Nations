@@ -1,4 +1,4 @@
-// UN Workforce Analytics Dashboard: sign-in and the secure results service (Supabase).
+// Workplace Relief Map Dashboard: sign-in and the secure results service (Supabase).
 // The session is kept in memory only: closing or reloading the page signs you out, and nothing about
 // the account is written to the browser's storage.
 window.AssessmentAuth = (function () {

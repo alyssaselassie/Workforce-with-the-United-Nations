@@ -67,34 +67,33 @@ The game layer stays professional: plain language, a calm palette and no leaderb
 
 Design principles: XP rewards learning actions (exploring a context, deciding, reflecting, hearing every voice) and never speed. Each action pays once; replaying earns XP only for doing better. There are no leaderboards, so learners are only compared with their past selves, and XP is not a measure of anyone's bias. `js/game.js` holds the rules (`XP`, `LEVELS`, `QUESTS`, badges); a ledger stores the best award per action key.
 
-## Separate applications: Workforce Assessment and Analytics
+## Separate applications: the Workplace Relief Map survey and dashboard
 
-The workforce survey is no longer part of this website. It is now two separate applications with their
-own addresses, developed in this repository but **not published as part of the Navigator**
-(`_config.yml` excludes `apps/` and `supabase/` from this site):
+The workforce survey is no longer part of this website. It is now the Relief Maps Tool project: two
+separate applications with their own addresses, developed in this repository but **not published as
+part of the Navigator** (`_config.yml` excludes `apps/` and `supabase/` from this site). Following the
+Relief Maps Tool worksheet, they collect one dataset and show one graph:
 
-- **UN Workforce Inclusion & Psychological Safety Assessment** (`apps/survey/`): an anonymous survey
-  with its own home page, privacy statement and confirmation page. It has 61 multiple-choice
-  questions, all required: consent, one of 12 professional departments, then six areas (A.
-  Psychological Safety, B. Workplace Inclusion, C. Cross-Cultural Collaboration, D. Leadership &
-  Management, E. Implicit Bias Awareness, F. Organizational Support) on agreement, confidence and
-  frequency scales, and G. Relief Map: how comfortable people feel in five workplace settings in
-  relation to their gender, age, religious identity, ethnicity and social class (it never asks which
-  of these they are; "Prefer not to say" is always available). It ends with a review screen. It does
-  not link to the dashboard.
-- **UN Workforce Analytics Dashboard** (`apps/analytics/`): for authorized researchers. Live results
-  need a sign-in and arrive already aggregated by a server-side results service. Each department has
-  a Relief Map laid out like the Relief Maps Tool worksheet (workplace settings across, each labelled
-  as a place of oppression, controversial, neutral or relief; comfort to discomfort up the side; one
-  coloured line each for gender, age, religious identity, ethnicity and social class) and six graphs.
-  A comparison view shows a small Relief Map for every department, and a labelled demonstration uses
-  fictional data.
+- **Workplace Relief Map Survey** (`apps/survey/`): an anonymous survey with its own home page,
+  privacy statement and confirmation page. It has 26 multiple-choice questions, all required (about 5
+  minutes): consent, then one page for each of five physical workplace spaces (your desk or
+  workstation, meeting rooms, your supervisor's office, the kitchen, break room or cafeteria, and
+  hallways, elevators and entrances), asking how comfortable you feel there in relation to your
+  gender, age, religious identity, ethnicity and social class. It never asks which of these you are,
+  or your department, and "Prefer not to say" is always available. It ends with a review screen and
+  does not link to the dashboard.
+- **Workplace Relief Map Dashboard** (`apps/analytics/`): for authorized researchers. Live results
+  need a sign-in and arrive already aggregated by a server-side results service. It shows one Relief
+  Map for everyone who took part, laid out like the Relief Maps Tool worksheet: the five spaces across,
+  each labelled as a place of oppression, controversial, neutral or relief; comfort to discomfort up
+  the side; one coloured line each for gender, age, religious identity, ethnicity and social class. A
+  labelled demonstration uses fictional data.
 - **Backend** (`supabase/`): a database that respondents can only write to, and the results
   service. No backend has been created yet; see `supabase/README.md` for what it needs.
 
-Nothing is shown for a group of fewer than 10 responses (or a Relief Map point with fewer than 10
-answers), small groups are protected from subtraction, individual answers are never displayed, and
-demonstration data is never mixed with real results.
+Nothing is shown until at least 10 people have taken part, no point on the map is shown with fewer
+than 10 answers, only the answer codes are stored (no department, date or time), individual answers
+are never displayed, and demonstration data is never mixed with real results.
 They are published from their own repositories:
 [alyssaselassie/un-workforce-assessment](https://github.com/alyssaselassie/un-workforce-assessment)
 (`https://alyssaselassie.github.io/un-workforce-assessment/`) and
@@ -106,7 +105,7 @@ Start with [`apps/README.md`](apps/README.md) and
 
 ## Relief Maps Tool (earlier pilot)
 
-The Workforce Assessment (now a separate application, see above) has replaced this pilot. It stays available, unchanged, at `relief-map/`, and is not in the main menu.
+The Workplace Relief Map survey and dashboard (separate applications, see above) have replaced this pilot. It stays available, unchanged, at `relief-map/`, and is not in the main menu.
 
 *Relief Maps Tool: Visualizing Well-Being Across Work & Learning Spaces*, in `relief-map/`, for the UN Transformative Spaces initiative. A 5-minute anonymous Qualtrics survey becomes a **team Relief Map**: six workplace settings along the bottom, the average answer from 1 to 5 up the side (higher is more positive), and three lines: **safety and voice**, **belonging and inclusion**, and **comfort**. Each setting has three fixed statements, one per line, and each statement also measures one of five dimensions (psychological safety, belonging, inclusion, voice and participation, comfort and well-being). It is a workplace adaptation of Relief Maps (Rodó-Zárate, 2023) and the 2025 Relief Maps Tool from the NYU Intersectionality Lab: it shows team averages, not individual maps.
 
@@ -144,8 +143,8 @@ workforce-survey/      only a notice that the assessment has moved to a separate
 
 Separate applications (not published with the Navigator; see apps/README.md):
 apps/shared/           the assessment model shared by the survey, the dashboard and the server
-apps/survey/           UN Workforce Inclusion & Psychological Safety Assessment
-apps/analytics/        UN Workforce Analytics Dashboard
+apps/survey/           Workplace Relief Map Survey
+apps/analytics/        Workplace Relief Map Dashboard
 supabase/              database schema and results service for live collection
 tools/build_assessment.js, tools/test_assessment.js, tools/test_assessment_db.js
 ```

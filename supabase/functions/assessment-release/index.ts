@@ -1,8 +1,8 @@
 // Supabase Edge Function: assessment-release
 //
-// Returns the aggregated, anonymity-protected results of the UN Workforce Inclusion & Psychological
-// Safety Assessment to signed-in users listed in public.assessment_admins. Individual responses are
-// read here, on the server, and never sent to the browser.
+// Returns the aggregated, anonymity-protected Relief Map of the Workplace Relief Map Survey to signed-in
+// users listed in public.assessment_admins. Individual responses are read here, on the server, and
+// never sent to the browser.
 //
 // Deploy (Supabase CLI):  supabase functions deploy assessment-release --no-verify-jwt
 //   --no-verify-jwt: the function checks the user's token itself (supabase.auth.getUser), which works
@@ -44,7 +44,7 @@ Deno.serve(async (req: Request) => {
       return Boolean(data);
     },
     fetchRows: async (from: number, to: number) => {
-      const { data, error } = await admin.from('assessment_responses').select('period, department, answers').order('id').range(from, to);
+      const { data, error } = await admin.from('assessment_responses').select('answers').order('id').range(from, to);
       if (error) throw error;
       return data ?? [];
     }

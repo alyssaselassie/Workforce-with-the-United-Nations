@@ -1,5 +1,5 @@
-// UN Workforce Inclusion & Psychological Safety Assessment: shared page behaviour.
-// Works out whether the assessment is connected to the secure database (live) or running as a
+// Workplace Relief Map Survey: shared page behaviour.
+// Works out whether the survey is connected to the secure database (live) or running as a
 // demonstration, shows that on every page, and submits responses.
 (function () {
   'use strict';
@@ -12,7 +12,7 @@
   const mode = configured && params.get('demo') !== '1' ? 'live' : 'demo';
   document.documentElement.dataset.mode = mode;
 
-  // Keep ?demo=1 on links between the assessment's own pages.
+  // Keep ?demo=1 on links between the survey's own pages.
   function keepDemo() {
     if (params.get('demo') !== '1') return;
     document.querySelectorAll('a[href]').forEach((a) => {
@@ -30,7 +30,7 @@
     el.hidden = false;
     (el.querySelector('.as-wrap') || el).innerHTML = configured
       ? '<p><strong>Demonstration version.</strong> You opened the practice version: answers are not collected. They stay in this browser and are labelled as demonstration data.</p>'
-      : '<p><strong>Demonstration version.</strong> This copy of the assessment is not connected to a secure database, so answers are not collected. They stay in this browser and are labelled as demonstration data.</p>';
+      : '<p><strong>Demonstration version.</strong> This copy of the survey is not connected to a secure database, so answers are not collected. They stay in this browser and are labelled as demonstration data.</p>';
   }
 
   // Shows the paragraphs written for the current mode (data-mode-only="live" or "demo").
@@ -67,13 +67,10 @@
   }
 
   // Returns a promise. Live: sends the response to the database. Demonstration: keeps it in this
-  // browser, in the latest demonstration period.
+  // browser, where it joins the fictional demonstration data.
   function submit(input) {
-    if (mode === 'live') {
-      const response = M.makeResponse(input);
-      return submitLive(response);
-    }
-    const response = M.makeResponse(input, { period: M.demoPeriod() });
+    const response = M.makeResponse(input);
+    if (mode === 'live') return submitLive(response);
     return Promise.resolve().then(() => submitDemo(response));
   }
 
