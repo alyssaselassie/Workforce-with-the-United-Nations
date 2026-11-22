@@ -11,7 +11,7 @@ window.ANALYTICS_CONFIG = {
   supabaseKey: '',
   // The Edge Function that returns aggregated results (supabase/functions/assessment-release).
   resultsFunction: 'assessment-release',
-  // Optional: the address of the separate survey application, e.g. 'https://<account>.github.io/un-workforce-assessment/'.
+  // Optional: the address of the separate survey application, e.g. 'https://<account>.github.io/workplace-relief-map-survey/'.
   // Used only for the "Take the demonstration survey" link in demonstration mode.
-  surveyUrl: 'https://alyssaselassie.github.io/un-workforce-assessment/'
+  surveyUrl: 'https://alyssaselassie.github.io/workplace-relief-map-survey/'
 };
