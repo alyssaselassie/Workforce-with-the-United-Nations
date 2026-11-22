@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds the UN Workforce Inclusion & Psychological Safety Assessment from its single source,
+// Builds the Workplace Relief Map survey and dashboard from their single source,
 // apps/shared/assessment-model.js:
 //   1. copies the model into the survey app, the analytics dashboard and the results service, so
 //      each can be deployed on its own;
@@ -33,22 +33,22 @@ function sql() {
 --   * Respondents use the public ("anon") key. They can only call submit_assessment(): they cannot
 --     read, change or delete any row, and the function checks every answer before saving.
 --   * Nobody can read responses through the public API. Only the assessment-release Edge Function
---     reads them, on the server, and it returns aggregated results that meet the anonymity
---     threshold (${M.CONFIG.minGroupSize} responses), only to signed-in users listed in assessment_admins.
---   * Stored per response: a random id, the department code, the reporting quarter and the answer
---     codes. No name, email, staff ID, IP address, date or time.
+--     reads them, on the server, and it returns the aggregated Relief Map (shown only once there are
+--     ${M.CONFIG.minGroupSize} responses), only to signed-in users listed in assessment_admins.
+--   * Stored per response: a random id and the answer codes. No name, email, staff ID, department,
+--     IP address, date or time.
 --
 -- Apply once: Supabase dashboard > SQL Editor > paste this file > Run (or: supabase db push).
 
 -- 1. Responses ------------------------------------------------------------------------------------
 create table if not exists public.assessment_responses (
   id uuid primary key default gen_random_uuid(),
-  period text not null check (period ~ '^[0-9]{4}-Q[1-4]$'),
-  department text not null check (department in (${list(s.departments)})),
   answers jsonb not null check (jsonb_typeof(answers) = 'object')
 );
+-- An earlier version also stored a department and a reporting quarter; neither is collected now.
+alter table public.assessment_responses drop column if exists department, drop column if exists period;
 comment on table public.assessment_responses is
-  'Anonymous assessment responses: department, reporting quarter and answer codes only. Not readable through the public API.';
+  'Anonymous survey responses: answer codes only. Not readable through the public API.';
 
 alter table public.assessment_responses enable row level security;
 -- No policies on purpose: with row level security on and no policy, the anon and authenticated
@@ -62,14 +62,15 @@ create table if not exists public.assessment_admins (
   user_id uuid primary key references auth.users (id) on delete cascade
 );
 comment on table public.assessment_admins is
-  'Accounts allowed to view aggregated results in the analytics dashboard.';
+  'Accounts allowed to view aggregated results in the dashboard.';
 alter table public.assessment_admins enable row level security;
 revoke all on table public.assessment_admins from public, anon, authenticated;
 
 -- 3. Submitting a response --------------------------------------------------------------------------
--- The only way in for respondents. It checks the department and that every one of the
--- ${s.items.length} statements has a valid answer code, and assigns the reporting quarter itself (UTC).
-create or replace function public.submit_assessment(p_department text, p_answers jsonb)
+-- The only way in for respondents. It checks that every one of the ${s.items.length} questions has a
+-- valid answer code.
+drop function if exists public.submit_assessment(text, jsonb);
+create or replace function public.submit_assessment(p_answers jsonb)
 returns void
 language plpgsql
 security definer
@@ -80,9 +81,6 @@ declare
   k text;
   v jsonb;
 begin
-  if p_department is null or not (p_department = any (array[${list(s.departments)}])) then
-    raise exception 'Choose a department from the list.' using errcode = '22023';
-  end if;
   if p_answers is null or jsonb_typeof(p_answers) <> 'object' then
     raise exception 'The answers are missing.' using errcode = '22023';
   end if;
@@ -95,13 +93,12 @@ begin
       raise exception 'Invalid answer for question %.', k using errcode = '22023';
     end if;
   end loop;
-  insert into public.assessment_responses (period, department, answers)
-  values (to_char(timezone('utc', now()), 'YYYY') || '-Q' || to_char(timezone('utc', now()), 'Q'), p_department, p_answers);
+  insert into public.assessment_responses (answers) values (p_answers);
 end;
 $$;
 
-revoke all on function public.submit_assessment(text, jsonb) from public;
-grant execute on function public.submit_assessment(text, jsonb) to anon, authenticated;
+revoke all on function public.submit_assessment(jsonb) from public;
+grant execute on function public.submit_assessment(jsonb) to anon, authenticated;
 `;
 }
 

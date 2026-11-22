@@ -6,8 +6,9 @@
 //   2. token not valid             -> 401
 //   3. account not in the admin list -> 403
 //   4. reads every response on the server and returns ONLY the aggregated release built by the shared
-//      model (assessment-model.js): groups under the minimum size and groups withheld to protect them
-//      carry no numbers, and no individual response ever leaves the server.
+//      model (assessment-model.js): one Relief Map, with no numbers until the minimum number of
+//      responses is reached and no point with fewer answers than that. No individual response ever
+//      leaves the server.
 
 export function corsHeaders(origin, allowedOrigins) {
   const headers = {
@@ -40,7 +41,7 @@ export async function handleRelease({ token, model, getUser, isAdmin, fetchRows,
     return { status: 500, body: { error: 'The results service could not read the responses. Try again later.' } };
   }
   // Internal identifiers only for the aggregation; they are not part of the release.
-  const responses = rows.map((r, i) => ({ id: `S${i + 1}`, period: r.period, department: r.department, answers: r.answers }));
+  const responses = rows.map((r, i) => ({ id: `S${i + 1}`, answers: r.answers }));
   const release = model.buildRelease(responses, { source: 'live', label: 'Live results' });
   return { status: 200, body: release };
 }

@@ -1,4 +1,4 @@
-// UN Workforce Inclusion & Psychological Safety Assessment: the questionnaire.
+// Workplace Relief Map Survey: the questionnaire.
 // Every question is multiple choice and required; a progress indicator and a review screen come
 // before submitting. Submitting is handled by site.js (secure database, or demonstration mode).
 (function () {
@@ -10,28 +10,25 @@
 
   // ---------- questions and pages ----------
   const Q = {
-    CONSENT: { id: M.CONSENT.id, text: M.CONSENT.text, options: M.CONSENT.options.map((label, i) => ({ value: String(i + 1), label })) },
-    DEPARTMENT: { id: M.DEPARTMENT_Q.id, text: M.DEPARTMENT_Q.text, help: M.DEPARTMENT_Q.help, list: true, options: M.DEPARTMENTS.map((d) => ({ value: d.id, label: d.name })) }
+    CONSENT: { id: M.CONSENT.id, text: M.CONSENT.text, options: M.CONSENT.options.map((label, i) => ({ value: String(i + 1), label })) }
   };
-  const itemQ = (letter, it, i, text) => ({ id: it.id, num: `${letter}${i + 1}`, text: text || it.text, scale: true,
-    options: M.SCALES[it.scale].options.map((label, j) => ({ value: String(j + 1), label })), na: { value: String(M.NA.code), label: M.naLabel(it.scale) } });
+  const itemQ = (it, i) => ({ id: it.id, num: String(i + 1), text: it.short, scale: true,
+    options: M.SCALE.options.map((label, j) => ({ value: String(j + 1), label })), na: { value: String(M.NA.code), label: M.NA.label } });
   const R = M.RELIEF;
-  const LAST = R.letter; // sections A to G
+  const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
+  // Consent, then one page per workplace space with one question per identity dimension, then review.
   const PAGES = [
-    { id: 'welcome', eyebrow: 'Before you start', title: 'Taking part', body: [M.TEXT.intro], facts: M.TEXT.privacy, questions: [Q.CONSENT] },
-    { id: 'department', eyebrow: 'Your department', title: 'Your department', body: [`This is the only question about you. It is used only to group answers, and no result is shown for a group of fewer than ${M.CONFIG.minGroupSize} people.`], questions: [Q.DEPARTMENT] }
+    { id: 'welcome', eyebrow: 'Before you start', title: 'Taking part', body: [M.TEXT.intro], facts: M.TEXT.privacy, questions: [Q.CONSENT] }
   ].concat(
-    M.CATEGORIES.map((c) => ({ id: c.id, eyebrow: `Section ${c.letter} of ${LAST}`, section: `Section ${c.letter}`, title: c.name, body: [c.intro], caution: c.caution, scaleName: M.SCALES[c.scale].name, questions: c.items.map((it, i) => itemQ(c.letter, it, i)) })),
-    // Section G, the Relief Map: one page per workplace setting, one question per identity dimension.
-    R.settings.map((s, si) => {
-      const items = R.items.filter((it) => it.setting === s.id);
+    R.spaces.map((s, si) => {
+      const items = M.ITEMS.filter((it) => it.space === s.id);
       return {
-        id: `${R.id}-${s.id}`, eyebrow: `Section ${R.letter}: ${R.name} · ${si + 1} of ${R.settings.length}`, section: `Section ${R.letter}`, title: s.name,
-        body: (si === 0 ? [R.intro] : []).concat(`${s.about} In ${s.phrase}, how comfortable do you feel in relation to each part of who you are?`),
-        caution: `${R.note} If you prefer not to answer, or you do not take part in this setting, choose "${M.SCALES.comfort.na}".`,
-        scaleName: M.SCALES.comfort.name, naHint: true,
-        questions: items.map((it, i) => itemQ(R.letter, it, si * items.length + i, it.short))
+        id: `space-${s.id}`, eyebrow: `Space ${si + 1} of ${R.spaces.length}`, section: `Space ${si + 1}`, title: s.name,
+        body: (si === 0 ? [R.intro] : []).concat(`${s.about} ${cap(s.phrase)}, how comfortable do you feel in relation to each part of who you are?`),
+        caution: `${R.note} If you prefer not to answer, or you do not use this space, choose "${M.NA.label}".`,
+        scaleName: M.SCALE.name,
+        questions: items.map((it, i) => itemQ(it, si * items.length + i))
       };
     }),
     [{ id: 'review', eyebrow: 'Review', title: 'Review your answers', review: true }]
@@ -72,7 +69,7 @@
           return `<dt>${esc(qName(q))}</dt><dd${v == null ? ' class="is-missing"' : ''}>${v == null ? 'Not answered' : esc(labelOf(q, v))}</dd>`;
         }).join('')}</dl></section>`).join('')}</div>
       <p class="sv-note">${S.mode === 'live'
-        ? 'When you submit, your answers are sent to the secure database with your department. Your name, email, staff ID and IP address are not part of the response.'
+        ? 'When you submit, only your answers are sent to the secure database. Your name, email, staff ID, department and IP address are not part of the response.'
         : 'Demonstration version: when you submit, your answers stay in this browser as demonstration data. Nothing is collected.'}</p>`;
   }
 
@@ -80,7 +77,7 @@
     if (page.review) return reviewHtml();
     return `<p class="sv-eyebrow">${esc(page.eyebrow)}</p><h1 class="sv-title" id="sv-h" tabindex="-1">${esc(page.title)}</h1>
       ${page.body.map((t) => `<p class="sv-lead">${esc(t)}</p>`).join('')}
-      ${page.scaleName ? `<p class="sv-scale-note">Answer scale: ${esc(page.scaleName.toLowerCase())}.${page.naHint ? '' : ` If a statement does not apply to you, choose "${esc(M.NA.label)}".`}</p>` : ''}
+      ${page.scaleName ? `<p class="sv-scale-note">Answer scale: ${esc(page.scaleName.toLowerCase())}.</p>` : ''}
       ${page.caution ? `<p class="sv-note">${esc(page.caution)}</p>` : ''}
       ${page.facts ? `<ul class="sv-facts">${page.facts.map((t) => `<li>${esc(t)}</li>`).join('')}</ul><p class="sv-more"><a href="privacy.html${S.demoQuery}" target="_blank" rel="noopener">Read the full privacy statement</a> (opens in a new tab).</p>` : ''}
       <p class="sv-all-required">All questions are required.</p>
@@ -184,7 +181,7 @@
     btn.textContent = 'Submitting…';
     let input;
     try {
-      input = { department: state.answers.DEPARTMENT, answers: Object.fromEntries(M.ITEMS.map((it) => [it.id, Number(state.answers[it.id])])) };
+      input = { answers: Object.fromEntries(M.ITEMS.map((it) => [it.id, Number(state.answers[it.id])])) };
     } catch (e) { input = null; }
     S.submit(input).then(() => {
       state.done = true;

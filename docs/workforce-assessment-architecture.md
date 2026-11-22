@@ -1,4 +1,4 @@
-# Workforce Assessment: architecture and deployment options
+# Workplace Relief Map: architecture and deployment options
 
 ## Decision
 
@@ -9,13 +9,14 @@ menu. It is now three distinct products:
    the survey is gone: no menu item, no module card, and it collects no workforce responses. Its old
    `workforce-survey/` address now shows a short "this assessment has moved" notice, and the Navigator
    deletes any responses the old survey left in the browser.
-2. **UN Workforce Inclusion & Psychological Safety Assessment** (`apps/survey/`): the survey, with its
-   own home page, navigation, privacy statement and confirmation page. It does not link to the
-   dashboard or the Navigator.
-3. **UN Workforce Analytics Dashboard** (`apps/analytics/`): the analysis tool, with a sign-in for live
-   results, 12 department datasets each with a Relief Map (laid out like the Relief Maps Tool
-   worksheet: workplace settings across, one line per identity dimension) and six graphs, and a
-   comparison view of small Relief Maps.
+2. **Workplace Relief Map Survey** (`apps/survey/`): the survey, with its own home page, navigation,
+   privacy statement and confirmation page. It asks how comfortable people feel in five physical
+   workplace spaces in relation to their gender, age, religious identity, ethnicity and social class,
+   and nothing about who they are (not even their department). It does not link to the dashboard or
+   the Navigator.
+3. **Workplace Relief Map Dashboard** (`apps/analytics/`): the analysis tool, with a sign-in for live
+   results. Like the Relief Maps Tool worksheet, it shows one graph for one dataset: a Relief Map with
+   the spaces across and one line per identity dimension.
 
 The survey and dashboard are developed in this repository, so that they share one tested model file.
 They are not published as part of the Navigator: `_config.yml` excludes them from its site. Each is
@@ -47,21 +48,19 @@ researcher  │ Dashboard (static site)  │─sign─▶│ Supabase Auth      
 ```
 
 - **Collection:** the survey calls one database function with the publishable key. The function
-  checks the department and every answer, assigns the quarter and stores only department, quarter
-  and answer codes. The public key cannot read anything back.
+  checks every answer and stores only the answer codes: no department, date or time. The public key
+  cannot read anything back.
 - **Analysis:** the dashboard signs the researcher in. A server-side function checks the account is on
   the admin list, reads the responses and returns only the aggregated release, built by the same code
   the dashboard and tests use. Individual responses never reach a browser.
 - **Anonymity rules** (one implementation, `buildRelease()` in `apps/shared/assessment-model.js`):
-  - nothing is shown for fewer than 10 completed responses;
-  - if the hidden departments add up to fewer than 10, the next-smallest department is withheld too;
-  - each reporting period stands alone;
-  - hidden groups carry no numbers;
-  - each Relief Map point (setting × identity dimension) needs at least 10 comfort answers ("Prefer
-    not to say" does not count), and the points held back must together hold 0 or at least 10
-    answers, so none can be worked out from the all-departments point. The survey never asks anyone's
-    gender, age, religion, ethnicity or social class, only how comfortable they feel in relation to
-    each, so there are no identity groups to protect.
+  - all responses form one dataset and one map, so there are no subgroups to subtract;
+  - nothing is shown for fewer than 10 completed responses, not even the count;
+  - each point (space × identity dimension) needs at least 10 comfort answers ("Prefer not to say"
+    does not count), or it carries no numbers;
+  - the survey never asks anyone's gender, age, religion, ethnicity, social class or department, only
+    how comfortable they feel in relation to each identity, so there are no identity groups to
+    protect.
 - **Demonstration data** is generated in the browser, labelled on every chart and never mixed with
   real results.
 

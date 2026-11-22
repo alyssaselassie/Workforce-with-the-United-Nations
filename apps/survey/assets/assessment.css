@@ -1,11 +1,11 @@
-/* UN Workforce Inclusion & Psychological Safety Assessment.
-   A quiet research instrument: deep navy, UN-inspired blue, white, muted gold and light blue accents.
+/* Workplace Relief Map Survey.
+   A quiet research instrument: deep navy, blue, white, muted gold and light blue accents.
    No web fonts or third-party files are loaded, so taking part sends nothing to anyone else. */
 :root {
   --navy: #13294b;
   --navy-2: #1d3a66;
-  --un: #009edb;       /* UN-inspired blue: fills, bars and accents only (3:1 on white) */
-  --un-ink: #0072bc;   /* the same blue, dark enough for text and links (5:1 on white) */
+  --blue: #009edb;       /* blue: fills, bars and accents only (3:1 on white) */
+  --blue-ink: #0072bc;   /* the same blue, dark enough for text and links (5:1 on white) */
   --gold: #b8924a;     /* muted gold: accents only */
   --gold-ink: #7a5a1e; /* gold dark enough for text */
   --sky: #e6f3fb;
@@ -22,9 +22,9 @@
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 1.0625rem; line-height: 1.55; }
-a { color: var(--un-ink); }
+a { color: var(--blue-ink); }
 a:hover { color: var(--navy); }
-:focus-visible { outline: 3px solid var(--un-ink); outline-offset: 2px; }
+:focus-visible { outline: 3px solid var(--blue-ink); outline-offset: 2px; }
 .as-skip { position: absolute; left: -999px; top: .5rem; z-index: 20; padding: .5rem .8rem; border-radius: .5rem; background: #fff; color: var(--navy); }
 .as-skip:focus { left: 1rem; }
 .as-wrap { width: 100%; max-width: 1040px; margin: 0 auto; padding: 0 16px; }
@@ -36,7 +36,7 @@ a:hover { color: var(--navy); }
 .as-header .as-wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem 1.5rem; padding-top: .8rem; padding-bottom: .8rem; }
 .as-brand { display: flex; align-items: center; gap: .75rem; color: #fff; text-decoration: none; }
 .as-brand:hover { color: #fff; }
-.as-mark { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--un); }
+.as-mark { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: var(--blue); }
 .as-mark svg { width: 24px; height: 24px; }
 .as-brand-text { display: block; font-weight: 700; line-height: 1.2; }
 .as-brand-text small { display: block; color: #c9d6ea; font-size: .8rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
@@ -66,7 +66,7 @@ a:hover { color: var(--navy); }
 .as-btn-quiet { background: #fff; color: var(--navy); border-color: var(--line); }
 .as-btn-quiet:hover { background: var(--sky-2); color: var(--navy); border-color: var(--navy); }
 .as-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 2rem 0 0; padding: 0; list-style: none; }
-.as-facts li { padding: .85rem 1rem; border: 1px solid var(--line); border-left: 4px solid var(--un); border-radius: 10px; background: var(--sky-2); }
+.as-facts li { padding: .85rem 1rem; border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 10px; background: var(--sky-2); }
 .as-facts strong { display: block; color: var(--navy); font-size: 1.15rem; }
 .as-facts li > span { color: var(--muted); font-size: .92rem; }
 .as-section { padding: 2.6rem 0; }
@@ -94,7 +94,7 @@ a:hover { color: var(--navy); }
 .as-callout { margin: 1.2rem 0; padding: 1rem 1.1rem; border: 1px solid var(--line); border-left: 4px solid var(--gold); border-radius: 10px; background: #fff; }
 .as-callout p { margin: 0; }
 .as-callout p + p { margin-top: .4rem; }
-.as-callout.is-info { border-left-color: var(--un); background: var(--sky-2); }
+.as-callout.is-info { border-left-color: var(--blue); background: var(--sky-2); }
 .as-done { display: grid; place-items: center; width: 64px; height: 64px; margin-bottom: 1rem; border-radius: 50%; background: var(--sky); }
 .as-done svg { width: 34px; height: 34px; }
 
@@ -111,7 +111,7 @@ a:hover { color: var(--navy); }
 .sv-brand { color: var(--navy); font-weight: 700; }
 .sv-count { color: var(--muted); font-size: .88rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .sv-progress { height: 8px; border-radius: 4px; background: var(--sky); overflow: hidden; }
-.sv-progress span { display: block; width: 0; height: 100%; border-radius: 4px; background: var(--un); transition: width .25s ease; }
+.sv-progress span { display: block; width: 0; height: 100%; border-radius: 4px; background: var(--blue); transition: width .25s ease; }
 main.sv-main { padding-top: 1rem; padding-bottom: 2rem; }
 .sv-card { padding: 1.35rem 1.15rem 1.2rem; border: 1px solid var(--line); border-radius: 14px; background: #fff; box-shadow: 0 6px 20px rgba(19, 41, 75, .06); }
 .sv-eyebrow { display: inline-block; margin: 0 0 .6rem; padding: .15rem .6rem; border-radius: 999px; background: var(--sky); color: var(--navy); font-size: .8rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
@@ -128,7 +128,7 @@ main.sv-main { padding-top: 1rem; padding-bottom: 2rem; }
 .sv-questions { display: grid; gap: 1.6rem; margin-top: 1rem; }
 .sv-q { margin: 0; padding: 0; border: 0; min-width: 0; scroll-margin-top: 120px; }
 .sv-q-text { display: block; margin: 0 0 .6rem; padding: 0; font-size: 1.125rem; font-weight: 600; line-height: 1.35; color: var(--ink); }
-.sv-q-num { display: inline-block; min-width: 2.1rem; color: var(--un-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+.sv-q-num { display: inline-block; min-width: 2.1rem; color: var(--blue-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
 .sv-req { margin-left: .35rem; color: var(--muted); font-size: .8rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
 .sv-help { margin: -.25rem 0 .65rem; color: var(--muted); font-size: .95rem; }
 .sv-q-error { margin: -.2rem 0 .6rem; color: var(--error); font-weight: 700; }
@@ -140,7 +140,7 @@ main.sv-main { padding-top: 1rem; padding-bottom: 2rem; }
 .sv-opt:hover { border-color: var(--navy-2); }
 .sv-opt:has(input:checked) { border: 2px solid var(--navy); background: var(--sky-2); }
 .sv-opt input:checked + .sv-dot { border-color: var(--navy); background: radial-gradient(circle, var(--navy) 0 5px, #fff 5.5px); }
-.sv-opt:has(input:focus-visible) { outline: 3px solid var(--un-ink); outline-offset: 2px; }
+.sv-opt:has(input:focus-visible) { outline: 3px solid var(--blue-ink); outline-offset: 2px; }
 .sv-q.has-error .sv-opt { border-color: #e5a29b; }
 .sv-opt-na { margin-top: .5rem; min-height: 44px; color: var(--muted); background: #fbfcfe; }
 .sv-error-summary { margin: 0 0 1.2rem; padding: .9rem 1rem; border: 3px solid var(--error); border-radius: 10px; background: #fff; }

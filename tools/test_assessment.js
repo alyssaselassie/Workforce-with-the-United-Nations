@@ -1,7 +1,6 @@
 #!/usr/bin/env node
-// Tests for the UN Workforce Inclusion & Psychological Safety Assessment: the shared model, the
-// anonymity rules, the results service logic and the separation of the three applications.
-// No dependencies. Usage: node tools/test_assessment.js
+// Tests for the Workplace Relief Map: the shared model, the anonymity rules, the results service logic
+// and the separation of the applications. No dependencies. Usage: node tools/test_assessment.js
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -19,213 +18,127 @@ const throws = (fn) => { try { fn(); return false; } catch (e) { return true; } 
 const k = M.CONFIG.minGroupSize;
 
 const fullAnswers = (over) => Object.assign(Object.fromEntries(M.ITEMS.map((it) => [it.id, 2])), over || {});
-const person = (department, period, over) => ({ id: M.responseId(), period: period || '2026-Q4', department, answers: fullAnswers(over) });
-const many = (n, department, period, over) => Array.from({ length: n }, () => person(department, period, over));
+const person = (over) => ({ id: M.responseId(), answers: fullAnswers(over) });
+const many = (n, over) => Array.from({ length: n }, () => person(over));
+const copy = (x) => JSON.parse(JSON.stringify(x));
 
 (async () => {
-  // ---------- 1. The instrument ----------
-  check('12 departments, in the order given', M.DEPARTMENTS.map((d) => d.name).join('|') === 'Human Resources (HR)|Finance & Accounting|Marketing & Communications|Research & Data Analytics|Information Technology (IT)|Legal & Compliance|Operations & Administration|Programme & Project Management|Policy & Strategy|Humanitarian & Field Operations|Leadership & Management|Other');
-  check('one dataset name per department', new Set(M.DEPARTMENTS.map((d) => d.dataset)).size === 12 && M.DEPARTMENT_BY_ID.HR.dataset === 'HR Dataset' && M.DEPARTMENT_BY_ID.OTH.dataset === 'Other Departments Dataset');
-  check('six areas A to F, named as given', M.CATEGORIES.map((c) => `${c.letter}. ${c.name}`).join('|') === 'A. Psychological Safety|B. Workplace Inclusion|C. Cross-Cultural Collaboration|D. Leadership & Management|E. Implicit Bias Awareness|F. Organizational Support');
-  check('statements per area 6,6,5,6,6,5', M.CATEGORIES.map((c) => c.items.length).join() === '6,6,5,6,6,5');
-  check('agreement, frequency and confidence scales all used', new Set(M.CATEGORIES.map((c) => c.scale)).size === 3);
-  check('agreement scale in order', M.SCALES.agree.options.join('|') === 'Strongly agree|Agree|Neither agree nor disagree|Disagree|Strongly disagree');
-  check('frequency scale in order', M.SCALES.frequency.options.join('|') === 'Always|Often|Sometimes|Rarely|Never');
-  check('confidence scale, five points, most confident first', M.SCALES.confidence.options.length === 5 && /^Very confident$/.test(M.SCALES.confidence.options[0]) && /^Not at all confident$/.test(M.SCALES.confidence.options[4]));
-  check('one scale per area', M.CATEGORIES.every((c) => c.items.every((it) => it.scale === c.scale)));
-  check('every statement has a basis and note; sources exist', M.ITEMS.every((it) => it.note && ['Adapted', 'New'].includes(it.basis) && it.sources.every((s) => M.SOURCES[s])));
-  check('every source has a citation and a link', Object.values(M.SOURCES).every((s) => s.cite && /^https:\/\//.test(s.url)));
+  // ---------- 1. The survey: like the Relief Maps Tool worksheet ----------
+  check('five physical workplace spaces', M.RELIEF.spaces.map((s) => s.name).join('|') === "Your desk or workstation|Meeting rooms|Your supervisor's office|Kitchen, break room or cafeteria|Hallways, elevators and entrances");
+  check('the lines are the worksheet\'s identity dimensions', M.RELIEF.dimensions.map((d) => d.name).join('|') === 'Gender|Age|Religious identity|Ethnicity|Social class');
+  check('one question per space and dimension (25)', M.ITEMS.length === 25 && new Set(M.ITEMS.map((it) => `${it.space}/${it.dimension}`)).size === 25);
+  check('comfort scale, very comfortable first, plus "prefer not to say"', M.SCALE.options.join('|') === 'Very comfortable|Comfortable|Neither comfortable nor uncomfortable|Uncomfortable|Very uncomfortable' && M.NA.code === 98 && M.answerLabel(98) === 'Prefer not to say or not applicable' && M.answerLabel(1) === 'Very comfortable');
+  check('every question has a basis, note and real source', M.ITEMS.every((it) => it.note && it.basis === 'New' && it.sources.every((s) => M.SOURCES[s] && M.SOURCES[s].cite && /^https:\/\//.test(M.SOURCES[s].url))));
   const qs = M.questions().filter((q) => q.type !== 'DB');
-  check(`${M.QUESTION_COUNT} questions, all multiple choice`, qs.length === M.QUESTION_COUNT && M.QUESTION_COUNT === 61 && qs.every((q) => q.type === 'MC' && q.options.length >= 2));
-  check('consent first, then department, then the statements', qs[0].id === 'CONSENT' && qs[1].id === 'DEPARTMENT' && qs[2].id === 'PS1');
-  const notRelief = qs.filter((q) => !(M.ITEM_BY_ID[q.id] && M.ITEM_BY_ID[q.id].category === M.RELIEF.id));
-  check('the only question about the respondent is the department; no identifiers asked', qs.filter((q) => !M.ITEM_BY_ID[q.id]).map((q) => q.id).join() === 'CONSENT,DEPARTMENT' && !notRelief.some((q) => /\byour (name|e-?mail|staff id|duty station|entity|age|gender|nationality|religio\w*|ethnicity|social class)\b/i.test(q.text)));
-  check('Relief Map questions ask only how comfortable, never which identity', M.RELIEF.items.every((it) => /^In [a-z -]+, how comfortable do you feel in relation to your [a-z ()]+\?$/.test(it.text)) && qs.filter((q) => M.RELIEF.items.some((it) => it.id === q.id)).every((q) => q.options.join('|') === M.SCALES.comfort.options.concat(M.SCALES.comfort.na).join('|')) && !qs.some((q) => /which (gender|age|religion|ethnicity|class)|what is your/i.test(q.text)));
-  check('intro states the real question count', M.TEXT.intro.includes(`${M.QUESTION_COUNT} multiple-choice questions`));
+  check(`${M.QUESTION_COUNT} questions, all multiple choice`, qs.length === M.QUESTION_COUNT && M.QUESTION_COUNT === 26 && qs.every((q) => q.type === 'MC' && q.options.length >= 2));
+  check('consent first, then the spaces in order', qs[0].id === 'CONSENT' && qs.slice(1).map((q) => q.id).join() === M.ITEMS.map((it) => it.id).join());
+  check('no department and no question about the respondent', !qs.some((q) => /department|which (gender|age|religion|ethnicity|class)|what is your|your (name|e-?mail|staff id|nationality)\b/i.test(q.text)) && !('DEPARTMENTS' in M));
+  check('questions ask only how comfortable, in a physical space', M.ITEMS.every((it) => /^(At|In) [a-z ',-]+, how comfortable do you feel in relation to your [a-z ()]+\?$/.test(it.text)), M.ITEMS.map((it) => it.text).find((t) => !/^(At|In) /.test(t)));
+  check('intro states the real question count and about 5 minutes', M.TEXT.intro.includes(`${M.QUESTION_COUNT} multiple-choice questions`) && /about 5 minutes/.test(M.TEXT.intro));
+  const unText = [M.TITLE, M.SHORT_TITLE, M.DASHBOARD_TITLE, M.TEXT.intro, M.TEXT.purpose, M.TEXT.thanks, M.TEXT.declined].concat(M.TEXT.privacy, M.TEXT.qualtricsPrivacy, M.qualtricsTxt(), M.codebookCSV()).join(' ');
+  check('nothing in the model is labelled UN', !/\bUN\b|United Nations/.test(unText));
 
   // ---------- 2. Every question is required ----------
-  const input = { department: 'HUM', answers: fullAnswers() };
-  check('complete response accepted', !throws(() => M.makeResponse(input, { date: '2026-11-16T12:00:00Z' })));
-  check('missing department rejected', throws(() => M.makeResponse(Object.assign({}, input, { department: null }))));
-  check('unknown department rejected', throws(() => M.makeResponse(Object.assign({}, input, { department: 'XYZ' }))));
+  const input = { answers: fullAnswers() };
+  check('complete response accepted', !throws(() => M.makeResponse(input)));
   M.ITEMS.forEach((it) => {
     const a = fullAnswers(); delete a[it.id];
-    check(`missing ${it.id} rejected`, throws(() => M.makeResponse(Object.assign({}, input, { answers: a }))));
+    check(`missing ${it.id} rejected`, throws(() => M.makeResponse({ answers: a })));
   });
-  check('invalid code rejected', throws(() => M.makeResponse(Object.assign({}, input, { answers: fullAnswers({ PS1: 7 }) }))));
-  check('"don\'t know or not applicable" (98) accepted', !throws(() => M.makeResponse(Object.assign({}, input, { answers: fullAnswers({ CC3: 98 }) }))));
-  check('unknown extra answers rejected by the validator', M.problems({ id: 'x', period: '2026-Q4', department: 'HR', answers: fullAnswers({ XX9: 1 }) }).includes('UNKNOWN_ANSWER'));
-  const made = M.makeResponse(input, { date: '2026-11-16T12:00:00Z' });
-  check('stores department, period and answers only', Object.keys(made).sort().join() === 'answers,department,id,period' && made.period === '2026-Q4');
-  check('anonymous response ID', /^R-[A-Z0-9]{12}$/.test(made.id) && M.responseId() !== M.responseId());
-  check('database payload has no ID or period (the database assigns the period)', Object.keys(M.submissionPayload(made)).sort().join() === 'p_answers,p_department');
-  check('period labels (UTC)', M.periodLabel('2026-Q4') === 'Q4 2026 (Oct–Dec)' && M.periodOf('2026-03-31T12:00:00Z') === '2026-Q1' && M.periodOf('2026-04-01T00:30:00Z') === '2026-Q2');
+  check('invalid codes rejected', [0, 6, 1.5, '1', null].every((v) => throws(() => M.makeResponse({ answers: fullAnswers({ RM_DESK_GEN: v }) }))));
+  check('"prefer not to say or not applicable" (98) accepted', !throws(() => M.makeResponse({ answers: fullAnswers({ RM_MEET_REL: 98 }) })));
+  check('unknown extra answers rejected', M.problems({ id: 'x', answers: fullAnswers({ XX9: 1 }) }).includes('UNKNOWN_ANSWER'));
+  const made = M.makeResponse(input);
+  check('stores an anonymous ID and the answers only (no department, date or period)', Object.keys(made).sort().join() === 'answers,id' && /^R-[A-Z0-9]{12}$/.test(made.id) && M.responseId() !== M.responseId());
+  check('database payload is the answers only', Object.keys(M.submissionPayload(made)).join() === 'p_answers');
 
-  // ---------- 3. Separate datasets ----------
-  const mixed = many(12, 'HR').concat(many(11, 'IT'), many(3, 'LEG'));
-  const ds = M.datasets(mixed);
-  check('one dataset per department', Object.keys(ds.byDepartment).length === 12);
-  check('department datasets hold only their department', Object.entries(ds.byDepartment).every(([id, rs]) => rs.every((r) => r.department === id)));
-  check('department datasets add up to the overall dataset', Object.values(ds.byDepartment).reduce((a, rs) => a + rs.length, 0) === ds.overall.length);
-  const rows = M.longRows(mixed.slice(0, 1));
-  check('long rows: department, period, question, area, answer', rows.length === 59 && ['response_id', 'department', 'period', 'question_id', 'category', 'answer_code', 'answer'].every((c) => c in rows[0]));
-
-  // ---------- 4. Threshold and suppression ----------
-  let rel = M.buildRelease(many(9, 'HR'));
-  check('9 responses: nothing shown', rel.data['2026-Q4'].overall.status === 'collecting' && rel.data['2026-Q4'].departments.HR.status === 'collecting');
-  rel = M.buildRelease(many(10, 'HR'));
-  check('10 responses: department and overall shown', rel.data['2026-Q4'].overall.n === 10 && rel.data['2026-Q4'].departments.HR.n === 10);
-  rel = M.buildRelease(many(20, 'HR').concat(many(12, 'IT'), many(4, 'LEG')));
-  let d = rel.data['2026-Q4'];
-  check('small department hidden', d.departments.LEG.status === 'collecting');
-  check('smallest shown department withheld to protect it', d.departments.IT.status === 'protected' && d.departments.HR.status === 'published');
-  check('hidden groups carry no numbers, not even their size', ['LEG', 'IT', 'FIN'].every((id) => Object.keys(d.departments[id]).join() === 'status'));
-  rel = M.buildRelease(many(20, 'HR').concat(many(6, 'IT'), many(5, 'LEG')));
-  d = rel.data['2026-Q4'];
-  check('two small departments together (11) need no extra withholding', d.departments.HR.status === 'published' && d.departments.IT.status === 'collecting' && d.departments.LEG.status === 'collecting');
-  check('threshold cannot be lowered', M.buildRelease(many(6, 'HR'), { minGroupSize: 5 }).minGroupSize === k);
-  check('higher threshold respected', M.buildRelease(many(12, 'HR'), { minGroupSize: 15 }).data['2026-Q4'].departments.HR.status === 'collecting');
-  rel = M.buildRelease(many(10, 'HR', '2026-Q3').concat(many(10, 'HR', '2026-Q4')));
-  check('each period released separately', rel.periods.join() === '2026-Q3,2026-Q4' && rel.data['2026-Q3'].departments.HR.n === 10 && rel.data['2026-Q4'].departments.HR.n === 10);
-  const one = M.aggregate(many(10, 'HR', '2026-Q4', { PS1: 1 }));
-  check('scores: favourable share and interval', one.scores.PS.favourable === 1 && one.scores.PS.lo != null && one.items.PS1[0] === 10);
-  check('area E: less often is favourable', M.polarity('IB').favourable.join() === '4,5' && M.favourableWords('IB') === '"Rarely" or "Never"');
-  check('confidence area favourable = very or fairly confident', M.favourableWords('CC') === '"Very confident" or "Fairly confident"');
-
-  // ---------- 5. Property test: no combination of shown results reveals a small group ----------
-  const rand = M.rng(42);
-  let trials = 0;
-  const violations = [];
-  for (let t = 0; t < 400; t += 1) {
-    const rs = [];
-    M.DEPARTMENTS.forEach((dep) => { if (rand() < 0.75) rs.push(...many(Math.floor(rand() * 18), dep.id)); });
-    const dd = M.buildRelease(rs).data['2026-Q4'];
-    if (!dd) continue;
-    trials += 1;
-    const n = (id) => rs.filter((x) => x.department === id).length;
-    const shown = (c) => c.status === 'published';
-    const cells = [dd.overall].concat(Object.values(dd.departments));
-    if (cells.some((c) => shown(c) && c.n < k)) violations.push(`trial ${t}: shown group below ${k}`);
-    if (cells.some((c) => !shown(c) && Object.keys(c).length !== 1)) violations.push(`trial ${t}: hidden group carries numbers`);
-    if (shown(dd.overall)) {
-      const rest = M.DEPARTMENTS.filter((dep) => !shown(dd.departments[dep.id])).reduce((a, dep) => a + n(dep.id), 0);
-      if (rest > 0 && rest < k) violations.push(`trial ${t}: overall minus shown departments = ${rest}`);
-      M.DEPARTMENTS.forEach((dep) => { if (shown(dd.departments[dep.id]) && dd.departments[dep.id].n !== n(dep.id)) violations.push(`trial ${t}: wrong n for ${dep.id}`); });
-    } else if (M.DEPARTMENTS.some((dep) => shown(dd.departments[dep.id]))) violations.push(`trial ${t}: department shown while the overall group is hidden`);
-    try { M.checkRelease(JSON.parse(JSON.stringify(M.buildRelease(rs)))); } catch (e) { violations.push(`trial ${t}: release fails its own check: ${e.message}`); }
-  }
-  check(`property test over ${trials} random datasets`, trials > 300 && !violations.length, violations.slice(0, 5).join('; '));
-
-  // ---------- 5b. The Relief Map (section G) ----------
-  check('Relief Map lines are the worksheet\'s identity dimensions', M.RELIEF.dimensions.map((x) => x.name).join('|') === 'Gender|Age|Religious identity|Ethnicity|Social class');
-  check('Relief Map has 4 to 6 workplace settings, 5 questions each', M.RELIEF.settings.length >= 4 && M.RELIEF.settings.length <= 6 && M.RELIEF.items.length === M.RELIEF.settings.length * 5);
-  check('comfort scale, very comfortable first, own "prefer not to say" wording', M.SCALES.comfort.options.join('|') === 'Very comfortable|Comfortable|Neither comfortable nor uncomfortable|Uncomfortable|Very uncomfortable' && M.answerLabel('RM_TM_REL', 98) === 'Prefer not to say or not applicable' && M.answerLabel('PS1', 98) === M.NA.label);
+  // ---------- 3. One dataset, one map: the anonymity rules ----------
+  let rel = M.buildRelease(many(9));
+  check('9 responses: nothing shown, not even the count', rel.result.status === 'collecting' && Object.keys(rel.result).join() === 'status');
+  rel = M.buildRelease(many(10));
+  check('10 responses: the map is shown with every point', rel.result.status === 'published' && rel.result.n === 10 && M.reliefMap(rel.result).shown === 25);
+  rel = M.buildRelease(many(9).concat(many(3, { RM_MEET_REL: 98 })));
+  check('a point with fewer than 10 comfort answers carries no numbers', rel.result.n === 12 && rel.result.relief.RM_MEET_REL === null && Array.isArray(rel.result.relief.RM_MEET_GEN) && M.reliefMap(rel.result).shown === 24);
+  check('incomplete responses are left out', M.buildRelease(many(9).concat([{ id: 'x', answers: { RM_DESK_GEN: 1 } }])).result.status === 'collecting');
+  check('threshold cannot be lowered', M.buildRelease(many(6), { minGroupSize: 5 }).minGroupSize === k);
+  check('higher threshold respected', M.buildRelease(many(12), { minGroupSize: 15 }).result.status === 'collecting');
   check('point value: average answer, 98 left out', M.reliefValue([1, 0, 0, 0, 1, 5]) === 3 && M.reliefValue([0, 0, 0, 0, 0, 4]) === null);
   const pt = (v) => (M.placeType(v) || { id: null }).id;
-  check('place types: oppression, controversial, relief, neutral, in that order', pt([3, 3.1, 2.9]) === 'oppression' && pt([3.5, 3.4, 2.4]) === 'oppression' && pt([1.5, 2.6, 2.2]) === 'controversial' && pt([1.8, 1.9, 2]) === 'relief' && pt([2.3, 2.5, 2.4]) === 'neutral' && pt([1.2, 3.9, null, null, null]) === null);
-  const withNa = (n, department, item, na) => many(n - na, department).concat(many(na, department, '2026-Q4', { [item]: 98 }));
-  rel = M.buildRelease(withNa(12, 'HR', 'RM_TM_REL', 3));
-  d = rel.data['2026-Q4'];
-  check('point with fewer than 10 answers is held back ("prefer not to say" does not count)', d.departments.HR.status === 'published' && d.departments.HR.relief.RM_TM_REL === null && d.overall.relief.RM_TM_REL === null && Array.isArray(d.departments.HR.relief.RM_TM_GEN));
-  rel = M.buildRelease(many(20, 'HR').concat(withNa(12, 'IT', 'RM_TM_GEN', 3)));
-  d = rel.data['2026-Q4'];
-  check('a second point is held back so the first cannot be worked out by subtraction', d.departments.IT.relief.RM_TM_GEN === null && d.departments.HR.relief.RM_TM_GEN === null && M.answered(d.overall.relief.RM_TM_GEN) === 29 && Array.isArray(d.departments.HR.relief.RM_TM_AGE));
-  check('hidden groups carry no Relief Map', M.buildRelease(many(20, 'HR').concat(many(4, 'LEG'))).data['2026-Q4'].departments.LEG.relief === undefined);
-  const rand3 = M.rng(7);
-  let trials3 = 0;
-  const bad = [];
-  for (let t = 0; t < 300; t += 1) {
-    const rs = [];
-    M.DEPARTMENTS.forEach((dep) => {
-      if (rand3() < 0.7) for (let i = Math.floor(rand3() * 18); i > 0; i -= 1) rs.push(person(dep.id, '2026-Q4', Object.fromEntries(M.RELIEF.items.filter(() => rand3() < 0.15).map((it) => [it.id, 98]))));
-    });
-    const r3 = M.buildRelease(rs);
-    const dd = r3.data['2026-Q4'];
-    if (!dd || dd.overall.status !== 'published') continue;
-    trials3 += 1;
-    const shownDeps = M.DEPARTMENTS.filter((dep) => dd.departments[dep.id].status === 'published');
-    M.RELIEF.items.forEach((it) => {
-      const answeredBy = (id) => rs.filter((x) => (id === 'ALL' || x.department === id) && x.answers[it.id] !== 98).length;
-      const o = dd.overall.relief[it.id];
-      if (o && M.answered(o) !== answeredBy('ALL')) bad.push(`trial ${t}: wrong overall count for ${it.id}`);
-      const pts = shownDeps.filter((dep) => dd.departments[dep.id].relief[it.id]);
-      if (pts.some((dep) => M.answered(dd.departments[dep.id].relief[it.id]) < k) || (o && M.answered(o) < k)) bad.push(`trial ${t}: point below ${k} for ${it.id}`);
-      if (!o && pts.length) bad.push(`trial ${t}: department point shown without the overall one`);
-      if (o) {
-        const rest = answeredBy('ALL') - pts.reduce((a, dep) => a + answeredBy(dep.id), 0);
-        if (rest > 0 && rest < k) bad.push(`trial ${t}: ${it.id} overall minus shown points = ${rest}`);
-      }
-    });
-    try { M.checkRelease(JSON.parse(JSON.stringify(r3))); } catch (e) { bad.push(`trial ${t}: release fails its own check: ${e.message}`); }
-  }
-  check(`Relief Map property test over ${trials3} random datasets`, trials3 > 200 && !bad.length, bad.slice(0, 5).join('; '));
+  check('kinds of place: oppression, controversial, relief, neutral, in that order', pt([3, 3.1, 2.9]) === 'oppression' && pt([3.5, 3.4, 2.4]) === 'oppression' && pt([1.5, 2.6, 2.2]) === 'controversial' && pt([1.8, 1.9, 2]) === 'relief' && pt([2.3, 2.5, 2.4]) === 'neutral' && pt([1.2, 3.9, null, null, null]) === null);
 
-  // ---------- 6. Demonstration data and release files ----------
+  // Property test: no published result breaks the rules.
+  const rand = M.rng(42);
+  const bad = [];
+  let trials = 0;
+  for (let t = 0; t < 300; t += 1) {
+    const rs = Array.from({ length: Math.floor(rand() * 30) }, () => person(Object.fromEntries(M.ITEMS.filter(() => rand() < 0.2).map((it) => [it.id, 98]))));
+    const r = M.buildRelease(rs);
+    trials += 1;
+    const c = r.result;
+    if (rs.length < k && c.status !== 'collecting') bad.push(`trial ${t}: shown with ${rs.length} responses`);
+    if (c.status === 'published') {
+      M.ITEMS.forEach((it) => {
+        const real = rs.filter((x) => x.answers[it.id] !== 98).length;
+        const p = c.relief[it.id];
+        if (p && M.answered(p) !== real) bad.push(`trial ${t}: wrong count for ${it.id}`);
+        if (p && real < k) bad.push(`trial ${t}: ${it.id} shown with ${real} answers`);
+        if (!p && real >= k) bad.push(`trial ${t}: ${it.id} hidden with ${real} answers`);
+      });
+    }
+    try { M.checkRelease(copy(r)); } catch (e) { bad.push(`trial ${t}: release fails its own check: ${e.message}`); }
+  }
+  check(`property test over ${trials} random datasets`, !bad.length, bad.slice(0, 5).join('; '));
+
+  // ---------- 4. Demonstration data and the release check ----------
   const demo = M.demoResponses();
   rel = M.buildRelease(demo, { source: 'demo' });
-  const q4 = rel.data['2026-Q4'];
-  check('demo covers three periods', rel.periods.join() === '2026-Q2,2026-Q3,2026-Q4');
-  check('demo shows every case: shown, collecting, withheld', q4.departments.HUM.status === 'published' && q4.departments.LEG.status === 'collecting' && q4.departments.LEAD.status === 'protected');
-  const unlocked = M.buildRelease(demo.concat(Array.from({ length: M.DEMO.unlock.needed }, () => M.makeResponse({ department: 'LEG', answers: fullAnswers() }, { period: M.demoPeriod() }))));
-  check('live demo: two Legal & Compliance answers unlock it and Leadership & Management', unlocked.data['2026-Q4'].departments.LEG.n === 10 && unlocked.data['2026-Q4'].departments.LEAD.status === 'published');
-  check('release passes its own check', !throws(() => M.checkRelease(JSON.parse(JSON.stringify(rel)))));
-  const tamper = (f) => { const x = JSON.parse(JSON.stringify(rel)); f(x); return throws(() => M.checkRelease(x)); };
+  const map = M.reliefMap(rel.result);
+  check('demo: one fictional team of 24', demo.length === 24 && rel.result.n === 24 && map.shown === 25);
+  check('demo map shows every kind of place', ['oppression', 'controversial', 'relief', 'neutral'].every((id) => Object.values(map.types).some((tp) => tp && tp.id === id)));
+  check('release passes its own check', !throws(() => M.checkRelease(copy(rel))));
+  const tamper = (f) => { const x = copy(rel); f(x); return throws(() => M.checkRelease(x)); };
   check('release with a lower threshold refused', tamper((x) => { x.minGroupSize = 3; }));
-  check('release with a small shown group refused', tamper((x) => { x.data['2026-Q4'].departments.LEG = { status: 'published', n: 8, items: {}, scores: {} }; }));
-  check('release with numbers on a hidden group refused', tamper((x) => { x.data['2026-Q4'].departments.LEG = { status: 'collecting', n: 8 }; }));
-  check('release that allows subtraction refused', tamper((x) => { x.data['2026-Q4'].departments.LEAD = Object.assign({ status: 'published' }, M.aggregate(demo.filter((r) => r.period === '2026-Q4' && r.department === 'LEAD'))); }));
-  check('release with another format refused', tamper((x) => { x.format = 'workforce-survey-release'; }));
-  const heldBack = Object.entries(q4.departments).flatMap(([id, c]) => (c.relief ? Object.keys(c.relief).filter((it) => c.relief[it] === null).map((it) => [id, it]) : []));
-  check('demo shows held-back Relief Map points in a small department', heldBack.length > 0 && heldBack.length < 20);
-  const map4 = M.reliefMap(q4.overall);
-  check('demo organization-wide map shows every kind of place', ['oppression', 'controversial', 'relief', 'neutral'].every((id) => Object.values(map4.types).some((tp) => tp.id === id)) && map4.shown === 25);
-  check('release with a Relief Map point below the minimum refused', tamper((x) => { const c = x.data['2026-Q4'].departments.HUM; c.relief.RM_TM_GEN = [2, 2, 2, 1, 1, 18]; }));
-  check('release with a held-back point put back refused', tamper((x) => { const [id, it] = heldBack[0]; const rs = demo.filter((r) => r.period === '2026-Q4' && r.department === id); x.data['2026-Q4'].departments[id].relief[it] = M.countAnswers(rs, it); }));
-  check('release with a Relief Map on a hidden group refused', tamper((x) => { x.data['2026-Q4'].departments.LEG.relief = {}; }));
-  const json = JSON.stringify(rel);
-  check('release holds no response IDs', !/R-[A-Z0-9]{12}/.test(json));
-  const csvRows = M.releaseRows(rel);
-  check('aggregated CSV: hidden groups have no numbers', csvRows.filter((r) => r.status !== 'shown').every((r) => r.count === '' && r.group_n === ''));
-  check('aggregated CSV: percentages add to 100 per question', (() => {
-    const g = csvRows.filter((r) => r.status === 'shown' && r.department === 'Humanitarian & Field Operations' && r.period === '2026-Q4' && r.question_id === 'PS1' && r.answer_code !== 98);
-    return Math.abs(g.reduce((a, r) => a + r.percent, 0) - 100) < 0.6;
-  })());
+  check('release with fewer than 10 responses refused', tamper((x) => { x.result.n = 8; }));
+  check('release with a point below the minimum refused', tamper((x) => { x.result.relief.RM_DESK_GEN = [2, 2, 2, 1, 1, 16]; }));
+  check('release with a point larger than the group refused', tamper((x) => { x.result.relief.RM_DESK_GEN = [20, 20, 0, 0, 0, 0]; }));
+  check('release with numbers while collecting refused', tamper((x) => { x.result = { status: 'collecting', n: 8 }; }));
+  check('release in another format refused', tamper((x) => { x.format = 'workforce-assessment-release'; }) && tamper((x) => { x.version = 1; }));
+  check('release holds no response IDs or individual answers', !/R-[A-Z0-9]{12}|"answers"/.test(JSON.stringify(rel)));
 
-  // ---------- 7. Qualtrics files ----------
+  // ---------- 5. Qualtrics files ----------
   const txt = M.qualtricsTxt();
-  check('Qualtrics file has every question', ['CONSENT', 'DEPARTMENT'].concat(M.ITEMS.map((it) => it.id)).every((id) => txt.includes(`[[ID:${id}]]`)));
-  check('Qualtrics file has no text-entry questions', !/Question:TE/.test(txt));
-  check('Qualtrics file sets code 98 on every statement', (txt.match(/\[\[Choice:98\]\]/g) || []).length === 59);
-  check('Qualtrics file: one block per Relief Map setting, worded "Prefer not to say"', M.RELIEF.settings.every((st, i) => txt.includes(`[[Block:G${i + 1}. Relief Map: ${st.name}]]`)) && (txt.match(/Prefer not to say or not applicable/g) || []).length >= 25);
-  check('codebook marks every question required', M.codebookRows().every((r) => r.required === 'Yes'));
+  check('Qualtrics file has every question', ['CONSENT'].concat(M.ITEMS.map((it) => it.id)).every((id) => txt.includes(`[[ID:${id}]]`)));
+  check('Qualtrics file has no text-entry questions and no department', !/Question:TE/.test(txt) && !/DEPARTMENT/.test(txt));
+  check('Qualtrics file sets code 98 on every question', (txt.match(/\[\[Choice:98\]\]/g) || []).length === 25);
+  check('Qualtrics file: one block per space', M.RELIEF.spaces.every((s, i) => txt.includes(`[[Block:${i + 1}. ${s.name}]]`)));
+  check('codebook marks every question required', M.codebookRows().length === 26 && M.codebookRows().every((r) => r.required === 'Yes'));
   const back = M.readExport(M.demoCSV());
   check('demo export reads back in full, labelled as demo', back.responses.length === demo.length && back.incomplete === 0 && back.demo === true);
-  check('export round trip gives the same results', JSON.stringify(M.buildRelease(back.responses, { source: 'demo' }).data) === JSON.stringify(rel.data));
+  check('export round trip gives the same map', JSON.stringify(M.buildRelease(back.responses, { created: 'x' }).result) === JSON.stringify(M.buildRelease(demo, { created: 'x' }).result));
   const lines = M.demoCSV().split('\r\n');
   const header = lines[0].split(',');
   const edit = (line, col, v) => line.split(',').map((x, i) => (header[i] === col ? v : x)).join(',');
-  const partial = M.readExport(lines.slice(0, 3).concat(edit(lines[3], 'PS3', ''), edit(lines[4], 'Finished', '0'), edit(lines[5], 'CONSENT', '2'), edit(lines[6], 'Status', '1'), edit(lines[7], 'DEPARTMENT', '13')).join('\r\n'));
+  const partial = M.readExport(lines.slice(0, 3).concat(edit(lines[3], 'RM_DESK_AGE', ''), edit(lines[4], 'Finished', '0'), edit(lines[5], 'CONSENT', '2'), edit(lines[6], 'Status', '1'), edit(lines[7], 'RM_HALL_CLS', '7')).join('\r\n'));
   check('export reader leaves out incomplete, declined, preview and invalid rows', partial.responses.length === 0 && partial.incomplete === 3 && partial.declined === 1 && partial.tests === 1);
   check('export reader refuses other files', throws(() => M.readExport('a,b\n1,2\n')));
 
-  // ---------- 8. Demonstration answers in the browser ----------
+  // ---------- 6. Demonstration answers in the browser ----------
   const mem = { data: {}, getItem(key) { return key in this.data ? this.data[key] : null; }, setItem(key, v) { this.data[key] = String(v); }, removeItem(key) { delete this.data[key]; } };
   const store = M.demoStore(mem);
   check('demo store starts empty', store.count() === 0);
-  check('demo store refuses incomplete responses', throws(() => store.add({ department: 'HR', period: '2026-Q4', answers: {} })) && store.count() === 0);
-  store.add(M.makeResponse(input, { period: M.demoPeriod() }));
+  check('demo store refuses incomplete responses', throws(() => store.add({ answers: {} })) && store.count() === 0);
+  store.add(M.makeResponse(input));
   check('demo store saves and labels demonstration answers', store.count() === 1 && JSON.parse(mem.data[M.CONFIG.demoStorageKey]).demonstration === true);
-  check('demo answers use the latest demonstration period', store.all()[0].period === '2026-Q4');
+  check('demo answers join the demonstration map', M.buildRelease(demo.concat(store.all())).result.n === 25);
   store.clear();
   check('demo store can be cleared', store.count() === 0);
-  check('the model defines no browser storage for real responses', !('storageKey' in M.CONFIG));
 
-  // ---------- 9. The results service (Edge Function logic) ----------
+  // ---------- 7. The results service (Edge Function logic) ----------
   const { handleRelease, corsHeaders } = await import(path.join(ROOT, 'supabase/functions/assessment-release/release-handler.mjs'));
-  const db = demo.map((r) => ({ period: r.period, department: r.department, answers: r.answers }));
+  const db = demo.map((r) => ({ answers: r.answers }));
   const users = { 'tok-admin': { id: 'u-admin' }, 'tok-staff': { id: 'u-staff' } };
   const svc = (token, extra) => handleRelease(Object.assign({
-    token, model: M, pageSize: 50,
+    token, model: M, pageSize: 10,
     getUser: async (t) => users[t] || null,
     isAdmin: async (id) => id === 'u-admin',
     fetchRows: async (from, to) => db.slice(from, to + 1)
@@ -234,28 +147,30 @@ const many = (n, department, period, over) => Array.from({ length: n }, () => pe
   check('service: invalid token -> 401', (await svc('nope')).status === 401);
   check('service: signed in but not an admin -> 403', (await svc('tok-staff')).status === 403);
   const ok = await svc('tok-admin');
-  check('service: admin gets the aggregated release (all pages read)', ok.status === 200 && ok.body.format === M.RELEASE_FORMAT && ok.body.data['2026-Q4'].overall.n === demo.filter((r) => r.period === '2026-Q4').length);
-  check('service: release passes the dashboard check', !throws(() => M.checkRelease(JSON.parse(JSON.stringify(ok.body)))));
-  check('service: no individual responses or IDs in the reply', !/"answers":\{|"S\d+"|R-[A-Z0-9]{12}|"department":"/.test(JSON.stringify(ok.body)));
+  check('service: admin gets the one aggregated map (all pages read)', ok.status === 200 && ok.body.format === M.RELEASE_FORMAT && ok.body.result.n === demo.length);
+  check('service: release passes the dashboard check', !throws(() => M.checkRelease(copy(ok.body))));
+  check('service: no individual responses or IDs in the reply', !/"answers"|"S\d+"|R-[A-Z0-9]{12}/.test(JSON.stringify(ok.body)));
   check('service: database error -> 500 without details', (await svc('tok-admin', { fetchRows: async () => { throw new Error('secret detail'); } })).body.error.indexOf('secret') < 0);
   check('service: CORS only for listed dashboard origins', corsHeaders('https://a.github.io', ['https://a.github.io'])['Access-Control-Allow-Origin'] === 'https://a.github.io' && !('Access-Control-Allow-Origin' in corsHeaders('https://evil.example', ['https://a.github.io'])));
 
-  // ---------- 10. Generated files and the separation of the three applications ----------
+  // ---------- 8. Generated files and the separation of the applications ----------
   let fresh = true;
   try { execFileSync(process.execPath, [path.join(ROOT, 'tools/build_assessment.js'), '--check'], { stdio: 'pipe' }); } catch (e) { fresh = false; }
   check('generated copies and files are up to date (node tools/build_assessment.js)', fresh);
   const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
-  const listFiles = (dir) => fs.readdirSync(path.join(ROOT, dir), { recursive: true }).map(String).filter((f) => /\.(html|js|css|txt|csv)$/.test(f)).map((f) => path.join(dir, f));
+  const listFiles = (dir) => fs.readdirSync(path.join(ROOT, dir), { recursive: true }).map(String).filter((f) => /\.(html|js|css|txt|csv|md)$/.test(f)).map((f) => path.join(dir, f));
   const surveyFiles = listFiles('apps/survey');
   const analyticsFiles = listFiles('apps/analytics');
   const own = (files) => files.filter((f) => !/assessment-model\.js$/.test(f));
-  check('survey app never links to or names the dashboard', own(surveyFiles).every((f) => !/dashboard|analytics/i.test(read(f))), own(surveyFiles).filter((f) => /dashboard|analytics/i.test(read(f))).join(', '));
+  check('survey app never links to or names the dashboard', own(surveyFiles).filter((f) => !/README\.md$/.test(f)).every((f) => !/dashboard|analytics/i.test(read(f))));
   check('survey app pages: home, survey, confirmation, privacy', ['index.html', 'survey.html', 'thanks.html', 'privacy.html'].every((p) => fs.existsSync(path.join(ROOT, 'apps/survey', p))));
+  check('no "UN" labels in the survey or the dashboard', surveyFiles.concat(analyticsFiles).every((f) => !/\bUN\b|United Nations/.test(read(f))), surveyFiles.concat(analyticsFiles).filter((f) => /\bUN\b|United Nations/.test(read(f))).join(', '));
   check('apps load nothing from the Navigator', surveyFiles.concat(analyticsFiles).every((f) => !/\.\.\/(script\.js|styles\.css|js\/)/.test(read(f))));
   check('apps are excluded from the Navigator site build', /^exclude:\s*\n(\s+- .+\n)*\s+- apps\/?\s*$/m.test(read('_config.yml')) && /- supabase/.test(read('_config.yml')));
   check('no service-role key or secret in the apps', own(surveyFiles.concat(analyticsFiles)).every((f) => !/service_role|sb_secret_|SERVICE_ROLE_KEY/.test(read(f))));
   const navigator = ['index.html', 'map.html', 'scenarios.html', 'toolkit.html', 'collaboration.html', 'profile.html', 'progress.html', 'script.js'];
   check('the Navigator no longer links to or embeds the survey', navigator.every((f) => !/workforce-survey\/|Workforce Survey|survey\.html|apps\/survey/.test(read(f))));
+  check('database schema stores the answers only', /create table if not exists public\.assessment_responses \(\n  id uuid primary key default gen_random_uuid\(\),\n  answers jsonb not null/.test(read('supabase/migrations/20261117000000_workforce_assessment.sql')) && /submit_assessment\(p_answers jsonb\)/.test(read('supabase/migrations/20261117000000_workforce_assessment.sql')));
 
   console.log(`${passed} passed, ${failures.length} failed`);
   if (failures.length) { failures.forEach((f) => console.log(`FAIL ${f}`)); process.exit(1); }

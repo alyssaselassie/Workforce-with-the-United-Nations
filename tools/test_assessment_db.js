@@ -4,7 +4,8 @@
 //   - respondents (anon) can submit a complete, valid response and nothing else;
 //   - nobody can read, change or delete responses through the public roles;
 //   - incomplete or invalid submissions are rejected;
-//   - only the department, the quarter and the answer codes are stored.
+//   - only the answer codes are stored (no department, date or time), also after upgrading a database
+//     made with the earlier schema.
 //
 // Needs psql and a THROWAWAY database (it creates roles, schemas and tables):
 //   ASSESSMENT_TEST_DATABASE_URL=postgresql://postgres@localhost:5432/assessment_test node tools/test_assessment_db.js
@@ -25,19 +26,20 @@ const j = (o) => `'${JSON.stringify(o).replace(/'/g, "''")}'::jsonb`;
 const without = (k) => { const o = Object.assign({}, valid); delete o[k]; return o; };
 const withVal = (k, v) => Object.assign({}, valid, { [k]: v });
 
-// Each rejected case: [description, department, answers SQL]
+const first = M.ITEMS[0].id;
+const last = M.ITEMS[M.ITEMS.length - 1].id;
+// Each rejected case: [description, answers SQL]
 const rejected = [
-  ['unknown department', "'FINANCE'", j(valid)],
-  ['missing department', 'null', j(valid)],
-  ['missing answers', "'HR'", 'null'],
-  ['answers not an object', "'HR'", "'[1,2,3]'::jsonb"],
-  ['one question unanswered', "'HR'", j(without('OS5'))],
-  ['an extra, unknown question', "'HR'", j(Object.assign({}, without('OS5'), { XX1: 1 }))],
-  ['answer code 0', "'HR'", j(withVal('PS1', 0))],
-  ['answer code 6', "'HR'", j(withVal('PS1', 6))],
-  ['answer code 1.5', "'HR'", j(withVal('PS1', 1.5))],
-  ['answer as text', "'HR'", j(withVal('PS1', '1'))],
-  ['answer null', "'HR'", j(withVal('PS1', null))]
+  ['missing answers', 'null'],
+  ['answers not an object', "'[1,2,3]'::jsonb"],
+  ['one question unanswered', j(without(last))],
+  ['an extra, unknown question', j(Object.assign({}, without(last), { XX1: 1 }))],
+  ['a department added', j(Object.assign({}, without(last), { DEPARTMENT: 1 }))],
+  ['answer code 0', j(withVal(first, 0))],
+  ['answer code 6', j(withVal(first, 6))],
+  ['answer code 1.5', j(withVal(first, 1.5))],
+  ['answer as text', j(withVal(first, '1'))],
+  ['answer null', j(withVal(first, null))]
 ];
 
 const sql = `
@@ -53,18 +55,24 @@ end $$;
 drop schema if exists auth cascade;
 drop table if exists public.assessment_responses, public.assessment_admins cascade;
 drop function if exists public.submit_assessment(text, jsonb);
+drop function if exists public.submit_assessment(jsonb);
 create schema auth;
 create table auth.users (id uuid primary key);
 grant usage on schema public to anon, authenticated, service_role;
 alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
 alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
 
+-- A database made with the earlier schema (department and quarter columns, older function), which the
+-- migration must upgrade.
+create table public.assessment_responses (id uuid primary key default gen_random_uuid(), period text not null, department text not null, answers jsonb not null);
+create function public.submit_assessment(p_department text, p_answers jsonb) returns void language plpgsql as $$ begin end; $$;
+
 \\i ${migration}
 
 -- A valid submission from a respondent.
 set role anon;
-select public.submit_assessment('HR', ${j(valid)});
-select public.submit_assessment('OTH', ${j(Object.fromEntries(M.ITEMS.map((it) => [it.id, 98])))});
+select public.submit_assessment(${j(valid)});
+select public.submit_assessment(${j(Object.fromEntries(M.ITEMS.map((it) => [it.id, 98])))});
 reset role;
 
 -- Respondents and signed-in users cannot read, insert, change or delete rows directly.
@@ -75,9 +83,9 @@ begin
     execute format('set local role %I', r);
     ok := false; begin perform 1 from public.assessment_responses limit 1; exception when insufficient_privilege then ok := true; end;
     if not ok then raise exception 'FAIL: % could read responses', r; end if;
-    ok := false; begin insert into public.assessment_responses (period, department, answers) values ('2026-Q4', 'HR', '{}'); exception when insufficient_privilege then ok := true; end;
+    ok := false; begin insert into public.assessment_responses (answers) values ('{}'); exception when insufficient_privilege then ok := true; end;
     if not ok then raise exception 'FAIL: % could insert directly', r; end if;
-    ok := false; begin update public.assessment_responses set department = 'IT'; exception when insufficient_privilege then ok := true; end;
+    ok := false; begin update public.assessment_responses set answers = '{}'; exception when insufficient_privilege then ok := true; end;
     if not ok then raise exception 'FAIL: % could update', r; end if;
     ok := false; begin delete from public.assessment_responses; exception when insufficient_privilege then ok := true; end;
     if not ok then raise exception 'FAIL: % could delete', r; end if;
@@ -91,22 +99,22 @@ end $$;
 do $$
 declare ok boolean;
 begin
-${rejected.map(([name, dep, ans]) => `  ok := false;
-  begin set local role anon; perform public.submit_assessment(${dep}, ${ans}); exception when invalid_parameter_value then ok := true; end;
+${rejected.map(([name, ans]) => `  ok := false;
+  begin set local role anon; perform public.submit_assessment(${ans}); exception when invalid_parameter_value then ok := true; end;
   reset role;
   if not ok then raise exception 'FAIL: accepted %', ${`'${name.replace(/'/g, "''")}'`}; end if;`).join('\n')}
 end $$;
 
--- What was stored: two rows, the current quarter, the department and the answers, nothing else.
+-- What was stored: two rows with their answers, nothing else; the earlier function is gone.
 do $$
 declare n int; cols text;
 begin
   select count(*) into n from public.assessment_responses;
   if n <> 2 then raise exception 'FAIL: expected 2 stored responses, found %', n; end if;
-  select count(*) into n from public.assessment_responses where period = to_char(timezone('utc', now()), 'YYYY') || '-Q' || to_char(timezone('utc', now()), 'Q');
-  if n <> 2 then raise exception 'FAIL: reporting period not assigned by the database'; end if;
   select string_agg(column_name, ',' order by ordinal_position) into cols from information_schema.columns where table_schema = 'public' and table_name = 'assessment_responses';
-  if cols <> 'id,period,department,answers' then raise exception 'FAIL: unexpected columns %', cols; end if;
+  if cols <> 'id,answers' then raise exception 'FAIL: unexpected columns %', cols; end if;
+  select count(*) into n from pg_proc where proname = 'submit_assessment';
+  if n <> 1 then raise exception 'FAIL: expected one submit_assessment function, found %', n; end if;
   -- Row level security is on for both tables.
   select count(*) into n from pg_class where relname in ('assessment_responses', 'assessment_admins') and relrowsecurity;
   if n <> 2 then raise exception 'FAIL: row level security is not enabled on both tables'; end if;
@@ -119,7 +127,7 @@ fs.writeFileSync(file, sql);
 try {
   const out = execFileSync('psql', [URL, '-X', '-q', '-t', '-A', '-f', file], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   if (!/DB TESTS PASSED/.test(out)) { console.error(out); process.exit(1); }
-  console.log(`Database tests passed: valid submissions accepted, ${rejected.length} invalid submissions rejected, no public read/write access, only department, quarter and answers stored.`);
+  console.log(`Database tests passed: valid submissions accepted, ${rejected.length} invalid submissions rejected, no public read/write access, only the answers stored (also after upgrading the earlier schema).`);
 } catch (e) {
   console.error(String(e.stderr || e.stdout || e.message));
   process.exit(1);
