@@ -1,6 +1,6 @@
 # GitHub Pages (Jekyll) settings for the UN Cultural Intelligence & Bias Navigator.
-# The Workforce Assessment survey (apps/survey), the Workforce Analytics Dashboard (apps/analytics)
-# and their database code (supabase) are separate applications. They are kept in this repository's
+# The Workplace Relief Map survey (apps/survey) and dashboard (apps/analytics) and their database
+# code (supabase) are separate applications. They are kept in this repository's
 # source but are NOT published as part of the Navigator's website: each is deployed on its own.
 exclude:
   - apps/
