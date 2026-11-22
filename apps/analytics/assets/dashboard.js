@@ -192,18 +192,18 @@
     const hi = pts.reduce((a, b) => (b.v > a.v ? b : a));
     const lo = pts.reduce((a, b) => (b.v < a.v ? b : a));
     const items = [
-      `<li><strong>Most discomfort:</strong> ${esc(hi.d.name)} ${esc(hi.s.phrase)} (${one(hi.v)}), a possible place to start.</li>`,
-      `<li><strong>Most comfort:</strong> ${esc(lo.d.name)} ${esc(lo.s.phrase)} (${one(lo.v)}).</li>`
+      `<li><strong>Most discomfort:</strong> ${esc(hi.d.name)} ${esc(hi.s.where)} (${one(hi.v)}).</li>`,
+      `<li><strong>Most comfort:</strong> ${esc(lo.d.name)} ${esc(lo.s.where)} (${one(lo.v)}).</li>`
     ];
     M.PLACE_TYPES.filter((t) => t.id !== 'neutral').forEach((t) => {
       const where = SPACES.filter((s) => map.types[s.id] && map.types[s.id].id === t.id);
       if (!where.length) return;
       const detail = (s) => {
-        if (t.id !== 'controversial') return esc(s.name);
+        if (t.id !== 'mixed') return esc(s.team);
         const v = DIMS.map((d) => ({ d, v: map.values[s.id][d.id] })).filter((e) => e.v != null);
         const top = v.reduce((a, b) => (b.v > a.v ? b : a));
         const bottom = v.reduce((a, b) => (b.v < a.v ? b : a));
-        return `${esc(s.name)} (${esc(top.d.name.toLowerCase())} ${one(top.v)}, ${esc(bottom.d.name.toLowerCase())} ${one(bottom.v)})`;
+        return `${esc(s.team)} (${esc(top.d.name.toLowerCase())} ${one(top.v)}, ${esc(bottom.d.name.toLowerCase())} ${one(bottom.v)})`;
       };
       items.push(`<li><strong>${esc(t.name)}:</strong> ${where.map(detail).join('; ')}.</li>`);
     });
@@ -228,8 +228,17 @@
       <p class="ad-hint">– = not shown: fewer than ${K} people answered. "Prefer not to say or not applicable" is left out of every average.</p></details>`;
   }
 
+  // Suggested next steps: practical ideas chosen from the pattern on the map (AssessmentModel.nextSteps).
+  function nextSteps(map) {
+    const steps = M.nextSteps(map);
+    if (!steps.length) return '';
+    return `<section class="ad-steps" aria-labelledby="steps-h"><h2 id="steps-h">Suggested next steps</h2>
+      <p class="ad-hint">Ideas for the team to discuss, chosen from the pattern on the map. They are starting points, not findings.</p>
+      <ol class="ad-steps-list">${steps.map((s) => `<li data-kind="${esc(s.kind)}"><strong>${esc(s.title)}.</strong> ${esc(s.text)}</li>`).join('')}</ol></section>`;
+  }
+
   const howLabelled = () => `<details class="ad-numbers"><summary>How spaces are labelled</summary>
-    <p class="ad-hint">Each point is the average answer from 1 (very comfortable) to 5 (very uncomfortable). Each space is labelled with one of the four kinds of place on the Relief Maps worksheet, checked in this order:</p>
+    <p class="ad-hint">Each point is the average answer from 1 (very comfortable) to 5 (very uncomfortable). Each space is labelled with one of four kinds of place, adapted from the Relief Maps worksheet and checked in this order:</p>
     <ol class="rm-rules">${M.PLACE_TYPES.map((t) => `<li><strong>${esc(t.name)}:</strong> ${esc(t.rule)}.</li>`).join('')}</ol>
     <p class="ad-hint">A space is labelled only when at least ${M.PLACE_MIN_LINES} of its ${DIMS.length} points are shown. The labels describe the group's averages, never a person.</p></details>`;
 
@@ -249,6 +258,7 @@
       <div class="rm-layout">${chartSlot('map', { map, label: 'Relief Map' })}${legend()}</div>
       <div class="rm-narrow-key">${spacesKey(map)}</div>
       ${insights(map, c.n)}
+      ${nextSteps(map)}
       ${reliefTable(map)}
       ${howLabelled()}
       <p class="ad-credit">${esc(CREDIT)}</p>`;
