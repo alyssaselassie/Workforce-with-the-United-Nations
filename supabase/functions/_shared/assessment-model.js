@@ -55,17 +55,19 @@
 
   // ---------- the Relief Map ----------
   // Five physical workplace spaces (the places on the map) and the five identity dimensions of the
-  // Relief Maps Tool worksheet (the lines), in the order of the worksheet's legend.
+  // Relief Maps Tool worksheet (the lines), in the order of the worksheet's legend. Each space has the
+  // wording the survey uses (name, phrase: "your desk") and the wording the team's results use (team,
+  // where: "people's desks").
   const RELIEF = {
     name: 'Relief Map',
     intro: 'This survey maps where people feel at ease at work. Think about the past 3 months (or since you joined, if that is more recent). For each of five workplace spaces, say how comfortable you feel there in relation to five parts of who you are. For example, someone may feel at ease in meeting rooms in relation to their age, but uncomfortable in relation to their gender.',
     note: 'These questions never ask which gender, age, religion, ethnicity or social class you are, only how comfortable you feel.',
     spaces: [
-      { id: 'DESK', name: 'Your desk or workstation', short: 'Your desk', phrase: 'at your desk or workstation', about: 'Where you do most of your work, including open-plan areas.' },
-      { id: 'MEET', name: 'Meeting rooms', short: 'Meeting rooms', phrase: 'in meeting rooms', about: 'Rooms where meetings and presentations take place.' },
-      { id: 'SUP', name: "Your supervisor's office", short: "Supervisor's office", phrase: "in your supervisor's office", about: 'Or wherever you usually meet your supervisor in person.' },
-      { id: 'BREAK', name: 'Kitchen, break room or cafeteria', short: 'Break room', phrase: 'in the kitchen, break room or cafeteria', about: 'Shared spaces where people eat, take breaks and chat.' },
-      { id: 'HALL', name: 'Hallways, elevators and entrances', short: 'Hallways', phrase: 'in hallways, elevators and entrances', about: 'The shared spaces you pass through every day.' }
+      { id: 'DESK', name: 'Your desk or workstation', short: 'Your desk', phrase: 'at your desk or workstation', about: 'Where you do most of your work, including open-plan areas.', team: 'Desks and workstations', where: "at people's desks and workstations" },
+      { id: 'MEET', name: 'Meeting rooms', short: 'Meeting rooms', phrase: 'in meeting rooms', about: 'Rooms where meetings and presentations take place.', team: 'Meeting rooms', where: 'in meeting rooms' },
+      { id: 'SUP', name: "Your supervisor's office", short: "Supervisor's office", phrase: "in your supervisor's office", about: 'Or wherever you usually meet your supervisor in person.', team: "Supervisors' offices", where: "in supervisors' offices" },
+      { id: 'BREAK', name: 'Kitchen, break room or cafeteria', short: 'Break room', phrase: 'in the kitchen, break room or cafeteria', about: 'Shared spaces where people eat, take breaks and chat.', team: 'Kitchen, break room or cafeteria', where: 'in the kitchen, break room or cafeteria' },
+      { id: 'HALL', name: 'Hallways, elevators and entrances', short: 'Hallways', phrase: 'in hallways, elevators and entrances', about: 'The shared spaces you pass through every day.', team: 'Hallways, elevators and entrances', where: 'in hallways, elevators and entrances' }
     ],
     dimensions: [
       { id: 'GEN', name: 'Gender', phrase: 'your gender' },
@@ -99,14 +101,15 @@
     const n = answered(counts);
     return n ? counts.slice(0, 5).reduce((a, c, i) => a + c * (i + 1), 0) / n : null;
   }
-  // The four kinds of place on the Relief Maps worksheet. In this workplace adaptation a space is
-  // labelled from its lines (the group's averages), checked in this order. The rule is ours: it is a
-  // reading aid for group averages, not part of the original individual-level method.
+  // Four kinds of place, adapted from the Relief Maps worksheet and named in plain, positive workplace
+  // language. A space is labelled from its lines (the group's averages), checked in this order. The
+  // rule is ours: it is a reading aid for group averages, not part of the original individual-level
+  // method.
   const PLACE_TYPES = [
-    { id: 'oppression', name: 'Places of oppression', short: 'Oppression', rule: 'the lines average 3 or more: as much discomfort as comfort, or more' },
-    { id: 'controversial', name: 'Controversial places', short: 'Controversial', rule: 'the highest and lowest lines are at least 1 point apart: comfort in relation to some identities, discomfort in relation to others' },
-    { id: 'relief', name: 'Places of relief', short: 'Relief', rule: 'the lines average 2 or less: comfortable on average' },
-    { id: 'neutral', name: 'Neutral places', short: 'Neutral', rule: 'anything in between' }
+    { id: 'improve', name: 'Places to improve', short: 'To improve', one: 'a place to improve', rule: 'the lines average 3 or more: as much discomfort as comfort, or more' },
+    { id: 'mixed', name: 'Mixed places', short: 'Mixed', one: 'a mixed place', rule: 'the highest and lowest lines are at least 1 point apart: people feel at ease in relation to some parts of who they are, and less so in relation to others' },
+    { id: 'comfort', name: 'Places of comfort', short: 'Comfort', one: 'a place of comfort', rule: 'the lines average 2 or less: comfortable on average' },
+    { id: 'neutral', name: 'Neutral places', short: 'Neutral', one: 'a neutral place', rule: 'anything in between' }
   ];
   const PLACE_TYPE_BY_ID = Object.fromEntries(PLACE_TYPES.map((p) => [p.id, p]));
   const PLACE_MIN_LINES = 3; // a space with fewer shown lines is not labelled
@@ -114,9 +117,9 @@
     const v = values.filter((x) => x != null);
     if (v.length < PLACE_MIN_LINES) return null;
     const avg = v.reduce((a, b) => a + b, 0) / v.length;
-    if (avg >= 3) return PLACE_TYPE_BY_ID.oppression;
-    if (Math.max(...v) - Math.min(...v) >= 1) return PLACE_TYPE_BY_ID.controversial;
-    if (avg <= 2) return PLACE_TYPE_BY_ID.relief;
+    if (avg >= 3) return PLACE_TYPE_BY_ID.improve;
+    if (Math.max(...v) - Math.min(...v) >= 1) return PLACE_TYPE_BY_ID.mixed;
+    if (avg <= 2) return PLACE_TYPE_BY_ID.comfort;
     return PLACE_TYPE_BY_ID.neutral;
   }
   // The Relief Map of a published result: values[space][dimension] (null where a point is held back)
@@ -127,6 +130,58 @@
     const types = Object.fromEntries(RELIEF.spaces.map((s) => [s.id, placeType(RELIEF.dimensions.map((d) => values[s.id][d.id]))]));
     const shown = ITEMS.filter((it) => c.relief[it.id]).length;
     return { values, types, shown };
+  }
+
+  // ---------- suggested next steps ----------
+  // Practical ideas for the team, chosen from the pattern on the map: places to improve first (the
+  // most discomfort first), then mixed places, then what already works. They are starting points for a
+  // team conversation, not findings, and none of them asks anyone who they are or who answered what.
+  const SPACE_IDEAS = {
+    DESK: 'Check that everyone has a suitable place to work, and agree simple habits for noise, interruptions and shared areas.',
+    MEET: 'Agree simple meeting habits, such as sharing the agenda in advance, rotating who chairs and takes notes, and making sure everyone has a chance to speak.',
+    SUP: 'Make one-to-one meetings regular and predictable, with a clear purpose, and invite feedback on how they could work better.',
+    BREAK: 'Make shared spaces welcoming to everyone, for example with a range of food options, a quiet corner and social time at different times of day.',
+    HALL: 'Check that signs, lighting and access work for everyone, and that everyday greetings and small talk include everyone.'
+  };
+  const DIMENSION_IDEAS = {
+    GEN: 'sharing speaking time fairly, using inclusive language and making sure facilities work for everyone',
+    AGE: "mixing experience levels on projects and avoiding assumptions about anyone's age or career stage",
+    REL: 'respecting dietary needs, quiet or prayer time and different holidays when planning work and events',
+    ETH: "pronouncing everyone's name correctly and welcoming different languages, cultures and traditions",
+    CLS: 'keeping team events free or low cost and valuing different educational and career paths'
+  };
+  const listText = (a) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
+
+  function nextSteps(map) {
+    if (!map) return [];
+    const of = (id) => RELIEF.spaces.filter((s) => map.types[s.id] && map.types[s.id].id === id);
+    const lines = (s) => RELIEF.dimensions.map((d) => ({ d, v: map.values[s.id][d.id] })).filter((e) => e.v != null);
+    const mean = (s) => lines(s).reduce((a, e) => a + e.v, 0) / lines(s).length;
+    const top = (s) => lines(s).reduce((a, b) => (b.v > a.v ? b : a));
+    const bottom = (s) => lines(s).reduce((a, b) => (b.v < a.v ? b : a));
+    const dim = (e) => `${e.d.name.toLowerCase()} (${e.v.toFixed(1)})`;
+    const improve = of('improve').sort((a, b) => mean(b) - mean(a));
+    const mixed = of('mixed').sort((a, b) => (top(b).v - bottom(b).v) - (top(a).v - bottom(a).v));
+    const comfort = of('comfort');
+    const steps = [];
+    improve.forEach((s) => steps.push({
+      kind: 'improve', space: s.id, dimension: top(s).d.id, title: `${s.team}: ${PLACE_TYPE_BY_ID.improve.one}`,
+      text: `Discomfort here is highest in relation to ${dim(top(s))}. ${SPACE_IDEAS[s.id]}`
+    }));
+    mixed.forEach((s) => steps.push({
+      kind: 'mixed', space: s.id, dimension: top(s).d.id, title: `${s.team}: ${PLACE_TYPE_BY_ID.mixed.one}`,
+      text: `People feel less at ease here in relation to ${dim(top(s))} than in relation to ${dim(bottom(s))}. Ask the team what would make this space work for everyone, for example ${DIMENSION_IDEAS[top(s).d.id]}.`
+    }));
+    if (!improve.length && !mixed.length && RELIEF.spaces.some((s) => map.types[s.id])) {
+      steps.push({ kind: 'keep', title: 'Keep what works', text: 'No space stands out as needing attention. Keep the habits that help people feel at ease, and keep listening.' });
+    }
+    const first = improve[0] || mixed[0];
+    if (comfort.length) {
+      steps.push({ kind: 'comfort', title: 'Build on what works', text: `The map shows comfort ${listText(comfort.map((s) => s.where))}. Ask the team what makes ${comfort.length === 1 ? 'this space' : 'these spaces'} work${first ? `, and whether any of it could help ${first.where}` : ''}.` });
+    }
+    steps.push({ kind: 'talk', title: 'Talk it through together', text: 'Share the map with the team and ask what would help everyone feel at ease. Keep the conversation safe: talk about spaces and habits, never about who gave which answers.' });
+    steps.push({ kind: 'repeat', title: 'Check again later', text: 'Run the survey again in about 3 months (it asks about the past 3 months) and compare the new map with this one.' });
+    return steps;
   }
 
   const TEXT = {
@@ -446,7 +501,7 @@
   return {
     CONFIG, TITLE, SHORT_TITLE, DASHBOARD_TITLE, CONSENT, NA, SCALE, SOURCES, RELIEF, ITEMS, ITEM_BY_ID, SPACE_BY_ID, DIMENSION_BY_ID,
     PLACE_TYPES, PLACE_TYPE_BY_ID, PLACE_MIN_LINES, QUESTION_COUNT, ANSWER_CODES, TEXT, DEMO, RELEASE_FORMAT, RELEASE_VERSION,
-    answerLabel, responseId, problems, makeResponse, submissionPayload, countAnswers, answered, reliefItem, reliefValue, placeType, reliefMap,
+    answerLabel, responseId, problems, makeResponse, submissionPayload, countAnswers, answered, reliefItem, reliefValue, placeType, reliefMap, nextSteps,
     buildRelease, checkRelease, questions, qualtricsTxt, codebookRows, codebookCSV, parseCSV, readExport, rng, demoResponses, demoCSV, demoStore, schema
   };
 });

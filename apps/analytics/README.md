@@ -16,13 +16,21 @@ One graph for one dataset, exactly like the Relief Maps Tool worksheet: a team-l
   identity, Ethnicity and Social class**, with a legend. Each point is the average answer from 1 (very
   comfortable) to 5 (very uncomfortable); "Prefer not to say or not applicable" is left out. Choosing
   a legend entry highlights its line; hovering shows the values.
-- **Below it:** a short reading (most discomfort, most comfort, the kinds of place), the numbers in a
-  table, and how spaces are labelled.
-- **Kinds of place** (the worksheet's terms), checked in this order: *Places of oppression* (the
-  lines average 3 or more), *Controversial places* (the highest and lowest lines are at least 1 point
-  apart), *Places of relief* (the lines average 2 or less), *Neutral places* (anything in between). A
-  space is labelled only when at least 3 of its 5 points are shown. These thresholds are this
-  project's reading aid for group averages, not part of the original method.
+- **Below it:** a short reading (most discomfort, most comfort, the kinds of place), **suggested next
+  steps** for the team, the numbers in a table, and how spaces are labelled.
+- **Kinds of place**, adapted from the worksheet and named in plain, positive workplace language,
+  checked in this order: *Places to improve* (the lines average 3 or more), *Mixed places* (the
+  highest and lowest lines are at least 1 point apart), *Places of comfort* (the lines average 2 or
+  less), *Neutral places* (anything in between). A space is labelled only when at least 3 of its 5
+  points are shown. These thresholds are this project's reading aid for group averages, not part of
+  the original method.
+- **Suggested next steps** (`AssessmentModel.nextSteps`): practical ideas chosen from the pattern on
+  the map. Places to improve come first (with the line that shows the most discomfort and an idea for
+  that space), then mixed places (with an idea for the line that shows the most discomfort), then
+  what already works, a reminder to talk the map through as a team without asking who answered what,
+  and a suggestion to run the survey again after 3 months. They are starting points for a team
+  conversation, not findings. The wording lives in `apps/shared/assessment-model.js` (`SPACE_IDEAS`,
+  `DIMENSION_IDEAS`) and can be edited there.
 
 This is a workplace adaptation of Relief Maps (Rodó-Zárate, 2023; Relief Maps+, INTERMAPS) and the
 NYU Intersectionality Lab's Relief Maps Tool, not the original individual-level method: it shows group

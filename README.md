@@ -85,9 +85,9 @@ Relief Maps Tool worksheet, they collect one dataset and show one graph:
 - **Workplace Relief Map Dashboard** (`apps/analytics/`): for authorized researchers. Live results
   need a sign-in and arrive already aggregated by a server-side results service. It shows one Relief
   Map for everyone who took part, laid out like the Relief Maps Tool worksheet: the five spaces across,
-  each labelled as a place of oppression, controversial, neutral or relief; comfort to discomfort up
-  the side; one coloured line each for gender, age, religious identity, ethnicity and social class. A
-  labelled demonstration uses fictional data.
+  each labelled as a place to improve, a mixed place, a neutral place or a place of comfort; comfort
+  to discomfort up the side; one coloured line each for gender, age, religious identity, ethnicity and
+  social class; and suggested next steps for the team. A labelled demonstration uses fictional data.
 - **Backend** (`supabase/`): a database that respondents can only write to, and the results
   service. No backend has been created yet; see `supabase/README.md` for what it needs.
 
