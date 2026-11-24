@@ -32,6 +32,12 @@ One graph for one dataset, exactly like the Relief Maps Tool worksheet: a team-l
   conversation, not findings. The wording lives in `apps/shared/assessment-model.js` (`SPACE_IDEAS`,
   `DIMENSION_IDEAS`) and can be edited there.
 
+**Look:** styled to match the team's Relief Maps survey: a cream page, deep green panels and buttons,
+Newsreader for headings, Inter for text and JetBrains Mono for small labels. The fonts are served from
+`assets/fonts` under the SIL Open Font License (licence files alongside them), so nothing loads from
+third parties. The line colours are unchanged and sit on a white card, keeping their checked
+contrast.
+
 This is a workplace adaptation of Relief Maps (Rodó-Zárate, 2023; Relief Maps+, INTERMAPS) and the
 NYU Intersectionality Lab's Relief Maps Tool, not the original individual-level method: it shows group
 averages for workplace spaces. Nobody is asked which gender, age, religion, ethnicity or social class

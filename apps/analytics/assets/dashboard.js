@@ -282,9 +282,9 @@
     const el = $('session');
     if (state.source === 'live') {
       const s = A.session();
-      el.innerHTML = `<span class="ad-who">Signed in${s ? ` as <strong>${esc(s.email)}</strong>` : ''}</span><button type="button" class="ad-btn ad-btn-on-dark" id="refresh">Refresh</button><button type="button" class="ad-btn ad-btn-on-dark" id="sign-out">Sign out</button>`;
+      el.innerHTML = `<span class="ad-who">Signed in${s ? ` as <strong>${esc(s.email)}</strong>` : ''}</span><button type="button" class="ad-btn ad-btn-chip" id="refresh">Refresh</button><button type="button" class="ad-btn ad-btn-chip" id="sign-out">Sign out</button>`;
     } else if (state.source === 'demo') {
-      el.innerHTML = '<span class="ad-who">Demonstration</span><button type="button" class="ad-btn ad-btn-on-dark" id="exit-demo">Exit</button>';
+      el.innerHTML = '<span class="ad-who">Demonstration</span><button type="button" class="ad-btn ad-btn-chip" id="exit-demo">Exit</button>';
     } else {
       el.innerHTML = '';
     }
