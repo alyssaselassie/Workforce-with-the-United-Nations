@@ -95,10 +95,10 @@ Nothing is shown until at least 10 people have taken part, no point on the map i
 than 10 answers, only the answer codes are stored (no department, date or time), individual answers
 are never displayed, and demonstration data is never mixed with real results.
 They are published from their own repositories:
-[alyssaselassie/un-workforce-assessment](https://github.com/alyssaselassie/un-workforce-assessment)
-(`https://alyssaselassie.github.io/un-workforce-assessment/`) and
-[alyssaselassie/un-workforce-analytics](https://github.com/alyssaselassie/un-workforce-analytics)
-(`https://alyssaselassie.github.io/un-workforce-analytics/`).
+[alyssaselassie/workforce-assessment](https://github.com/alyssaselassie/workforce-assessment)
+(`https://alyssaselassie.github.io/workforce-assessment/`) and
+[alyssaselassie/workforce-analytics](https://github.com/alyssaselassie/workforce-analytics)
+(`https://alyssaselassie.github.io/workforce-analytics/`).
 Start with [`apps/README.md`](apps/README.md) and
 [`docs/workforce-assessment-architecture.md`](docs/workforce-assessment-architecture.md). The old
 `workforce-survey/` address now only says that the assessment has moved.
