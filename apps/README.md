@@ -11,8 +11,8 @@ graph.
 | Purpose | Education and professional development | Anonymous workforce data collection | Aggregated research and organizational analysis |
 | Audience | UN personnel and training participants | Survey participants | Authorized researchers and project administrators |
 | Source | repository root | `apps/survey/` | `apps/analytics/` |
-| Address | `https://alyssaselassie.github.io/Workforce-with-the-United-Nations/` (unchanged) | `https://alyssaselassie.github.io/un-workforce-assessment/` | `https://alyssaselassie.github.io/un-workforce-analytics/` |
-| Published from | this repository | [alyssaselassie/un-workforce-assessment](https://github.com/alyssaselassie/un-workforce-assessment) | [alyssaselassie/un-workforce-analytics](https://github.com/alyssaselassie/un-workforce-analytics) |
+| Address | `https://alyssaselassie.github.io/Workforce-with-the-United-Nations/` (unchanged) | `https://alyssaselassie.github.io/workforce-assessment/` | `https://alyssaselassie.github.io/workforce-analytics/` |
+| Published from | this repository | [alyssaselassie/workforce-assessment](https://github.com/alyssaselassie/workforce-assessment) | [alyssaselassie/workforce-analytics](https://github.com/alyssaselassie/workforce-analytics) |
 | Collects responses? | No | Yes, answer codes only, to the secure database (demonstration mode when not connected) | No; signs in and reads the aggregated map |
 
 The two apps are kept out of the Navigator's GitHub Pages site (`_config.yml` excludes `apps/` and

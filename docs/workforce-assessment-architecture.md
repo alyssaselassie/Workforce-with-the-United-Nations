@@ -70,7 +70,7 @@ Setup steps are in `supabase/README.md`.
 
 | Item | Why | Cost | Credentials |
 | --- | --- | --- | --- |
-| Two new GitHub repositories, for example `un-workforce-assessment` and `un-workforce-analytics` | Separate addresses for the survey and the dashboard on GitHub Pages | Free for public repositories | None in the code |
+| Two new GitHub repositories, for example `workforce-assessment` and `workforce-analytics` | Separate addresses for the survey and the dashboard on GitHub Pages | Free for public repositories | None in the code |
 | A Supabase project | Database, sign-in and the results service | Free plan for a pilot (free projects pause when inactive; check current pricing) | Project URL and publishable key (public by design) in each app's `config.js`. The service-role key stays inside Supabase |
 | Dashboard accounts | Researchers and administrators who may see results | Included | Created by the project owner in Supabase |
 | A data protection decision | Who is responsible, retention period, region and who sees what. Complete the privacy statement | n/a | n/a |
